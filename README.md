@@ -71,6 +71,7 @@ official records — never by similarity scores or an LLM. Details: [docs/ARCHIT
 | [DATA_SOURCES](docs/DATA_SOURCES.md) · [DATA_INVENTORY](docs/DATA_INVENTORY.md) · [DATA_QUALITY](docs/DATA_QUALITY.md) | What was used, how it was profiled, what the checks found |
 | [INGESTION](docs/INGESTION.md) | Pipeline steps, runs, caching, offline replay, access handling |
 | [RETRIEVAL_AND_REASONING](docs/RETRIEVAL_AND_REASONING.md) · [COMPLIANCE_LOGIC](docs/COMPLIANCE_LOGIC.md) | Matching, labels, status rules, journey, assistant |
+| [AI_ASSISTANT](docs/AI_ASSISTANT.md) | Local multilingual query understanding, routing, model and privacy decisions |
 | [HALLMARKING](docs/HALLMARKING.md) · [LABS](docs/LABS.md) | Domain rules for AHCs, districts and laboratories |
 | [COPYRIGHT_AND_ACCESS](docs/COPYRIGHT_AND_ACCESS.md) | Reuse terms, what is never collected, privacy |
 | [DEPLOYMENT](docs/DEPLOYMENT.md) | Deploying the demo: env vars, data bundle, Docker, hosting, troubleshooting |

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: manak-marg
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: MANAKMARG_CORS_ORIGINS
+        value: "*"

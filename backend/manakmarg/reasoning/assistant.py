@@ -532,7 +532,7 @@ def _invalid_identifier_answer(conn, understanding: QueryUnderstanding, composer
     corrected = f"IS {digits}"
     if any(resolution.standard_ids for resolution in StandardResolver(conn).resolve_text(corrected)):
         composer.follow("follow.check_standard", ref=corrected)
-    return composer.say("head.invalid_identifier", ref=ref), UNKNOWN, ["possible_typo"], []
+    return composer.say("head.invalid_identifier", number=ref[2:].strip(" -:/")), UNKNOWN, ["possible_typo"], []
 
 
 def _unknown_location_answer(conn, understanding: QueryUnderstanding, composer: _Composer, evidence: EvidenceBuilder) -> tuple[str, str | None, list[str], list[str]]:
@@ -607,6 +607,8 @@ def answer(
     elif category == ROUTE_GENERAL:
         headline, status, caveats, headline_ids = _general_answer(conn, query, composer, evidence)
     else:
+        # ROUTE_OUT_OF_SCOPE: no BIS cue, identifier, place or listed product (understanding.in_scope is False here
+        # or nothing in the records matched), so no record is consulted.
         headline, status, caveats, headline_ids = composer.say("head.out_of_scope"), None, [], []
         composer.follow("follow.example_product")
         composer.follow("follow.example_hallmarking")

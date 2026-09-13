@@ -73,9 +73,49 @@ CUES = {
     ),
     INTENT_STANDARD: (
         "which standard", "which indian standard", "applicable standard", "standard applies", "standard for",
-        "which is applies", "bis standard", "kaunsa standard", "konsa standard", "standard batao", "manak", "मानक",
+        "which is applies", "standard", "bis standard", "kaunsa standard", "konsa standard", "standard batao", "manak",
+        "मानक", "बीआईएस मानक",
     ),
 }
+
+_ENTITY_ALIASES = {
+    "material": {
+        "copper": ("copper", "तांबा", "तांबे"),
+        "steel": ("steel", "स्टील", "इस्पात"),
+        "stainless steel": ("stainless steel", "स्टेनलेस स्टील", "स्टेनलेस इस्पात"),
+        "pvc": ("pvc", "पीवीसी"),
+        "aluminium": ("aluminium", "aluminum", "एल्युमिनियम", "अल्यूमिनियम"),
+        "plastic": ("plastic", "प्लास्टिक"),
+        "cement": ("cement", "सीमेंट"),
+        "gold": ("gold", "सोना", "सोने"),
+        "silver": ("silver", "चांदी", "चाँदी"),
+    },
+    "product": {
+        "wire": ("wire", "wires", "तार"),
+        "cable": ("cable", "cables", "केबल"),
+        "pipe": ("pipe", "pipes", "पाइप"),
+        "tube": ("tube", "tubes", "ट्यूब"),
+        "plate": ("plate", "plates", "प्लेट"),
+        "utensils": ("utensil", "utensils", "बर्तन"),
+        "cookware": ("cookware", "कुकवेयर"),
+        "jewellery": ("jewellery", "jewelry", "ज्वेलरी", "आभूषण"),
+        "structural steel": ("structural steel", "स्ट्रक्चरल स्टील"),
+        "pressure cooker": ("pressure cooker", "pressure cookers", "प्रेशर कुकर"),
+        "ceiling fan": ("ceiling fan", "ceiling fans", "सीलिंग फैन"),
+    },
+    "application": {
+        "construction": ("construction", "निर्माण"),
+        "industrial": ("industrial", "industry", "औद्योगिक"),
+        "drinking water": ("drinking water", "पीने का पानी"),
+    },
+}
+
+_DOMAIN_TERMS = frozenset(
+    "bis standard standards certification licence license qco scheme compliance hallmark hallmarking lab labs "
+    "testing test ahc mandatory compulsory product wire cable pipe tube plate steel copper pvc aluminium cement "
+    "utensil cookware jewellery jewelry gold silver मानक प्रमाणन लाइसेंस क्यूको योजना अनुपालन हॉलमार्क प्रयोगशाला "
+    "जाँच परीक्षण अनिवार्य स्टील तांबा तार केबल पाइप बर्तन सोना चांदी".split()
+)
 
 QUESTION_WORDS = frozenset(
     """about all am any applies apply applicable ask cover covered coverage details do does done find give help
@@ -201,6 +241,11 @@ class QueryUnderstanding:
     aliases_used: tuple[tuple[str, str], ...] = ()
     invalid_refs: tuple[str, ...] = ()
     unresolved_place: str | None = None
+    material: str | None = None
+    product: str | None = None
+    application: str | None = None
+    in_scope: bool = True
+    clarification: str | None = None
 
 
 def _padded(text: str) -> str:
@@ -253,6 +298,19 @@ def _unresolved_place(text: str, ignore: set[str]) -> str | None:
     return None
 
 
+def _find_entity(text: str, category: str) -> str | None:
+    normalized = _padded(text)
+    for canonical, aliases in _ENTITY_ALIASES[category].items():
+        if any(f" {norm_match(alias)} " in normalized for alias in aliases):
+            return canonical
+    return None
+
+
+def _has_domain_signal(text: str, understanding_parts: tuple[str | None, ...]) -> bool:
+    tokens = set(norm_match(text).split())
+    return bool(tokens & _DOMAIN_TERMS) or any(understanding_parts)
+
+
 def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderstanding:
     text = text or ""
     gazetteer = gazetteer or Gazetteer()
@@ -268,6 +326,7 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
         hits[INTENT_HALLMARKING].append("recognition number")
     lab_or_standard_context = bool(hits[INTENT_LABS] or hits[INTENT_TESTS] or hits[INTENT_STANDARD])
     designations = extract_designations(_RECOGNITION.sub(" ", work))
+    malformed_is = bool(invalid_refs)
     if not designations and lab_or_standard_context:
         designations = extract_designations(" ".join(_BARE_NUMBER.findall(work)), assume_is_prefix=True)
     standard_refs = tuple(dict.fromkeys(designation.std_key for designation in designations))
@@ -283,6 +342,10 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
         metal = "gold"
     elif " silver " in padded:
         metal = "silver"
+
+    material = _find_entity(text, "material")
+    product = _find_entity(text, "product")
+    application = _find_entity(text, "application")
 
     cue_tokens = {token for cues in hits.values() for cue in cues for token in norm_match(cue).split()}
     identifier_tokens = {norm_match(part) for designation in designations for part in designation.raw.split()}
@@ -304,12 +367,23 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
         and not token.isdigit()
     ]
     product_text = " ".join(product_words) or None
+    in_scope = _has_domain_signal(f"{text} {aliased.text}", (material, product, application, *standard_refs, *recognition_nos, *invalid_refs)) or any(hits.values())
+    if malformed_is and not standard_refs:
+        product_text = None
+    if not in_scope:
+        product_text = None
 
     intents = [intent for intent in INTENT_PRIORITY if hits[intent]]
     if product_text or standard_refs:
         intents.append(INTENT_PRODUCT)
     primary = intents[0] if intents else INTENT_GENERAL
+    if not in_scope:
+        primary = INTENT_GENERAL
+        intents = [INTENT_GENERAL]
     confidence = 0.9 if (standard_refs or recognition_nos or (intents and primary != INTENT_PRODUCT)) else 0.6 if product_text else 0.3
+    clarification = None
+    if material and not product and not standard_refs:
+        clarification = "Please specify the product type, such as wire, cable, pipe, tube or sheet."
     return QueryUnderstanding(
         text=text,
         language="hi" if _DEVANAGARI.search(text) else "en",
@@ -330,6 +404,11 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
         aliases_used=aliased.replacements,
         invalid_refs=invalid_refs,
         unresolved_place=unresolved,
+        material=material,
+        product=product,
+        application=application,
+        in_scope=in_scope,
+        clarification=clarification,
     )
 
 

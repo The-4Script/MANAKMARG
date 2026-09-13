@@ -165,7 +165,7 @@ def test_out_of_scope_question_uses_no_records(engine, query):
     response = _ask(engine, query)
     assert response.route.category == "out_of_scope"
     assert not response.sections and not response.evidence.ids()
-    assert "outside what MANAK MARG covers" in response.headline
+    assert "outside MANAK MARG" in response.headline
 
 
 def test_unlisted_product_does_not_show_unrelated_standards(engine):
@@ -177,7 +177,7 @@ def test_unlisted_product_does_not_show_unrelated_standards(engine):
 def test_mistyped_is_number_is_unknown_not_confirmed(engine):
     response = _ask(engine, "What is IS 2O62?")
     assert response.status_label == "UNKNOWN" and response.route.category == "invalid_identifier"
-    assert "IS 2O62" in response.headline and "IS 2 " not in response.headline
+    assert "2O62" in response.headline and "IS 2" not in response.headline
     assert "possible_typo" in response.caveats and not response.sections
 
 
@@ -266,3 +266,16 @@ def test_unknown_product_is_not_declared_unregulated(engine):
     response = _ask(engine, "xylophone quasar compulsory?")
     assert "No compulsory-certification listing" in response.headline
     assert "absence_not_proof" in response.caveats
+
+
+def test_out_of_scope_question_does_not_search_bis_data(engine):
+    response = _ask(engine, "What is the capital of France?")
+    assert response.understanding.in_scope is False
+    assert "outside MANAK MARG" in response.headline
+    assert not response.sections
+
+
+def test_malformed_standard_identifier_is_not_confirmed(engine):
+    response = _ask(engine, "What is IS 2O62?")
+    assert response.understanding.standard_refs == ()
+    assert "IS 2" not in response.headline

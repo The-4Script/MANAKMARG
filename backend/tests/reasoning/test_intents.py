@@ -78,6 +78,37 @@ def test_hindi_question_is_detected_and_routed():
     assert INTENT_PRODUCT not in result.intents
 
 
+@pytest.mark.parametrize(
+    "text, material, product",
+    [
+        ("I need the BIS standard for copper wire", "copper", "wire"),
+        ("स्टील के लिए BIS standard बताओ", "steel", None),
+        ("mujhe steel ke liye BIS standard batao", "steel", None),
+        ("मुझे copper wire का BIS standard चाहिए", "copper", "wire"),
+    ],
+)
+def test_multilingual_product_and_material_entities(text, material, product):
+    result = understand(text, gazetteer=GAZETTEER)
+    assert result.intent == INTENT_STANDARD
+    assert result.material == material
+    assert result.product == product
+    assert result.in_scope is True
+
+
+def test_material_only_query_requests_product_clarification():
+    result = understand("I need a BIS standard for a copper product")
+    assert result.material == "copper"
+    assert result.product is None
+    assert result.clarification
+
+
+def test_non_bis_question_is_out_of_scope():
+    result = understand("What is the capital of France?")
+    assert result.intent == INTENT_GENERAL
+    assert result.product_text is None
+    assert result.in_scope is False
+
+
 def test_recognition_number_routes_to_hallmarking():
     result = understand("status of cro/rahc/r-110002 please")
     assert result.recognition_nos == ("CRO/RAHC/R-110002",)
@@ -117,7 +148,7 @@ def test_hindi_and_hinglish_product_words():
         ("How to apply for BIS licence for pressure cookers?", INTENT_PROCESS, "pressure cookers"),
         ("upcoming QCOs", INTENT_UPCOMING, None),
         ("ceiling fans", INTENT_PRODUCT, "ceiling fans"),
-        ("hello", INTENT_PRODUCT, "hello"),
+        ("hello", INTENT_GENERAL, None),
         ("what is it?", INTENT_GENERAL, None),
     ],
 )

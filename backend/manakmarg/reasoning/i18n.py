@@ -40,13 +40,9 @@ MESSAGES: dict[str, dict[str, str]] = {
         "en": "Here is what the official BIS page on compulsory certification says; to check a specific product, name it or its IS number.",
         "hi": "अनिवार्य प्रमाणन पर आधिकारिक BIS पृष्ठ के अनुसार जानकारी; किसी विशेष उत्पाद के लिए उसका नाम या IS संख्या बताएँ।",
     },
-    "head.out_of_scope": {
-        "en": "This question is outside what MANAK MARG covers (Indian Standards, compulsory BIS certification, laboratories, hallmarking and gap analysis), so no official record was used.",
-        "hi": "यह प्रश्न MANAK MARG के दायरे (भारतीय मानक, अनिवार्य BIS प्रमाणन, प्रयोगशालाएँ, हॉलमार्किंग और गैप विश्लेषण) से बाहर है, इसलिए किसी आधिकारिक रिकॉर्ड का उपयोग नहीं किया गया।",
-    },
     "head.invalid_identifier": {
-        "en": "“{ref}” is not a valid Indian Standard number — it may be a typo (for example the letter O instead of zero), so nothing was looked up for it.",
-        "hi": "“{ref}” मान्य भारतीय मानक संख्या नहीं है — संभवतः टाइपिंग त्रुटि है (जैसे शून्य की जगह अक्षर O), इसलिए इसके लिए कुछ नहीं खोजा गया।",
+        "en": "The Indian Standard number “{number}” is not valid — it may be a typo (for example the letter O instead of zero), so nothing was looked up for it.",
+        "hi": "भारतीय मानक संख्या “{number}” मान्य नहीं है — संभवतः टाइपिंग त्रुटि है (जैसे शून्य की जगह अक्षर O), इसलिए इसके लिए कुछ नहीं खोजा गया।",
     },
     "head.unknown_location": {
         "en": "“{place}” was not found in the indexed district, state or laboratory location lists — check the spelling or name the state.",
@@ -194,6 +190,10 @@ MESSAGES: dict[str, dict[str, str]] = {
     "head.nothing": {
         "en": "I could not find an official answer in the indexed data. Try naming the product, an IS number or a district.",
         "hi": "अनुक्रमित डेटा में आधिकारिक उत्तर नहीं मिला। उत्पाद, IS संख्या या ज़िला बताकर देखें।",
+    },
+    "head.out_of_scope": {
+        "en": "This question is outside MANAK MARG's BIS and compliance scope (Indian Standards, compulsory BIS certification, laboratories, hallmarking and gap analysis), so no official record was used.",
+        "hi": "यह सवाल MANAK MARG के BIS और अनुपालन क्षेत्र (भारतीय मानक, अनिवार्य BIS प्रमाणन, प्रयोगशालाएँ, हॉलमार्किंग और गैप विश्लेषण) से बाहर है, इसलिए किसी आधिकारिक रिकॉर्ड का उपयोग नहीं किया गया।",
     },
     "head.gap": {
         "en": "Use Gap Analysis to compare your datasheet or test report with requirements from a document you legitimately hold.",

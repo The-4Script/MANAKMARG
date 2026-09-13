@@ -138,27 +138,40 @@ docker run --rm -p 7860:7860 manakmarg
 The image builds the frontend, installs the backend on Python 3.12, restores the data bundle at build time, runs as
 uid 1000, listens on `0.0.0.0:$PORT` (default 7860) and has a `HEALTHCHECK` on `/api/health`.
 
-### Free hosting options for the demo
+### Free deployment choices
 
-**Hugging Face Spaces** (free CPU Basic tier, 16 GB RAM; sleeps when idle)
+**Render free Docker web service** is the simplest single-host option. It supports custom Docker containers at no
+compute charge, sleeps when idle and provides HTTPS. The free service has 512 MB RAM and 0.1 CPU; this app has been
+measured at about 290 MB after warm-up, so it may work but is not a guaranteed capacity fit. Set the health check to
+`/api/health` and do not deploy the optional large indexes. Uploaded documents and generated SQLite files are
+ephemeral.
 
-1. Create a Space with SDK **Docker** (blank template).
-2. The Space's `README.md` must start with this header:
-   ```yaml
-   ---
-   title: MANAK MARG
-   sdk: docker
-   app_port: 7860
-   ---
-   ```
-3. Push this repository to the Space's git remote. Hugging Face rejects files over 10 MB unless they are tracked
-   with Git LFS/Xet, so run `git lfs install && git lfs track "deploy/data/*.tar.gz"` in the Space copy before
-   pushing. Alternatively, upload the bundle through the Space's "Files → Add file" page, or host it elsewhere and
-   set `MANAKMARG_DATA_URL` as a Space variable.
-4. Set the Space visibility to **Private** unless the team agrees to make it public (see the note in section 4).
+The repository includes [`render.yaml`](../render.yaml), so Render can configure this automatically:
 
-**Render** (free web service: 512 MB RAM, sleeps after inactivity): New → Web Service → connect the GitHub repository
-→ runtime **Docker**. Render injects `PORT`. Set the health check path to `/api/health`.
+1. Push the repository to GitHub, including `Dockerfile`, `deploy/data/manakmarg-data.tar.gz` and `render.yaml`.
+2. In Render, choose **New +** → **Blueprint** and select the GitHub repository.
+3. Confirm the `manak-marg` web service is set to the **Free** plan, then apply the blueprint.
+4. Wait for the Docker build to finish. Render injects `PORT`; the image defaults to `7860` locally and reads the
+  injected Render port at runtime.
+5. Open the generated `onrender.com` URL and verify `/api/health` returns `data_ready: true`.
+
+If the bundle is kept outside Git, add `MANAKMARG_DATA_URL` under the service's Environment settings. Keep the
+service private or add authentication before using uploaded documents; the application itself has no authentication.
+
+**Google Cloud Run** is the stronger container option when a billing account is acceptable. Its request-based free
+tier includes 2 million requests, 180,000 vCPU-seconds and 360,000 GiB-seconds of RAM per month in eligible regions.
+It can run this Dockerfile unchanged, scales to zero, and requires billing to be enabled; usage beyond the free tier
+is billable.
+
+**Hugging Face Static Space** is free, but it can host only `frontend/dist`, not this FastAPI backend. Use it only as
+a split deployment: build with `VITE_API_BASE_URL=https://your-api.example.com`, publish `frontend/dist` as the
+static Space, and host the API on Render or Cloud Run with `MANAKMARG_CORS_ORIGINS` set to the Space origin.
+
+Hugging Face **Docker** and ordinary **Gradio** Spaces require a paid plan. Gradio is not a drop-in alternative for
+this project because the existing React application and FastAPI API would need a wrapper or rewrite. The prepared
+Docker metadata remains in [`deploy/huggingface/README.md`](../deploy/huggingface/README.md) for paid-plan use.
+
+For any public deployment, review the bundled BIS-derived data terms first. The app has no authentication.
 
 **Laptop + Cloudflare quick tunnel** (no account needed): run section 5 locally, then
 `cloudflared tunnel --url http://localhost:8000` and share the printed `trycloudflare.com` URL.
