@@ -230,9 +230,12 @@ cd ../frontend && npm run build
 
 ## 11. Measured footprint
 
-Measured on the development machine from a clean clone (section 9 commands):
+Measured on the development machine (Windows 11, Python 3.14), running from a clean clone with the section 9 commands:
 
-- The data bundle restores in a few seconds.
-- The listing vector index is the only index loaded into memory.
-- Server memory after warm-up (journey + assistant queries): see the handoff report for the measured figure. Budget
-  ~512 MB–1 GB.
+- `import-data` restores the bundle in about 4 seconds.
+- A journey request takes about 0.5 seconds once the index is loaded.
+- Only the listing vector index is loaded into memory.
+- Server working set after warm-up (journey, assistant, hallmarking, labs and gap-analysis requests) is about
+  290 MB. Windows reports more committed (private) memory because of numerical-library allocations, and this was
+  not measured on Linux.
+- Plan for **1 GB RAM**. A 512 MB instance may work, but it has not been verified.
