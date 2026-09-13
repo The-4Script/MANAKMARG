@@ -103,3 +103,16 @@ def test_unknown_product_is_not_declared_unregulated(engine):
     response = _ask(engine, "xylophone quasar compulsory?")
     assert "No compulsory-certification listing" in response.headline
     assert "absence_not_proof" in response.caveats
+
+
+def test_out_of_scope_question_does_not_search_bis_data(engine):
+    response = _ask(engine, "What is the capital of France?")
+    assert response.understanding.in_scope is False
+    assert "outside MANAK MARG" in response.headline
+    assert not response.sections
+
+
+def test_malformed_standard_identifier_is_not_confirmed(engine):
+    response = _ask(engine, "What is IS 2O62?")
+    assert response.understanding.standard_refs == ()
+    assert "IS 2" not in response.headline

@@ -66,9 +66,48 @@ CUES = {
     ),
     INTENT_STANDARD: (
         "which standard", "which indian standard", "applicable standard", "standard applies", "standard for",
-        "which is applies", "मानक",
+        "which is applies", "standard", "मानक", "बीआईएस मानक",
     ),
 }
+
+_ENTITY_ALIASES = {
+    "material": {
+        "copper": ("copper", "तांबा", "तांबे"),
+        "steel": ("steel", "स्टील", "इस्पात"),
+        "stainless steel": ("stainless steel", "स्टेनलेस स्टील", "स्टेनलेस इस्पात"),
+        "pvc": ("pvc", "पीवीसी"),
+        "aluminium": ("aluminium", "aluminum", "एल्युमिनियम", "अल्यूमिनियम"),
+        "plastic": ("plastic", "प्लास्टिक"),
+        "cement": ("cement", "सीमेंट"),
+        "gold": ("gold", "सोना", "सोने"),
+        "silver": ("silver", "चांदी", "चाँदी"),
+    },
+    "product": {
+        "wire": ("wire", "wires", "तार"),
+        "cable": ("cable", "cables", "केबल"),
+        "pipe": ("pipe", "pipes", "पाइप"),
+        "tube": ("tube", "tubes", "ट्यूब"),
+        "plate": ("plate", "plates", "प्लेट"),
+        "utensils": ("utensil", "utensils", "बर्तन"),
+        "cookware": ("cookware", "कुकवेयर"),
+        "jewellery": ("jewellery", "jewelry", "ज्वेलरी", "आभूषण"),
+        "structural steel": ("structural steel", "स्ट्रक्चरल स्टील"),
+        "pressure cooker": ("pressure cooker", "pressure cookers", "प्रेशर कुकर"),
+        "ceiling fan": ("ceiling fan", "ceiling fans", "सीलिंग फैन"),
+    },
+    "application": {
+        "construction": ("construction", "निर्माण"),
+        "industrial": ("industrial", "industry", "औद्योगिक"),
+        "drinking water": ("drinking water", "पीने का पानी"),
+    },
+}
+
+_DOMAIN_TERMS = frozenset(
+    "bis standard standards certification licence license qco scheme compliance hallmark hallmarking lab labs "
+    "testing test ahc mandatory compulsory product wire cable pipe tube plate steel copper pvc aluminium cement "
+    "utensil cookware jewellery jewelry gold silver मानक प्रमाणन लाइसेंस क्यूको योजना अनुपालन हॉलमार्क प्रयोगशाला "
+    "जाँच परीक्षण अनिवार्य स्टील तांबा तार केबल पाइप बर्तन सोना चांदी".split()
+)
 
 QUESTION_WORDS = frozenset(
     """about all am any applies apply applicable ask cover covered coverage details do does done find give help
@@ -115,6 +154,7 @@ _STATE_PHRASES = {norm_match(name): name for name in STATES_AND_UTS} | {
 _DEVANAGARI = re.compile("[ऀ-ॿ]")
 _RECOGNITION = re.compile(r"\b[A-Z]{2,4}/RAHC/R-\d{3,8}\b", re.IGNORECASE)
 _BARE_NUMBER = re.compile(r"(?<![\w./:-])\d{2,5}(?![\w/:-])")
+_MALFORMED_IS = re.compile(r"\bIS\s+\d+[A-Za-z]+\d+\b", re.IGNORECASE)
 
 
 @dataclass
@@ -161,6 +201,11 @@ class QueryUnderstanding:
     metal: str | None
     product_text: str | None
     confidence: float
+    material: str | None = None
+    product: str | None = None
+    application: str | None = None
+    in_scope: bool = True
+    clarification: str | None = None
 
 
 def _padded(text: str) -> str:
@@ -202,6 +247,19 @@ def _find_place(tokens: list[str], gazetteer: Gazetteer) -> tuple[str | None, st
     return None, None, None, set()
 
 
+def _find_entity(text: str, category: str) -> str | None:
+    normalized = _padded(text)
+    for canonical, aliases in _ENTITY_ALIASES[category].items():
+        if any(f" {norm_match(alias)} " in normalized for alias in aliases):
+            return canonical
+    return None
+
+
+def _has_domain_signal(text: str, understanding_parts: tuple[str | None, ...]) -> bool:
+    tokens = set(norm_match(text).split())
+    return bool(tokens & _DOMAIN_TERMS) or any(understanding_parts)
+
+
 def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderstanding:
     text = text or ""
     padded = _padded(text)
@@ -213,6 +271,9 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
         hits[INTENT_HALLMARKING].append("recognition number")
     lab_or_standard_context = bool(hits[INTENT_LABS] or hits[INTENT_TESTS] or hits[INTENT_STANDARD])
     designations = extract_designations(_RECOGNITION.sub(" ", text))
+    malformed_is = bool(_MALFORMED_IS.search(text))
+    if malformed_is:
+        designations = tuple(designation for designation in designations if not designation.raw.upper().startswith("IS "))
     if not designations and lab_or_standard_context:
         designations = extract_designations(" ".join(_BARE_NUMBER.findall(text)), assume_is_prefix=True)
     standard_refs = tuple(dict.fromkeys(designation.std_key for designation in designations))
@@ -229,6 +290,10 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
     elif any(word in padded for word in (" silver ", " चांदी ")):
         metal = "silver"
 
+    material = _find_entity(text, "material")
+    product = _find_entity(text, "product")
+    application = _find_entity(text, "application")
+
     cue_tokens = {token for cues in hits.values() for cue in cues for token in norm_match(cue).split()}
     identifier_tokens = {norm_match(part) for designation in designations for part in designation.raw.split()}
     identifier_tokens |= {"is", "part", "sec", *doc_numbers}
@@ -244,12 +309,23 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
         and not token.isdigit()
     ]
     product_text = " ".join(product_words) or None
+    in_scope = _has_domain_signal(text, (material, product, application, *standard_refs, *recognition_nos)) or any(hits.values())
+    if malformed_is and not standard_refs:
+        product_text = None
+    if not in_scope:
+        product_text = None
 
     intents = [intent for intent in INTENT_PRIORITY if hits[intent]]
     if product_text or standard_refs:
         intents.append(INTENT_PRODUCT)
     primary = intents[0] if intents else INTENT_GENERAL
+    if not in_scope:
+        primary = INTENT_GENERAL
+        intents = [INTENT_GENERAL]
     confidence = 0.9 if (standard_refs or recognition_nos or (intents and primary != INTENT_PRODUCT)) else 0.6 if product_text else 0.3
+    clarification = None
+    if material and not product and not standard_refs:
+        clarification = "Please specify the product type, such as wire, cable, pipe, tube or sheet."
     return QueryUnderstanding(
         text=text,
         language="hi" if _DEVANAGARI.search(text) else "en",
@@ -266,6 +342,11 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
         metal=metal,
         product_text=product_text,
         confidence=confidence,
+        material=material,
+        product=product,
+        application=application,
+        in_scope=in_scope,
+        clarification=clarification,
     )
 
 

@@ -135,6 +135,10 @@ MESSAGES: dict[str, dict[str, str]] = {
         "en": "I could not find an official answer in the indexed data. Try naming the product, an IS number or a district.",
         "hi": "अनुक्रमित डेटा में आधिकारिक उत्तर नहीं मिला। उत्पाद, IS संख्या या ज़िला बताकर देखें।",
     },
+    "head.out_of_scope": {
+        "en": "This question is outside MANAK MARG's BIS and compliance scope.",
+        "hi": "यह सवाल MANAK MARG के BIS और अनुपालन क्षेत्र से बाहर है।",
+    },
     "head.gap": {
         "en": "Use Gap Analysis to compare your datasheet or test report with requirements from a document you legitimately hold.",
         "hi": "अपनी डेटाशीट या परीक्षण रिपोर्ट की तुलना वैध रूप से उपलब्ध दस्तावेज़ की आवश्यकताओं से करने के लिए गैप विश्लेषण का उपयोग करें।",

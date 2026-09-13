@@ -440,8 +440,13 @@ def answer(
         if intent == INTENT_PROCESS:
             _process_answer(conn, composer, evidence)
     else:
-        found = _faq_section(conn, query, composer, evidence) + _documents_section(conn, query, composer, evidence)
-        headline, status, caveats, headline_ids = (composer.say("head.faq") if found else composer.say("head.nothing")), None, [], []
+        found = 0
+        if understanding.in_scope:
+            found = _faq_section(conn, query, composer, evidence) + _documents_section(conn, query, composer, evidence)
+        if not understanding.in_scope:
+            headline, status, caveats, headline_ids = composer.say("head.out_of_scope"), None, [], []
+        else:
+            headline, status, caveats, headline_ids = (composer.say("head.faq") if found else composer.say("head.nothing")), None, [], []
         if not found:
             composer.follow("follow.upcoming")
 
