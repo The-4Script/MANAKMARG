@@ -10,6 +10,7 @@ place names with the English terms used by the records; the rest of the question
 
 import re
 from dataclasses import dataclass, field
+from dataclasses import replace
 
 import sqlalchemy as sa
 from sqlalchemy.engine import Connection
@@ -246,6 +247,28 @@ class QueryUnderstanding:
     application: str | None = None
     in_scope: bool = True
     clarification: str | None = None
+
+
+def apply_model_hints(understanding: QueryUnderstanding, hints: dict) -> QueryUnderstanding:
+    """Apply only bounded routing hints; identifiers and legal facts remain local-only."""
+    allowed_intents = set(INTENT_PRIORITY) | {INTENT_PRODUCT, INTENT_GENERAL}
+    intent = hints.get("intent") if hints.get("intent") in allowed_intents else understanding.intent
+    material = hints.get("material") if hints.get("material") in _ENTITY_ALIASES["material"] else understanding.material
+    product = hints.get("product") if hints.get("product") in _ENTITY_ALIASES["product"] else understanding.product
+    application = hints.get("application") if hints.get("application") in _ENTITY_ALIASES["application"] else understanding.application
+    product_text = understanding.product_text
+    if material and product:
+        product_text = f"{material} {product}"
+    return replace(
+        understanding,
+        intent=intent,
+        intents=tuple(dict.fromkeys((intent, *understanding.intents))),
+        material=material,
+        product=product,
+        application=application,
+        product_text=product_text,
+        confidence=max(understanding.confidence, min(float(hints.get("confidence", 0)), 0.85)),
+    )
 
 
 def _padded(text: str) -> str:

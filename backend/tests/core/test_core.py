@@ -7,6 +7,8 @@ _ENV_VARS = (
     "ANTHROPIC_API_KEY",
     "MANAKMARG_ANTHROPIC_API_KEY",
     "MANAKMARG_LLM_MODEL",
+    "GROQ_API_KEY",
+    "MANAKMARG_GROQ_API_KEY",
     "MANAKMARG_DB_PATH",
     "MANAKMARG_FETCH_MIN_DELAY_S",
     "MANAKMARG_OFFLINE",
@@ -68,6 +70,16 @@ def test_settings_read_environment(monkeypatch):
     assert s.offline is True
     assert s.llm_enabled is True
     assert s.db_path == paths.PROJECT_ROOT / "data" / "processed" / "other.sqlite3"
+
+
+def test_groq_settings_are_supported(monkeypatch):
+    _clean_env(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "gsk-test")
+    s = Settings(_env_file=None)
+    assert s.groq_api_key == "gsk-test"
+    assert s.llm_enabled is True
+    assert s.groq_reasoning_model == "openai/gpt-oss-120b"
+    assert s.groq_fast_model == "openai/gpt-oss-20b"
 
 
 def test_llm_needs_both_key_and_model(monkeypatch):

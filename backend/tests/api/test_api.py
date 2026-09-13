@@ -15,7 +15,7 @@ from tests.fixture_db import build_fixture_db
 def client(tmp_path_factory):
     root = tmp_path_factory.mktemp("api")
     engine = build_fixture_db(root / "api.sqlite3")
-    settings = Settings(db_path=root / "api.sqlite3", anthropic_api_key=None, llm_model=None)
+    settings = Settings(db_path=root / "api.sqlite3", anthropic_api_key=None, llm_model=None, groq_api_key=None)
     app = create_app(settings, state=deps.AppState(settings, engine=engine, index_dir=root / "indexes"), frontend_dir=root / "no-frontend")
     app.dependency_overrides[deps.get_today] = lambda: date(2026, 9, 13)
     with TestClient(app) as test_client:

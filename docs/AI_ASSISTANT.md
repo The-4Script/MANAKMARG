@@ -20,16 +20,20 @@ The parser supports English, Hindi and common Hinglish terms. It distinguishes m
 `copper wire` becomes material `copper` and product `wire`. A material-only request receives a clarification instead
 of an arbitrary standard. Clearly unrelated questions are rejected before FAQ or standards retrieval.
 
-## Model recommendation
+## Model policy
 
-No neural model is required for the current success criteria. A transparent alias and intent classifier is faster,
-smaller, testable offline and easier to audit for regulatory answers. A CNN has no useful advantage for this short-text
-classification problem and is not used.
+The local alias and intent classifier remains the first path because it is faster, testable offline and easier to audit
+for regulatory answers. A CNN has no useful advantage for this short-text classification problem and is not used.
 
-An optional future model may rerank or parse only low-confidence queries after local candidate filtering. It must return
-structured entities, receive no full BIS corpus or private documents, and never decide legal status. Its output must be
-validated against the same local resolvers. The application must continue normally when no API key, network or model is
-available.
+When a query is genuinely ambiguous and Groq is configured, the server uses only the supplied models:
+
+1. `openai/gpt-oss-120b` for the best structured routing attempt.
+2. `openai/gpt-oss-20b` if the first model fails, times out, hits a limit or returns invalid JSON.
+
+For audio, it uses `whisper-large-v3-turbo` first and `whisper-large-v3` as the transcription fallback. These calls are
+never needed for ordinary deterministic queries. Models return only routing/entity hints; they cannot create IS numbers,
+QCOs, legal status or evidence. Output is allow-listed and passed through local resolvers. The application continues
+normally when no key, network, SDK or model is available.
 
 ## What remains deterministic
 
@@ -42,11 +46,11 @@ available.
 
 The local layer adds only regular-expression, token and dictionary work: no model download, GPU or persistent external
 service. Its memory and startup impact is negligible relative to the existing SQLite and index loading. Normal query
-latency remains bounded by the existing retrieval path. External API calls are zero by default and are not needed for
-the demo flows.
+latency remains bounded by the existing retrieval path. External API calls are zero for clear queries and limited to one
+request plus one fallback for ambiguous text or audio.
 
 ## Privacy and security
 
-No user query, uploaded document or BIS corpus is sent externally by this layer. If an optional provider is added,
-the integration must explicitly redact private documents, send only retrieved public context, keep credentials server-side,
-and fail closed to the deterministic path. API keys belong in deployment secrets, never frontend code or source control.
+No uploaded document or BIS corpus is sent externally by this layer. Only an ambiguous user query or explicitly requested
+audio is sent to Groq. Credentials stay server-side and the cascade fails closed to the deterministic path. API keys
+belong in deployment secrets, never frontend code or source control.

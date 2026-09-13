@@ -38,7 +38,10 @@ from manakmarg.reasoning.intents import (
     Gazetteer,
     QueryUnderstanding,
     understand,
+    apply_model_hints,
 )
+from manakmarg.core.config import get_settings
+from manakmarg.reasoning.groq import understand_query
 from manakmarg.reasoning.journey import build_journey
 from manakmarg.reasoning.labs import find_labs
 from manakmarg.reasoning.routing import (
@@ -566,6 +569,10 @@ def answer(
     lang = lang if lang in ("en", "hi") else "en"
     gazetteer = gazetteer or Gazetteer.load(conn)
     understanding = understand(query, gazetteer=gazetteer)
+    if understanding.in_scope and (understanding.clarification or understanding.confidence < 0.5):
+        hints = understand_query(query, get_settings())
+        if hints:
+            understanding = apply_model_hints(understanding, hints)
     route = route_query(understanding, gazetteer)
     evidence = EvidenceBuilder(conn)
     composer = _Composer(lang)
