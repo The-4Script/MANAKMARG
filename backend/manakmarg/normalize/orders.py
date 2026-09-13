@@ -64,6 +64,14 @@ def _so_number_from_file_name(file_name: str) -> str | None:
     return f"S.O. {match.group(1)}(E)" if match else None
 
 
+def order_identity(url: str, so_number: str | None, gsr_number: str | None) -> str:
+    """Key of one regulatory order. BIS pages sometimes link different notifications to the same PDF (for example a
+    pressure-cooker amendment and the cables QCO both pointing at ``Cables_28012020.pdf``); the notification number
+    keeps such orders apart, while references without a number stay keyed by their URL."""
+    number = so_number or gsr_number
+    return f"{url}#{number}" if number else url
+
+
 def classify_order_kind(text: str | None) -> str:
     for kind, pattern in _KIND_RULES:
         if pattern.search(text or ""):
@@ -74,10 +82,11 @@ def classify_order_kind(text: str | None) -> str:
 def parse_order_links(links: list[tuple], page_url: str) -> list[OrderRef]:
     """Order references from ``(anchor text, href)`` or ``(anchor text, href, context line)`` items.
 
-    Links are resolved against ``page_url`` and de-duplicated by URL.
+    Links are resolved against ``page_url`` and de-duplicated by URL; a repeated URL is kept only when it carries a
+    different notification number (a different order that shares the PDF link).
     """
     refs: list[OrderRef] = []
-    seen: set[str] = set()
+    seen: dict[str, set[str | None]] = {}
     for item in links:
         text, href = item[0], item[1]
         context_raw = item[2] if len(item) > 2 else None
@@ -85,9 +94,11 @@ def parse_order_links(links: list[tuple], page_url: str) -> list[OrderRef]:
         if not href or href.startswith("#") or href.lower().startswith(("javascript:", "mailto:")):
             continue
         url = urljoin(page_url, href)
-        if url in seen:
+        numbers = seen.setdefault(url, set())
+        link_number = extract_so_number(text) or extract_gsr_number(text)
+        if numbers and (link_number is None or link_number in numbers):
             continue
-        seen.add(url)
+        numbers.add(link_number)
 
         raw = clean_ws(text)
         anchor = _ENUMERATION.sub("", raw).strip()

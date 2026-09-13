@@ -43,6 +43,14 @@ export const CAVEATS: Record<string, Text> = {
     en: "Some matches used a curated synonym (a search aid, not evidence).",
     hi: "कुछ मिलान संकलित पर्यायवाची (खोज सहायता, साक्ष्य नहीं) से हुए।",
   },
+  possible_typo: {
+    en: "The IS number looks mistyped (letters mixed with digits). No standard was looked up; check the number on the BIS standards portal.",
+    hi: "IS संख्या में टाइपिंग त्रुटि लगती है (अंकों के साथ अक्षर)। कोई मानक नहीं खोजा गया; BIS मानक पोर्टल पर संख्या जाँचें।",
+  },
+  location_not_recognised: {
+    en: "The place you named is not in the indexed district, state or laboratory location lists, so it was not used as a filter.",
+    hi: "आपका बताया स्थान अनुक्रमित ज़िला, राज्य या प्रयोगशाला स्थान सूचियों में नहीं है, इसलिए इसे फ़िल्टर के रूप में उपयोग नहीं किया गया।",
+  },
 };
 
 export const NOTES: Record<string, Text> = {

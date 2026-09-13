@@ -309,10 +309,9 @@ def load_text_document(
 
 
 def link_order_document(run: RunRecorder, *, order_url: str, document_id: int) -> int:
+    """Attach a fetched PDF to every order that links to it (distinct orders can share one PDF URL)."""
     orders = schema.regulatory_order
-    return run.conn.execute(
-        orders.update().where(orders.c.order_key == order_url).values(document_id=document_id)
-    ).rowcount
+    return run.conn.execute(orders.update().where(orders.c.url == order_url).values(document_id=document_id)).rowcount
 
 
 # --------------------------------------------------------------------------- laboratories

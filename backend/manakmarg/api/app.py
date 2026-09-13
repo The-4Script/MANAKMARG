@@ -15,6 +15,15 @@ from . import deps
 from .routers import assistant, compliance, documents, labs_hallmarking, meta
 
 
+CLIENT_ROUTES = frozenset({"", "assistant", "journey", "standards", "certification", "labs", "hallmarking", "gap-analysis", "sources"})
+
+
+def is_client_route(path: str) -> bool:
+    """Paths the React router serves (kept in step with ``frontend/src/App.tsx``)."""
+    parts = path.strip("/").split("/")
+    return (len(parts) == 1 and parts[0] in CLIENT_ROUTES) or (len(parts) == 2 and parts[0] == "standards" and bool(parts[1]))
+
+
 def create_app(settings: Settings | None = None, state: deps.AppState | None = None, frontend_dir: Path | None = None) -> FastAPI:
     settings = settings or get_settings()
     deps.configure(state or deps.AppState(settings))
@@ -46,6 +55,8 @@ def create_app(settings: Settings | None = None, state: deps.AppState | None = N
             candidate = (dist / path).resolve()
             if path and candidate.is_file() and dist.resolve() in candidate.parents:
                 return FileResponse(candidate)
-            return FileResponse(dist / "index.html")
+            # Unknown paths still get the app (it shows a "page not found" view) but with a real 404 status.
+            status = 200 if is_client_route(path) else 404
+            return FileResponse(dist / "index.html", status_code=status)
 
     return app

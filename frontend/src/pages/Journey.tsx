@@ -428,7 +428,7 @@ export default function Journey() {
               {data.steps.map((step, index) => (
                 <li key={step.key} className="relative flex gap-4">
                   <div className="z-10 grid size-[3.25rem] shrink-0 place-items-center rounded-full border border-slate-200 bg-white">{STATE_ICON[step.state]}</div>
-                  <Card className={cx("flex-1 p-5", step.state === "missing" && "bg-slate-50/70")}>
+                  <Card className={cx("min-w-0 flex-1 p-5", step.state === "missing" && "bg-slate-50/70")}>
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                       <h3 className="font-semibold text-ink-900">
                         <span className="mr-2 text-slate-400">{index + 1}</span>

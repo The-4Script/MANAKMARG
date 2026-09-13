@@ -8,7 +8,7 @@ from manakmarg.db import schema
 from manakmarg.db.engine import get_engine, init_db
 from manakmarg.ingest import sources
 from manakmarg.ingest.bis_schemes import parse_scheme_i, parse_upcoming_qcos
-from manakmarg.ingest.compliance_loader import load_scheme_records
+from manakmarg.ingest.compliance_loader import load_scheme_records, retire_unlinked_orders
 from manakmarg.ingest.runs import RunRecorder
 from tests.standards_seed import seed_standards
 
@@ -108,6 +108,53 @@ def test_orders_are_stored_once_and_linked(engine, scheme_i_records):
     assert orders[0]["order_kind"] == "qco"
     assert orders[0]["order_date"] == date(2003, 2, 17)
     assert linked >= len(cement_rows) > 1
+
+
+def _order_titles(conn, coverage_id):
+    links, orders = schema.coverage_order, schema.regulatory_order
+    return conn.execute(
+        sa.select(orders.c.title, orders.c.so_number, orders.c.url, orders.c.order_key)
+        .select_from(links.join(orders, orders.c.order_id == links.c.order_id))
+        .where(links.c.coverage_id == coverage_id)
+        .order_by(links.c.ordinal)
+    ).all()
+
+
+def test_orders_sharing_a_pdf_url_are_not_merged(engine, scheme_i_records):
+    """The BIS page links both the pressure-cooker amendment (S.O. 2019(E)) and the cables QCO (S.O. 294(E)) to
+    Cables_28012020.pdf; each listing must keep its own order and the shared URL is preserved on both."""
+    pdf = "https://www.bis.gov.in/wp-content/uploads/2020/01/Cables_28012020.pdf"
+    _load_scheme_i(engine, scheme_i_records)
+    with engine.connect() as conn:
+        cable_rows = [row for row in _coverage(conn, category="Cables")]
+        cooker = _coverage(conn, product_name="Domestic Pressure Cooker")[0]
+        shared = conn.execute(sa.select(schema.regulatory_order).where(schema.regulatory_order.c.url == pdf)).mappings().all()
+        cooker_orders = _order_titles(conn, cooker["coverage_id"])
+        cable_orders = {row["coverage_id"]: _order_titles(conn, row["coverage_id"]) for row in cable_rows}
+    assert {row["so_number"] for row in shared} == {"S.O. 2019(E)", "S.O. 294(E)"}
+    assert len(cable_rows) == 13
+    for orders in cable_orders.values():
+        assert [order.so_number for order in orders] == ["S.O. 294(E)"]
+        assert all("Cables" in order.title and "Pressure Cooker" not in order.title for order in orders)
+        assert orders[0].url == pdf
+    assert any(order.so_number == "S.O. 2019(E)" and "Pressure Cooker" in order.title for order in cooker_orders)
+
+
+def test_unlinked_orders_are_retired_not_deleted(engine, scheme_i_records):
+    _load_scheme_i(engine, scheme_i_records)
+    with engine.begin() as conn:
+        conn.execute(
+            schema.regulatory_order.insert().values(
+                order_key="https://example.invalid/old.pdf", title="Old URL-keyed row", url="https://example.invalid/old.pdf",
+                order_kind="qco", source_id="bis_scheme_i_page", source_locator="test", retrieved_at="2026-09-12T00:00:00+00:00", is_current=True,
+            )
+        )
+        assert retire_unlinked_orders(conn) == 1
+        row = conn.execute(sa.select(schema.regulatory_order).where(schema.regulatory_order.c.title == "Old URL-keyed row")).mappings().one()
+        linked_current = conn.execute(
+            sa.select(sa.func.count()).select_from(schema.regulatory_order).where(schema.regulatory_order.c.is_current.is_(False))
+        ).scalar()
+    assert row["is_current"] is False and linked_current == 1
 
 
 def test_illustrative_items_point_to_their_parent_listing(engine, scheme_i_records):

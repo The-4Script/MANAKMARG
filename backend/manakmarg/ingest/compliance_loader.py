@@ -15,7 +15,7 @@ import sqlalchemy as sa
 from manakmarg.db import schema
 from manakmarg.ingest.bis_schemes import ILLUSTRATIVE_ITEM, CoverageRecord
 from manakmarg.ingest.runs import RunRecorder
-from manakmarg.normalize.orders import OrderRef
+from manakmarg.normalize.orders import OrderRef, order_identity
 from manakmarg.normalize.text import norm_match
 from manakmarg.search.resolvers import UNRESOLVED, StandardResolver
 
@@ -87,16 +87,19 @@ def _seed_scheme(run: RunRecorder, scheme_id: str, page_url: str) -> None:
     )
 
 
+def _order_key(order: OrderRef) -> str:
+    return order_identity(order.url, order.so_number, order.gsr_number)
+
+
 def _upsert_order(run: RunRecorder, order: OrderRef) -> int:
     table = schema.regulatory_order
-    existing = run.conn.execute(
-        sa.select(table.c.order_id, table.c.source_id).where(table.c.order_key == order.url)
-    ).first()
+    key = _order_key(order)
+    existing = run.conn.execute(sa.select(table.c.order_id, table.c.source_id).where(table.c.order_key == key)).first()
     if existing is not None and existing.source_id != run.source_id:
         return existing.order_id
     return run.upsert(
         "regulatory_order",
-        key={"order_key": order.url},
+        key={"order_key": key},
         values={
             "title": order.title,
             "url": order.url,
@@ -113,14 +116,25 @@ def _upsert_order(run: RunRecorder, order: OrderRef) -> int:
 def _replace_order_links(run: RunRecorder, coverage_id: int, orders: list[OrderRef], cache: dict[str, int]) -> int:
     run.conn.execute(schema.coverage_order.delete().where(schema.coverage_order.c.coverage_id == coverage_id))
     for ordinal, order in enumerate(orders):
-        if order.url not in cache:
-            cache[order.url] = _upsert_order(run, order)
+        key = _order_key(order)
+        if key not in cache:
+            cache[key] = _upsert_order(run, order)
         run.conn.execute(
-            schema.coverage_order.insert().values(
-                coverage_id=coverage_id, order_id=cache[order.url], ordinal=ordinal, relation=order.kind
-            )
+            schema.coverage_order.insert().values(coverage_id=coverage_id, order_id=cache[key], ordinal=ordinal, relation=order.kind)
         )
     return len(orders)
+
+
+def retire_unlinked_orders(conn) -> int:
+    """Orders no current listing links to any more (for example rows keyed before orders sharing a PDF were kept
+    apart) are marked not current; history is kept, nothing is deleted."""
+    table, links = schema.regulatory_order, schema.coverage_order
+    result = conn.execute(
+        table.update()
+        .where(table.c.is_current.is_(True), table.c.order_id.not_in(sa.select(links.c.order_id)))
+        .values(is_current=False)
+    )
+    return result.rowcount
 
 
 def _replace_standard_links(

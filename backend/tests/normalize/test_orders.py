@@ -6,6 +6,7 @@ from manakmarg.normalize.orders import (
     classify_order_kind,
     extract_gsr_number,
     extract_so_number,
+    order_identity,
     parse_order_links,
 )
 
@@ -92,6 +93,26 @@ def test_parse_order_links_builds_deduplicated_order_refs():
     assert extension.url == "https://www.bis.gov.in/wp-content/uploads/2020/10/Extension.pdf"
     assert extension.kind == "extension"
     assert extension.order_date is None
+
+
+def test_same_pdf_url_with_different_notification_numbers_stays_two_orders():
+    pdf = "https://www.bis.gov.in/wp-content/uploads/2020/01/Cables_28012020.pdf"
+    refs = parse_order_links(
+        [
+            ("(S.O.2019(E) dated 23/06/2020)", pdf, "Domestic Pressure Cooker (Quality Control) (Amendment) Order, 2020"),
+            ("(S.O. 294 (E) dated 21/01/2020 )", pdf, "49. Cables (Quality Control) Order, 2020"),
+            ("(S.O. 294 (E) dated 21/01/2020 )", pdf, "Cables (Quality Control) Order, 2020"),
+        ],
+        page_url=SCHEME_I_URL,
+    )
+    assert [ref.so_number for ref in refs] == ["S.O. 2019(E)", "S.O. 294(E)"]
+    assert order_identity(refs[0].url, refs[0].so_number, None) != order_identity(refs[1].url, refs[1].so_number, None)
+    assert all(ref.url == pdf for ref in refs)
+
+
+def test_order_identity_without_a_number_is_the_url():
+    assert order_identity("https://x/a.pdf", None, None) == "https://x/a.pdf"
+    assert order_identity("https://x/a.pdf", None, "G.S.R. 843(E)") == "https://x/a.pdf#G.S.R. 843(E)"
 
 
 def test_parse_order_links_uses_file_name_when_anchor_text_is_empty():

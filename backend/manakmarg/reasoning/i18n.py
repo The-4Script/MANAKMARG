@@ -17,6 +17,62 @@ MESSAGES: dict[str, dict[str, str]] = {
     "section.faq": {"en": "From official BIS FAQs", "hi": "आधिकारिक BIS प्रश्नोत्तर से"},
     "section.documents": {"en": "From indexed official documents", "hi": "अनुक्रमित आधिकारिक दस्तावेज़ों से"},
     "section.tests": {"en": "Tests & inspection", "hi": "परीक्षण और निरीक्षण"},
+    "section.scheme": {"en": "Certification scheme", "hi": "प्रमाणन योजना"},
+    "section.related_standards": {
+        "en": "Published standards whose titles contain all your words (not a compulsory listing)",
+        "hi": "प्रकाशित मानक जिनके शीर्षक में आपके सभी शब्द हैं (अनिवार्य सूची नहीं)",
+    },
+    "section.suggestions": {"en": "Did you mean", "hi": "क्या आपका आशय था"},
+    # routing outcomes
+    "head.scheme": {"en": "{name}: {description}", "hi": "{name}: {description}"},
+    "head.scheme_no_description": {
+        "en": "{name}: the BIS page lists {count} product(s) under this scheme; no official scheme description is indexed — see the official page.",
+        "hi": "{name}: BIS पृष्ठ पर इस योजना के अंतर्गत {count} उत्पाद सूचीबद्ध हैं; योजना का आधिकारिक विवरण अनुक्रमित नहीं है — आधिकारिक पृष्ठ देखें।",
+    },
+    "head.scheme_not_indexed": {
+        "en": "{scheme} is not in the indexed BIS scheme pages — see the Certification page and the official BIS website.",
+        "hi": "{scheme} अनुक्रमित BIS योजना पृष्ठों में नहीं है — प्रमाणन पृष्ठ और आधिकारिक BIS वेबसाइट देखें।",
+    },
+    "item.scheme_mark": {"en": "Conformity mark: {mark}", "hi": "अनुरूपता चिह्न: {mark}"},
+    "item.scheme_counts": {"en": "Listings on the official page: {counts}", "hi": "आधिकारिक पृष्ठ पर सूचियाँ: {counts}"},
+    "item.scheme_document": {"en": "Official guideline: {title}", "hi": "आधिकारिक दिशानिर्देश: {title}"},
+    "head.qco_general": {
+        "en": "Here is what the official BIS page on compulsory certification says; to check a specific product, name it or its IS number.",
+        "hi": "अनिवार्य प्रमाणन पर आधिकारिक BIS पृष्ठ के अनुसार जानकारी; किसी विशेष उत्पाद के लिए उसका नाम या IS संख्या बताएँ।",
+    },
+    "head.out_of_scope": {
+        "en": "This question is outside what MANAK MARG covers (Indian Standards, compulsory BIS certification, laboratories, hallmarking and gap analysis), so no official record was used.",
+        "hi": "यह प्रश्न MANAK MARG के दायरे (भारतीय मानक, अनिवार्य BIS प्रमाणन, प्रयोगशालाएँ, हॉलमार्किंग और गैप विश्लेषण) से बाहर है, इसलिए किसी आधिकारिक रिकॉर्ड का उपयोग नहीं किया गया।",
+    },
+    "head.invalid_identifier": {
+        "en": "“{ref}” is not a valid Indian Standard number — it may be a typo (for example the letter O instead of zero), so nothing was looked up for it.",
+        "hi": "“{ref}” मान्य भारतीय मानक संख्या नहीं है — संभवतः टाइपिंग त्रुटि है (जैसे शून्य की जगह अक्षर O), इसलिए इसके लिए कुछ नहीं खोजा गया।",
+    },
+    "head.unknown_location": {
+        "en": "“{place}” was not found in the indexed district, state or laboratory location lists — check the spelling or name the state.",
+        "hi": "“{place}” अनुक्रमित ज़िला, राज्य या प्रयोगशाला स्थान सूचियों में नहीं मिला — वर्तनी जाँचें या राज्य बताएँ।",
+    },
+    "head.labs_place_unknown": {
+        "en": "“{place}” was not recognised as a location, so these results are not filtered by location: LIMS lists {count} laboratory scope row(s) for {refs}.",
+        "hi": "“{place}” को स्थान के रूप में पहचाना नहीं गया, इसलिए परिणाम स्थान से फ़िल्टर नहीं हैं: LIMS में {refs} के लिए {count} प्रयोगशाला दायरा पंक्तियाँ सूचीबद्ध हैं।",
+    },
+    "item.labs_place_unknown": {
+        "en": "Location “{place}” not recognised — laboratories anywhere in India are shown.",
+        "hi": "स्थान “{place}” पहचाना नहीं गया — पूरे भारत की प्रयोगशालाएँ दिखाई गई हैं।",
+    },
+    "item.suggestion": {"en": "{district}, {state}", "hi": "{district}, {state}"},
+    "head.hm_metal_gold": {
+        "en": "In the indexed official records, mandatory hallmarking applies to gold jewellery and gold artefacts in {count} notified district(s); name a district to check it.",
+        "hi": "अनुक्रमित आधिकारिक रिकॉर्ड में सोने के आभूषणों और कलाकृतियों की अनिवार्य हॉलमार्किंग {count} अधिसूचित ज़िलों में लागू है; जाँचने के लिए ज़िला बताएँ।",
+    },
+    "head.hm_metal_silver": {
+        "en": "The indexed mandatory-hallmarking records (the notified district list and its Gazette cross-check) cover gold jewellery and gold artefacts only; they do not show hallmarking of silver jewellery as mandatory. Silver is covered by the BIS hallmarking scheme (see the FAQs below) — verify the current position with BIS.",
+        "hi": "अनुक्रमित अनिवार्य हॉलमार्किंग रिकॉर्ड (अधिसूचित ज़िला सूची और राजपत्र मिलान) केवल सोने के आभूषणों और कलाकृतियों के लिए हैं; इनमें चांदी के आभूषणों की हॉलमार्किंग अनिवार्य नहीं दिखाई गई है। चांदी BIS हॉलमार्किंग योजना में शामिल है (नीचे प्रश्नोत्तर देखें) — वर्तमान स्थिति BIS से सत्यापित करें।",
+    },
+    "link.certification": {"en": "Certification & QCOs", "hi": "प्रमाणन और QCO"},
+    "follow.example_product": {"en": "Which standard applies to stainless steel utensils?", "hi": "स्टेनलेस स्टील के बर्तनों पर कौन सा मानक लागू है?"},
+    "follow.example_hallmarking": {"en": "Is hallmarking mandatory in Jaipur?", "hi": "जयपुर में हॉलमार्किंग अनिवार्य है क्या?"},
+    "follow.check_standard": {"en": "What is {ref}?", "hi": "{ref} क्या है?"},
     # product / compulsory status headlines
     "head.compulsory": {
         "en": "“{product}” is listed under {scheme} for compulsory BIS certification.",
@@ -47,6 +103,10 @@ MESSAGES: dict[str, dict[str, str]] = {
         "hi": "अनुक्रमित BIS पृष्ठों में “{text}” से मेल खाती कोई अनिवार्य प्रमाणन सूची नहीं मिली।",
     },
     "prefix.possible": {"en": "Possible match: ", "hi": "संभावित मिलान: "},
+    "head.broad_product": {
+        "en": "“{text}” matches several compulsory-certification listings, so no single standard can be picked — name the product more specifically (its full name or IS number). The closest listings are shown below; none is confirmed as yours.",
+        "hi": "“{text}” कई अनिवार्य प्रमाणन सूचियों से मेल खाता है, इसलिए कोई एक मानक नहीं चुना जा सकता — उत्पाद का पूरा नाम या IS संख्या बताएँ। नीचे निकटतम सूचियाँ दिखाई गई हैं; इनमें से कोई भी आपके उत्पाद के रूप में पुष्ट नहीं है।",
+    },
     "item.basis": {"en": "Status basis (quoted): {basis}", "hi": "स्थिति का आधार (उद्धरण): {basis}"},
     "item.matched": {"en": "Matched your words to the official product name “{product}” ({coverage}% of your product words).", "hi": "आपके शब्द आधिकारिक उत्पाद नाम “{product}” से मिलाए गए (आपके उत्पाद शब्दों का {coverage}%)."},
     "item.matched_standard": {"en": "Found through the standard you named ({ref}).", "hi": "आपके बताए मानक ({ref}) से मिला।"},

@@ -10,8 +10,14 @@ These are also shown in the product (Navigator and Sources & Data Health).
   available and is not inferred.
 * **Licensed jewellers** are not listed: the official report requires a CAPTCHA.
 * **IS-wise laboratory scope, Product Manual text and QCO text** are indexed for 13 demo standard families; other
-  standards show metadata and link to LIMS / official PDFs. 11 Product Manuals are parsed; one (`PM_IS_2062.pdf`)
-  refused access (HTTP 403).
+  standards show metadata and link to LIMS / official PDFs. 11 Product Manuals are parsed (of 1,645 listed on the
+  Product Specific Guidelines page); the rest are metadata with a link to the official PDF.
+  * **IS 2062**: the manual is published at `https://www.bis.gov.in/PDF/cart/PM_IS_2062.pdf`, which returned HTTP 403.
+    This is an access control and is deliberately not bypassed, so IS 2062 has no parsed SIT; its tests come from
+    LIMS scope rows.
+  * **IS 694 / IS 1554**: manuals are public PDFs but outside the demo families, so they were never fetched. Adding them
+    means adding the families to `ingest/demo_families.py` and running an online `documents` + `lab_scope` ingestion;
+    this is a post-demo improvement, not done in the accuracy pass.
 * Product Manuals that do not follow the common annex template are kept as searchable text without structured SIT.
 
 ## Currency and legal status
@@ -27,8 +33,11 @@ These are also shown in the product (Navigator and Sources & Data Health).
 * Product matching is lexical/LSA over official product names plus a small curated synonym list; unusual trade names
   may not match, and ties are shown as candidates for the user to confirm. Neural embeddings are pluggable but the model
   download was deferred.
-* Query understanding is rule-based. Hindi questions are routed by Hindi keywords and state names; Hindi district names
-  are not in the gazetteer (Latin spellings work).
+* Query understanding and routing are rule-based. Hindi and Hinglish questions pass through a curated alias list
+  (`normalize/aliases.py`) of domain words and about 45 major city names in Devanagari; places missing from that list
+  must be written in Latin script, and an unrecognised place is reported rather than guessed.
+* The BIS Scheme I page itself sometimes lists the same notification twice with two PDF links (for example S.O. 4494(E)
+  for cookware); both links are kept as published.
 * Answers are template-based. The optional Claude narrative is not enabled in this build.
 
 ## Gap analysis

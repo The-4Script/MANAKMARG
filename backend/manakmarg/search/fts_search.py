@@ -140,6 +140,11 @@ def search_faq(conn: Connection, text: str | None, *, limit: int = 10) -> list[H
     return search(conn, "faq", text, limit=limit)
 
 
+def search_faq_all_terms(conn: Connection, text: str | None, *, limit: int = 5) -> list[Hit]:
+    """FAQs containing every query term (no any-term fallback): used to decide whether a question is in scope."""
+    return _run(conn, "faq", fts_query(text, mode="all"), limit)
+
+
 def search_chunks(conn: Connection, text: str | None, *, limit: int = 10) -> list[Hit]:
     return search(conn, "chunk", text, limit=limit)
 

@@ -177,7 +177,7 @@ export default function GapAnalysis() {
         {ROLES.map(({ role, key }) => {
           const roleFiles = files.filter((file) => file.role === role);
           return (
-            <Card key={role} className="flex flex-col p-5">
+            <Card key={role} className="flex min-w-0 flex-col p-5">
               <h2 className="font-semibold text-ink-900">{t(key)}</h2>
               <p className="mt-1 text-xs text-slate-500">PDF · DOCX · TXT</p>
               <ul className="mt-3 flex-1 space-y-2">

@@ -5,6 +5,7 @@ The combined score only orders candidate listings. Applicability and compulsory 
 """
 
 import json
+import re
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -20,7 +21,7 @@ from manakmarg.search.resolvers import Resolution, StandardResolver
 from manakmarg.search.vectors import VectorIndex
 
 SYNONYMS_PATH = Path(__file__).with_name("synonyms.json")
-WEIGHTS = {"bm25": 0.3, "vector": 0.2, "coverage": 0.35, "exact": 0.1, "listing": 0.05}
+WEIGHTS = {"bm25": 0.3, "vector": 0.2, "coverage": 0.35, "exact": 0.1, "listing": 0.05, "standard_title": 0.3}
 IDENTIFIER_BONUS = 1.0
 MIN_VECTOR_SIMILARITY = 0.2
 _LISTING_PRIOR = {"LISTED_COMPULSORY": 1.0, "UPCOMING": 0.8, "NEEDS_VERIFICATION": 0.6, "DENOTIFIED": 0.4, "RESCINDED": 0.4}
@@ -132,6 +133,43 @@ def _linked_coverage(conn: Connection, families: set[str]) -> set[int]:
     return {row.coverage_id for row in rows}
 
 
+_TITLE_HEAD_SPLIT = re.compile(r"\s[-–—]\s|:\s")
+
+
+def title_head(title: str | None) -> str:
+    """The subject part of a standard title, before its first " - " / " — " / ": " separator
+    ("Structural Steel - Part 1 - Hot Rolled …" → "structural steel")."""
+    return norm_match(_TITLE_HEAD_SPLIT.split(title or "", maxsplit=1)[0])
+
+
+def _standard_title_heads(conn: Connection, coverage_ids: set[int]) -> dict[int, set[str]]:
+    """Title heads of the standards each listing cites. A listing citing an undivided standard that is published only
+    in parts ("IS 2062") takes the heads of those parts."""
+    if not coverage_ids:
+        return {}
+    links, standard = schema.coverage_standard, schema.standard
+    rows = conn.execute(
+        sa.select(links.c.coverage_id, links.c.family_key, standard.c.title_clean, standard.c.title)
+        .select_from(links.outerjoin(standard, standard.c.standard_id == links.c.standard_id))
+        .where(links.c.coverage_id.in_(sorted(coverage_ids)))
+    ).all()
+    heads: dict[int, set[str]] = {}
+    by_family: dict[str, set[int]] = {}
+    for row in rows:
+        title = row.title_clean or row.title
+        if title:
+            heads.setdefault(row.coverage_id, set()).add(title_head(title))
+        elif row.family_key:
+            by_family.setdefault(row.family_key, set()).add(row.coverage_id)
+    if by_family:
+        conditions = [sa.or_(standard.c.family_key == key, standard.c.family_key.like(f"{key} (Part %")) for key in sorted(by_family)]
+        for row in conn.execute(sa.select(standard.c.family_key, standard.c.title_clean, standard.c.title).where(standard.c.is_current.is_(True), sa.or_(*conditions))):
+            key = next((key for key in by_family if row.family_key == key or row.family_key.startswith(f"{key} (Part ")), None)
+            for coverage_id in by_family.get(key, ()):
+                heads.setdefault(coverage_id, set()).add(title_head(row.title_clean or row.title))
+    return heads
+
+
 def find_product_matches(
     conn: Connection,
     text: str,
@@ -160,21 +198,29 @@ def find_product_matches(
     top_bm25 = max(bm25.values(), default=0.0) or 1.0
 
     candidates: list[CoverageCandidate] = []
-    for row in _coverage_rows(conn, set(bm25) | set(vector_scores) | by_identifier):
+    rows = _coverage_rows(conn, set(bm25) | set(vector_scores) | by_identifier)
+    title_heads = _standard_title_heads(conn, {row.coverage_id for row in rows})
+    for row in rows:
         product_tokens = set(content_tokens(f"{row.product_name} {row.category or ''} {row.product_category or ''}"))
         coverage = max((len(variant & product_tokens) / len(variant) for variant in variants), default=0.0)
         if coverage == 0 and row.coverage_id not in bm25 and row.coverage_id not in by_identifier:
             continue  # vector-only neighbour sharing no query word: too weak to show as a candidate
         exact = 1.0 if norm_match(row.product_name) in exact_names else 0.0
+        # The cited standard's title subject is exactly what the user named ("structural steel" → IS 2062 "Structural
+        # Steel - Part 1 - …"), which a narrower listing name ("Structural Steel (Ordinary Quality)") is not.
+        title_match = 1.0 if coverage >= 1.0 and title_heads.get(row.coverage_id, set()) & exact_names else 0.0
         score = (
             WEIGHTS["bm25"] * max(bm25.get(row.coverage_id, 0.0), 0.0) / top_bm25
             + WEIGHTS["vector"] * vector_scores.get(row.coverage_id, 0.0)
             + WEIGHTS["coverage"] * coverage
             + WEIGHTS["exact"] * exact
             + WEIGHTS["listing"] * _LISTING_PRIOR.get(row.listing_status, 0.5)
+            + WEIGHTS["standard_title"] * title_match
             + (IDENTIFIER_BONUS if row.coverage_id in by_identifier else 0.0)
         )
         via = []
+        if title_match:
+            via.append("standard_title")
         if row.coverage_id in by_identifier:
             via.append("standard_reference")
         if row.coverage_id in bm25:

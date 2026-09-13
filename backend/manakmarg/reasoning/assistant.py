@@ -1,8 +1,9 @@
 """Assistant: routes a question to deterministic services and composes an evidence-cited answer in EN or HI.
 
 Every sentence carries the evidence ids it relies on. Facts (standards, listings, dates, labs, AHCs, districts) come
-from the reasoning services over official records; the templates only word them. An optional LLM narrative, when
-enabled, is checked against the same evidence before it is shown (``manakmarg.llm``).
+from the reasoning services over official records; the templates only word them. The route
+(``manakmarg.reasoning.routing``) decides which records are consulted and is returned with the answer. An optional
+LLM narrative, when enabled, is checked against the same evidence before it is shown (``manakmarg.llm``).
 """
 
 from dataclasses import dataclass, field
@@ -20,7 +21,7 @@ from manakmarg.reasoning.applicability import (
     COMPULSORY,
     DENOTIFIED,
     ENFORCEMENT_DATE_REACHED,
-    NO_LISTING_FOUND,
+    UNKNOWN,
     UPCOMING,
     Assessment,
     assess,
@@ -30,21 +31,41 @@ from manakmarg.reasoning.evidence import EvidenceBuilder
 from manakmarg.reasoning.hallmarking import AMBIGUOUS, COVERED, NOT_IN_LIST, check_district, find_ahcs
 from manakmarg.reasoning.i18n import say
 from manakmarg.reasoning.intents import (
-    INTENT_GAP,
-    INTENT_HALLMARKING,
     INTENT_LABS,
     INTENT_PROCESS,
+    INTENT_STATUS,
     INTENT_TESTS,
-    INTENT_UPCOMING,
     Gazetteer,
     QueryUnderstanding,
     understand,
 )
 from manakmarg.reasoning.journey import build_journey
 from manakmarg.reasoning.labs import find_labs
+from manakmarg.reasoning.routing import (
+    ROUTE_AHC,
+    ROUTE_CERTIFICATION,
+    ROUTE_GAP,
+    ROUTE_GENERAL,
+    ROUTE_HALLMARKING,
+    ROUTE_INVALID_IDENTIFIER,
+    ROUTE_LAB,
+    ROUTE_OUT_OF_SCOPE,
+    ROUTE_PRODUCT,
+    ROUTE_QCO,
+    ROUTE_UNKNOWN_LOCATION,
+    ROUTE_UPCOMING,
+    SCHEME_ROUTES,
+    Route,
+    route_query,
+)
 from manakmarg.search import fts_search
+from manakmarg.search.hybrid import content_tokens
+from manakmarg.search.resolvers import StandardResolver
 
 MAX_ITEMS = 6
+_STATUS_EFFECT = {"LISTED_COMPULSORY": "COMPULSORY", "DENOTIFIED": "DENOTIFIED", "RESCINDED": "RESCINDED", "NEEDS_VERIFICATION": "NEEDS_VERIFICATION", "UPCOMING": "UPCOMING"}
+_SCHEME_SHORT = {"SCHEME_I": "Scheme I", "SCHEME_II": "Scheme II", "SCHEME_IV": "Scheme IV", "SCHEME_X": "Scheme X"}
+OVERVIEW_SOURCE = "bis_compulsory_overview_page"
 
 
 @dataclass(frozen=True)
@@ -76,6 +97,7 @@ class AssistantResponse:
     narrative: str | None = None
     narrative_source: str = "template"
     headline_evidence: list[str] = field(default_factory=list)
+    route: Route | None = None
 
 
 class _Composer:
@@ -123,6 +145,23 @@ def _q(value: str) -> str:
 # --------------------------------------------------------------------------- product compliance
 
 
+def _lab_items(result, composer: _Composer) -> list[AnswerItem]:
+    return [
+        AnswerItem(
+            composer.say(
+                "item.lab",
+                name=match.lab_name,
+                place=", ".join(filter(None, (match.city, match.state))) or "—",
+                ref=match.is_ref_raw,
+                status=match.status,
+                charges=f" · ₹{match.charges_total:,.0f}" if match.charges_total else "",
+            ),
+            match.evidence_ids,
+        )
+        for match in result.matches[:MAX_ITEMS]
+    ]
+
+
 def _product_answer(conn, understanding: QueryUnderstanding, composer: _Composer, evidence: EvidenceBuilder, today: date, vectors) -> tuple[str, str | None, list[str], list[str]]:
     std_key = understanding.standard_refs[0] if understanding.standard_refs else None
     assessment: Assessment = assess(conn, text=understanding.product_text, std_key=std_key if not understanding.product_text else None, today=today, evidence=evidence, vectors=vectors)
@@ -135,7 +174,11 @@ def _product_answer(conn, understanding: QueryUnderstanding, composer: _Composer
         params = {"product": lead.product_name, "scheme": lead.scheme_name or "", "date": lead.enforcement_date.isoformat() if lead.enforcement_date else "", "days": lead.days_to_enforcement}
         key = {COMPULSORY: "head.compulsory", UPCOMING: "head.upcoming", ENFORCEMENT_DATE_REACHED: "head.enforcement_reached", DENOTIFIED: "head.denotified"}.get(lead.effect, "head.verify")
         headline = composer.say(key, **params)
-        if assessment.label == CANDIDATE:
+        full_matches = {view.product_name.lower() for view in assessment.listings if view.token_coverage is not None and view.token_coverage >= 1.0}
+        if assessment.label == CANDIDATE and not std_key and understanding.product_text and len(understanding.product_text.split()) == 1 and len(full_matches) >= 4:
+            # A single broad word ("steel") fully matches many listings; do not single one out as the likely answer.
+            headline = composer.say("head.broad_product", text=understanding.product_text)
+        elif assessment.label == CANDIDATE:
             headline = composer.say("prefix.possible") + headline
 
         why = []
@@ -179,6 +222,9 @@ def _product_answer(conn, understanding: QueryUnderstanding, composer: _Composer
         family = next((link.family_key for link in lead.standards if link.family_key), None)
         if family:
             composer.link("link.labs", f"/labs?ref={_q(family)}")
+            if INTENT_LABS in understanding.intents:
+                result = find_labs(conn, family, state=understanding.state, district=understanding.district, city=understanding.city, include_inactive=False, today=today, evidence=evidence)
+                composer.section("labs", _lab_items(result, composer))
         if assessment.label in ("LIKELY_APPLICABLE", "CANDIDATE"):
             composer.action("action.confirm", lead.evidence_id)
         if lead.effect not in (COMPULSORY, UPCOMING):
@@ -197,13 +243,20 @@ def _product_answer(conn, understanding: QueryUnderstanding, composer: _Composer
             composer.link("link.standard", f"/standards?key={_q(identified.std_key or identified.ref_raw)}")
         else:
             headline = composer.say("head.no_listing", text=understanding.product_text or understanding.text)
+        # Without a listing, a published standard is shown only when its title contains every product word; weaker
+        # full-text neighbours are not presented as related to the product.
+        wanted = set(content_tokens(understanding.product_text)) if understanding.product_text else set()
         standards = []
-        for candidate in assessment.standards[:3]:
+        for candidate in assessment.standards:
+            if identified is None and (not wanted or not wanted <= set(content_tokens(candidate.title))):
+                continue
             row = conn.execute(sa.select(schema.standard).where(schema.standard.c.standard_id == candidate.standard_id)).mappings().first()
             if row is not None:
                 evidence_id = evidence.add_record("standard", row, record_id=row["std_key"], title=f"{row['std_key']} — {candidate.title}", snippet=candidate.title)
                 standards.append(AnswerItem(composer.say("item.standard", std_key=candidate.std_key, title=candidate.title), (evidence_id,)))
-        composer.section("standards", standards)
+            if len(standards) >= 3:
+                break
+        composer.section("standards" if identified is not None else "related_standards", standards)
         composer.follow("follow.upcoming")
     return headline, assessment.label, assessment.caveats, headline_ids
 
@@ -211,11 +264,26 @@ def _product_answer(conn, understanding: QueryUnderstanding, composer: _Composer
 # --------------------------------------------------------------------------- hallmarking
 
 
+def _metal_answer(conn, understanding: QueryUnderstanding, composer: _Composer, evidence: EvidenceBuilder) -> tuple[str, list[str]]:
+    table = schema.hallmarking_district
+    rows = conn.execute(sa.select(table).where(table.c.is_current.is_(True)).order_by(table.c.district_id)).mappings().all()
+    notified = [row for row in rows if row["phase_no"] is not None]
+    headline_ids = []
+    for row in {row["source_id"]: row for row in rows}.values():
+        headline_ids.append(
+            evidence.add_record("hallmarking_district", row, record_id=row["district_id"], title=f"{row['district']}, {row['state']}", snippet=row["phase_label"] or row["gazette_note"])
+        )
+    key = "head.hm_metal_silver" if understanding.metal == "silver" else "head.hm_metal_gold"
+    return composer.say(key, count=len(notified)), headline_ids
+
+
 def _hallmarking_answer(conn, understanding: QueryUnderstanding, composer: _Composer, evidence: EvidenceBuilder, today: date) -> tuple[str, str | None, list[str], list[str]]:
     headline_ids: list[str] = []
     status = None
     caveats: list[str] = []
-    district, state = understanding.district, understanding.state
+    state = understanding.state
+    district = understanding.district or (understanding.unresolved_place if not state else None)
+    faq_text = understanding.text
     if district:
         check = check_district(conn, district, state, evidence=evidence)
         status = check.status
@@ -224,6 +292,9 @@ def _hallmarking_answer(conn, understanding: QueryUnderstanding, composer: _Comp
         elif check.status == NOT_IN_LIST:
             headline = composer.say("head.hm_not_listed", district=district)
             caveats.append("absence_not_proof")
+            if understanding.unresolved_place:
+                caveats.append("location_not_recognised")
+            composer.section("suggestions", [AnswerItem(composer.say("item.suggestion", district=item.get("district"), state=item.get("state"))) for item in check.suggestions[:5]])
         else:
             match = check.matches[0]
             headline_ids = list(match.evidence_ids)
@@ -258,10 +329,14 @@ def _hallmarking_answer(conn, understanding: QueryUnderstanding, composer: _Comp
             headline = composer.say("head.hm_state_none", state=state)
             caveats.append("absence_not_proof")
         composer.link("link.hallmarking", f"/hallmarking?state={_q(state)}")
+    elif understanding.metal and INTENT_STATUS in understanding.intents:
+        headline, headline_ids = _metal_answer(conn, understanding, composer, evidence)
+        faq_text = f"{understanding.metal} hallmarking"
+        composer.link("link.hallmarking", "/hallmarking")
     else:
         headline = composer.say("head.hm_general")
 
-    if district or state:
+    if (district and status != NOT_IN_LIST) or state:
         result = find_ahcs(conn, state=state, district=district if status not in (None, NOT_IN_LIST) else None, metal=understanding.metal, include_inactive=True, today=today, evidence=evidence)
         inactive = sum(count for key, count in result.counts.items() if key != "OPERATIVE")
         place = ", ".join(filter(None, (district, state)))
@@ -282,15 +357,14 @@ def _hallmarking_answer(conn, understanding: QueryUnderstanding, composer: _Comp
         view = next((item for item in result.operative + result.inactive if item.recognition_no == recognition_no), None)
         if view is not None:
             composer.section("ahcs", [AnswerItem(composer.say("item.ahc_status", name=view.name, recognition_no=view.recognition_no, status=view.effective_status, reason=" ".join(view.reasons)), view.evidence_ids)])
-    _faq_section(conn, understanding.text, composer, evidence, categories=("hallmarking_general", "hallmarking_mandatory"))
-    composer.section("district" if not district else "faq", [])
+    _faq_section(conn, faq_text, composer, evidence, categories=("hallmarking_general", "hallmarking_mandatory"))
     jewellers_item = AnswerItem(composer.say("item.jewellers"))
     composer.sections.append(AnswerSection("jewellers", composer.say("section.jewellers"), (jewellers_item,)))
     composer.follow("follow.huid")
     return headline, status, caveats, headline_ids
 
 
-# --------------------------------------------------------------------------- labs, upcoming, process, FAQ
+# --------------------------------------------------------------------------- labs, upcoming, process, schemes, FAQ
 
 
 def _labs_answer(conn, understanding: QueryUnderstanding, composer: _Composer, evidence: EvidenceBuilder, today: date, vectors) -> tuple[str, str | None, list[str], list[str]]:
@@ -301,33 +375,28 @@ def _labs_answer(conn, understanding: QueryUnderstanding, composer: _Composer, e
         refs = " ".join(families)
     if not refs:
         return composer.say("head.labs_need_standard"), None, [], []
+    has_place = bool(understanding.city or understanding.district or understanding.state)
+    unknown_place = understanding.unresolved_place if not has_place else None
     result = find_labs(conn, refs, state=understanding.state, district=understanding.district, city=understanding.city, include_inactive=False, today=today, evidence=evidence)
-    place = f" ({', '.join(filter(None, (understanding.city or understanding.district, understanding.state)))})" if (understanding.city or understanding.district or understanding.state) else ""
+    place = f" ({', '.join(filter(None, (understanding.city or understanding.district, understanding.state)))})" if has_place else ""
     shown_refs = ", ".join(result.designations) or refs
     composer.link("link.labs", f"/labs?ref={_q(refs)}" + (f"&city={_q(understanding.city)}" if understanding.city else "") + (f"&state={_q(understanding.state)}" if understanding.state else ""))
+    caveats = ["location_not_recognised"] if unknown_place else []
     if not result.matches:
         key = "head.labs_not_indexed" if "scope_not_indexed" in result.notes else "head.labs_none"
         composer.action("action.lims")
-        return composer.say(key, refs=shown_refs), None, [], []
-    items = [
-        AnswerItem(
-            composer.say(
-                "item.lab",
-                name=match.lab_name,
-                place=", ".join(filter(None, (match.city, match.state))) or "—",
-                ref=match.is_ref_raw,
-                status=match.status,
-                charges=f" · ₹{match.charges_total:,.0f}" if match.charges_total else "",
-            ),
-            match.evidence_ids,
-        )
-        for match in result.matches[:MAX_ITEMS]
-    ]
+        return composer.say(key, refs=shown_refs), None, caveats, []
+    items = _lab_items(result, composer)
     if result.location_fallback:
         items.insert(0, AnswerItem(composer.say("item.labs_fallback")))
+    if unknown_place:
+        items.insert(0, AnswerItem(composer.say("item.labs_place_unknown", place=unknown_place)))
     composer.section("labs", items)
     composer.follow("follow.apply")
-    return composer.say("head.labs", count=result.counts.get("rows", len(result.matches)), refs=shown_refs, place=place), None, [], []
+    count = result.counts.get("rows", len(result.matches))
+    if unknown_place:
+        return composer.say("head.labs_place_unknown", place=unknown_place, count=count, refs=shown_refs), None, caveats, []
+    return composer.say("head.labs", count=count, refs=shown_refs, place=place), None, caveats, []
 
 
 def _upcoming_answer(conn, composer: _Composer, evidence: EvidenceBuilder, today: date) -> tuple[str, str | None, list[str], list[str]]:
@@ -361,6 +430,64 @@ def _process_answer(conn, composer: _Composer, evidence: EvidenceBuilder) -> tup
         items.append(AnswerItem(composer.say("item.step", label=row["step_label"], text=row["text"]), (evidence_id,)))
     composer.section("process", items)
     return composer.say("head.process"), None, [], []
+
+
+def _scheme_answer(conn, scheme_id: str, composer: _Composer, evidence: EvidenceBuilder) -> tuple[str, str | None, list[str], list[str]]:
+    composer.link("link.certification", f"/certification?tab={scheme_id}")
+    table = schema.certification_scheme
+    row = conn.execute(sa.select(table).where(table.c.scheme_id == scheme_id)).mappings().first()
+    if row is None:
+        return composer.say("head.scheme_not_indexed", scheme=_SCHEME_SHORT[scheme_id]), None, [], []
+    scheme_evidence = evidence.add_record("certification_scheme", row, record_id=scheme_id, title=row["name"], snippet=row["official_description"] or row["name"], url=row["official_url"])
+    coverage = schema.scheme_coverage
+    counts = conn.execute(
+        sa.select(coverage.c.listing_status, sa.func.count())
+        .where(coverage.c.scheme_id == scheme_id, coverage.c.is_current.is_(True))
+        .group_by(coverage.c.listing_status)
+        .order_by(sa.func.count().desc())
+    ).all()
+    total = sum(count for _, count in counts)
+    if row["official_description"]:
+        headline = composer.say("head.scheme", name=row["name"], description=row["official_description"])
+    else:
+        headline = composer.say("head.scheme_no_description", name=row["name"], count=total)
+    items = []
+    if row["conformity_mark"]:
+        items.append(AnswerItem(composer.say("item.scheme_mark", mark=row["conformity_mark"]), (scheme_evidence,)))
+    if counts:
+        summary = ", ".join(f"{count} {composer.say('effect.' + _STATUS_EFFECT.get(status, 'NEEDS_VERIFICATION'))}" for status, count in counts)
+        items.append(AnswerItem(composer.say("item.scheme_counts", counts=summary), (scheme_evidence,)))
+    documents = schema.scheme_document
+    for document in conn.execute(
+        sa.select(documents).where(documents.c.scheme_id == scheme_id, documents.c.is_current.is_(True)).order_by(documents.c.ordinal).limit(MAX_ITEMS)
+    ).mappings():
+        document_evidence = evidence.add_record("scheme_document", document, record_id=document["scheme_doc_id"], title=document["title"], snippet=document["title"], url=document["url"])
+        items.append(AnswerItem(composer.say("item.scheme_document", title=document["title"]), (document_evidence,)))
+    composer.section("scheme", items)
+    composer.follow("follow.apply")
+    composer.follow("follow.upcoming")
+    return headline, None, ["listing_snapshot"], [scheme_evidence]
+
+
+def _qco_general_answer(conn, query: str, composer: _Composer, evidence: EvidenceBuilder) -> tuple[str, str | None, list[str], list[str]]:
+    chunk, document = schema.document_chunk, schema.document
+    rows = conn.execute(
+        sa.select(chunk, document.c.url, document.c.title.label("doc_title"), document.c.source_id, document.c.retrieved_at)
+        .select_from(chunk.join(document, document.c.document_id == chunk.c.document_id))
+        .where(document.c.source_id == OVERVIEW_SOURCE, document.c.is_current.is_(True))
+        .order_by(chunk.c.ordinal)
+        .limit(1)
+    ).mappings().all()
+    items, headline_ids = [], []
+    for row in rows:
+        evidence_id = evidence.add(kind="document_chunk", record_id=row["chunk_id"], title=row["doc_title"] or row["url"], source_id=row["source_id"], snippet=row["text"], url=row["url"], retrieved_at=row["retrieved_at"], page=row["page_start"])
+        items.append(AnswerItem(snippet(row["text"], 520), (evidence_id,)))
+        headline_ids.append(evidence_id)
+    composer.section("documents", items)
+    composer.link("link.certification", "/certification")
+    composer.follow("follow.upcoming")
+    composer.follow("follow.example_product")
+    return composer.say("head.qco_general"), None, [], headline_ids
 
 
 def _faq_section(conn, text: str, composer: _Composer, evidence: EvidenceBuilder, *, categories: tuple[str, ...] | None = None, limit: int = 3) -> int:
@@ -399,6 +526,30 @@ def _documents_section(conn, text: str, composer: _Composer, evidence: EvidenceB
     return len(items)
 
 
+def _invalid_identifier_answer(conn, understanding: QueryUnderstanding, composer: _Composer) -> tuple[str, str | None, list[str], list[str]]:
+    ref = understanding.invalid_refs[0]
+    digits = ref[2:].strip(" -:/").translate(str.maketrans("OoIl", "0011"))
+    corrected = f"IS {digits}"
+    if any(resolution.standard_ids for resolution in StandardResolver(conn).resolve_text(corrected)):
+        composer.follow("follow.check_standard", ref=corrected)
+    return composer.say("head.invalid_identifier", ref=ref), UNKNOWN, ["possible_typo"], []
+
+
+def _unknown_location_answer(conn, understanding: QueryUnderstanding, composer: _Composer, evidence: EvidenceBuilder) -> tuple[str, str | None, list[str], list[str]]:
+    place = understanding.unresolved_place
+    check = check_district(conn, place, None, evidence=evidence)
+    composer.section("suggestions", [AnswerItem(composer.say("item.suggestion", district=item.get("district"), state=item.get("state"))) for item in check.suggestions[:5]])
+    composer.follow("follow.example_hallmarking")
+    return composer.say("head.unknown_location", place=place), None, ["location_not_recognised"], []
+
+
+def _general_answer(conn, query: str, composer: _Composer, evidence: EvidenceBuilder) -> tuple[str, str | None, list[str], list[str]]:
+    found = _faq_section(conn, query, composer, evidence) + _documents_section(conn, query, composer, evidence)
+    if not found:
+        composer.follow("follow.upcoming")
+    return (composer.say("head.faq") if found else composer.say("head.nothing")), None, [], []
+
+
 # --------------------------------------------------------------------------- entry point
 
 
@@ -413,37 +564,53 @@ def answer(
 ) -> AssistantResponse:
     today = today or clock.today()
     lang = lang if lang in ("en", "hi") else "en"
-    understanding = understand(query, gazetteer=gazetteer or Gazetteer.load(conn))
+    gazetteer = gazetteer or Gazetteer.load(conn)
+    understanding = understand(query, gazetteer=gazetteer)
+    route = route_query(understanding, gazetteer)
     evidence = EvidenceBuilder(conn)
     composer = _Composer(lang)
-    intent = understanding.intent
+    category = route.category
 
-    if intent == INTENT_GAP:
+    if category == ROUTE_OUT_OF_SCOPE and fts_search.search_faq_all_terms(conn, understanding.normalized_text or query):
+        route = Route(ROUTE_GENERAL, "every word found in an official FAQ")
+        category = ROUTE_GENERAL
+
+    if category == ROUTE_INVALID_IDENTIFIER:
+        headline, status, caveats, headline_ids = _invalid_identifier_answer(conn, understanding, composer)
+    elif category == ROUTE_GAP:
         headline, status, caveats, headline_ids = composer.say("head.gap"), None, [], []
         composer.link("link.gap", "/gap-analysis")
-    elif intent == INTENT_HALLMARKING or understanding.recognition_nos:
+    elif category in (ROUTE_HALLMARKING, ROUTE_AHC):
         headline, status, caveats, headline_ids = _hallmarking_answer(conn, understanding, composer, evidence, today)
-    elif intent == INTENT_LABS:
+    elif category == ROUTE_LAB:
         headline, status, caveats, headline_ids = _labs_answer(conn, understanding, composer, evidence, today, vectors)
-    elif intent == INTENT_UPCOMING:
+    elif category == ROUTE_UPCOMING:
         headline, status, caveats, headline_ids = _upcoming_answer(conn, composer, evidence, today)
-    elif intent == INTENT_PROCESS and not (understanding.product_text or understanding.standard_refs):
+    elif route.scheme_id:
+        headline, status, caveats, headline_ids = _scheme_answer(conn, SCHEME_ROUTES[category], composer, evidence)
+    elif category == ROUTE_CERTIFICATION:
         headline, status, caveats, headline_ids = _process_answer(conn, composer, evidence)
-    elif understanding.product_text or understanding.standard_refs:
+    elif category == ROUTE_UNKNOWN_LOCATION:
+        headline, status, caveats, headline_ids = _unknown_location_answer(conn, understanding, composer, evidence)
+    elif category == ROUTE_PRODUCT:
         headline, status, caveats, headline_ids = _product_answer(conn, understanding, composer, evidence, today, vectors)
-        if intent == INTENT_TESTS:
+        if INTENT_TESTS in understanding.intents:
             journey = build_journey(conn, text=understanding.product_text, std_key=understanding.standard_refs[0] if understanding.standard_refs else None, today=today, vectors=vectors)
             tests = next((step for step in journey.steps if step.key == "tests"), None)
             if tests and tests.data.get("sit_rows"):
                 section_id = evidence.add(kind="guideline_section", record_id=f"sit:{tests.data['manual_url']}", title=tests.data["manual_title"], source_id="bis_product_manual_documents", url=tests.data["manual_url"], page=tests.data.get("sit_page"))
                 composer.sections.insert(0, AnswerSection("tests", composer.say("section.tests"), tuple(AnswerItem(composer.say("item.sit", requirement=row["requirement"], clause=row["clause"], frequency=row["frequency"] or "—"), (section_id,)) for row in tests.data["sit_rows"][:8])))
-        if intent == INTENT_PROCESS:
+        if INTENT_PROCESS in understanding.intents:
             _process_answer(conn, composer, evidence)
+    elif category == ROUTE_QCO:
+        headline, status, caveats, headline_ids = _qco_general_answer(conn, query, composer, evidence)
+    elif category == ROUTE_GENERAL:
+        headline, status, caveats, headline_ids = _general_answer(conn, query, composer, evidence)
     else:
-        found = _faq_section(conn, query, composer, evidence) + _documents_section(conn, query, composer, evidence)
-        headline, status, caveats, headline_ids = (composer.say("head.faq") if found else composer.say("head.nothing")), None, [], []
-        if not found:
-            composer.follow("follow.upcoming")
+        headline, status, caveats, headline_ids = composer.say("head.out_of_scope"), None, [], []
+        composer.follow("follow.example_product")
+        composer.follow("follow.example_hallmarking")
+        composer.follow("follow.upcoming")
 
     return AssistantResponse(
         query=query,
@@ -458,4 +625,5 @@ def answer(
         links=composer.links,
         evidence=evidence,
         headline_evidence=headline_ids,
+        route=route,
     )

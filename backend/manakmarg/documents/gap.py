@@ -31,11 +31,14 @@ class GapReport:
 
 
 def add_demo_files(store: SessionStore, session_id: str) -> list[dict]:
-    added = []
+    """Add the labelled demo files once per session: a demo file already present is reused, not added again, so a
+    refreshed ``?demo=1`` page does not duplicate requirements. User uploads are untouched."""
+    existing = {(stored.filename, stored.role): stored for stored, _ in store.files(session_id) if stored.demo}
+    files = []
     for name, role in DEMO_FILES:
-        stored = store.add_file(session_id, name, (DEMO_DIR / name).read_bytes(), role, demo=True)
-        added.append({"file_id": stored.file_id, "filename": stored.filename, "role": role, "demo": True})
-    return added
+        stored = existing.get((name, role)) or store.add_file(session_id, name, (DEMO_DIR / name).read_bytes(), role, demo=True)
+        files.append({"file_id": stored.file_id, "filename": stored.filename, "role": role, "demo": True})
+    return files
 
 
 def analyze_session(store: SessionStore, session_id: str) -> GapReport:
