@@ -14,7 +14,7 @@ USER_AGENT = "ManakMarg-SIH2026-Prototype/0.1 (educational research; polite craw
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_prefix="MANAKMARG_",
-        env_file=paths.PROJECT_ROOT / ".env",
+        env_file=(paths.PROJECT_ROOT / ".env.local", paths.PROJECT_ROOT / ".env"),
         env_file_encoding="utf-8",
         extra="ignore",
         populate_by_name=True,
@@ -25,7 +25,12 @@ class Settings(BaseSettings):
         default=None,
         validation_alias=AliasChoices("ANTHROPIC_API_KEY", "MANAKMARG_ANTHROPIC_API_KEY"),
     )
+    groq_api_key: str | None = Field(default=None, validation_alias=AliasChoices("GROQ_API_KEY", "MANAKMARG_GROQ_API_KEY"))
     llm_model: str | None = None
+    groq_fast_model: str = "openai/gpt-oss-20b"
+    groq_reasoning_model: str = "openai/gpt-oss-120b"
+    groq_transcription_model: str = "whisper-large-v3-turbo"
+    groq_transcription_fallback_model: str = "whisper-large-v3"
     fetch_min_delay_s: float = 2.5
     user_agent: str = USER_AGENT
     offline: bool = False
@@ -45,7 +50,7 @@ class Settings(BaseSettings):
 
     @property
     def llm_enabled(self) -> bool:
-        return bool(self.anthropic_api_key) and bool(self.llm_model)
+        return bool(self.groq_api_key) or (bool(self.anthropic_api_key) and bool(self.llm_model))
 
     @property
     def cors_origin_list(self) -> list[str]:

@@ -39,7 +39,10 @@ from manakmarg.reasoning.intents import (
     Gazetteer,
     QueryUnderstanding,
     understand,
+    apply_model_hints,
 )
+from manakmarg.core.config import get_settings
+from manakmarg.reasoning.groq import understand_query
 from manakmarg.reasoning.journey import build_journey
 from manakmarg.reasoning.labs import find_labs
 from manakmarg.search import fts_search
@@ -414,6 +417,10 @@ def answer(
     today = today or clock.today()
     lang = lang if lang in ("en", "hi") else "en"
     understanding = understand(query, gazetteer=gazetteer or Gazetteer.load(conn))
+    if understanding.in_scope and (understanding.clarification or understanding.confidence < 0.5):
+        hints = understand_query(query, get_settings())
+        if hints:
+            understanding = apply_model_hints(understanding, hints)
     evidence = EvidenceBuilder(conn)
     composer = _Composer(lang)
     intent = understanding.intent

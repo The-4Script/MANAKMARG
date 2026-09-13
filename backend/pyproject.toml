@@ -26,7 +26,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-llm = ["anthropic"]
+llm = ["anthropic", "groq"]
 dev = ["pytest>=8", "httpx>=0.27"]
 
 [project.scripts]
