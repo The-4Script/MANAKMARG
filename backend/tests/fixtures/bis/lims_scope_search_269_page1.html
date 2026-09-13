@@ -1,0 +1,1328 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>LIMS IS-wise search 269</title></head><body>
+
+<div class="R-header3 py-2">
+<div class="container-fluid">
+<div class="row align-items-center">
+<div class="col-sm-4">
+<div class="logoshomes">
+<div class="wrap-logof">
+<img src="/static/image/manak.png"/>
+</div>
+<div class="cogo_text">
+<a href="/">
+<h2><span class="logo_heads">Bureau of Indian Standards</span></h2>
+<h3>The National Standards Body of India</h3>
+</a>
+</div>
+</div>
+</div>
+<div class="col-sm-4 col-4 text-center">
+<a href="/accounts/login/"><img src="/static/image/eBis.png" width="134"/></a>
+</div>
+<div class="col-sm-4 col-8 text-right">
+<div class="d-inline-flex align-items-center menubar justify-content-end">
+<a class="" href="https://iconnect.manakonline.in/" target="_blank"><img src="/static/image/iconnect.png" width="60"/></a>
+<div class="Buttontop ml-3 d-none d-sm-block">
+<button class="decrease">A-</button>
+<button class="resetMe">A</button>
+<button class="increase">A+</button>
+</div>
+<a class="header-login" href="/accounts/login/">Login <img src="/static/image/lock.png"/></a>
+</div>
+<!-- <div class="d-flex align-items-center justify-content-end pt-2 border-top ">
+            <div class="padrightn d-none d-sm-block"><i class="fa fa-calendar"></i> MONTH: </div>
+            <div class="dropme ml-3 d-none d-sm-block">
+              <select class="yearmonthvalu" id="yearmonthvalu">
+                <option value="202011">January - 2021</option>
+                <option value="202010">February - 2021</option>
+                <option value="202009">March - 2021</option>
+              </select>
+            </div>
+            </ul>
+          </div> -->
+</div>
+</div>
+<div class="bgb row mt-2">
+<div class="col-md-7 mainmenubars">
+
+</div>
+<div class="col-md-5 nopdlef">
+<div class="container-marquee">
+<ol class="breadcrumb breadcrumb-arrow">
+<!--<li><a href="#">  <span style="font-size:30px;cursor:pointer" onclick="openNav()"> <i class="fa fa-bars marto white-text" aria-hidden="true"></i>
+  </span>
+  </a></li>-->
+<li><a href="#"><i class="fa fa-bell white-text fs-18"></i></a></li>
+<li class="active"><span class="white-texts">
+<marquee behavior="scroll" direction="left" onmouseout="this.start();" onmouseover="this.stop();" scrollamount="5">
+<a href="https://www.youtube.com/watch?v=0_sk9WzQmMs" style="color: red !important; background: none;text-decoration: none; border: none;" target="_blank">
+<span class="blink">Standards Watch Video on BIS Laboratories</span>
+</a>
+<br/>
+</marquee>
+</span></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- % include 'home_header_inner.html' %} -->
+<!-- -->
+<!-- Page Wrapper -->
+<div id="wrapper">
+<!-- Content Wrapper -->
+<div class="d-flex flex-column" id="content-wrapper">
+<!-- Main Content -->
+<div id="content">
+<!-- Begin Page Content -->
+<div class="container-fluid adminpage">
+
+<!-- Page Heading -->
+<!-- <h1 class="h3 mb-2 text-gray-800">Lab Details</h1>
+        <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below. For more
+          information about DataTables, please visit the</p> -->
+<!-- DataTales Example -->
+<div class="table-header mb-3">
+<div class="d-flex justify-content-between">
+<div class="d-flex align-items-center">
+<h5 class="m-0 font-weight-bold text-primary">
+                Search by IS Number             
+              </h5>
+<a class="ResetBtns" href="/home/search_is_number/">Reset</a>
+<div class="counts ml-3 textcolor">50 Results</div>
+</div>
+</div>
+<div class="filterbox" id="Filter">
+<form action="" class="filter-form" method="get">
+<div class="row">
+<div class="filter_1 col-lg-3 col-md-3 col-sm-6">
+<label class="control-label" id="id_label_1">Laboratory Name</label> <input id="id_lab__lab_name__icontains" name="lab__lab_name__icontains" type="text"/>
+</div>
+<div class="filter_2 col-lg-3 col-md-3 col-sm-6">
+<label class="control-label" id="id_label_2">Indian Standard Number</label> <input id="id_is_number__doc_no" name="is_number__doc_no" type="text" value="269"/>
+</div>
+<div class="filter_3 col-lg-3 col-md-3 col-sm-6">
+<label class="control-label" id="id_label_3">IS: Part</label> <input id="id_is_number__part" name="is_number__part" type="text"/>
+</div>
+<div class="filter_4 col-lg-3 col-md-3 col-sm-6">
+<label class="control-label" id="id_label_4">IS: Section</label> <input id="id_is_number__section" name="is_number__section" type="text"/>
+</div>
+<div class="filter_5 col-lg-3 col-md-3 col-sm-6">
+<label class="control-label" id="id_label_5">IS: Year</label> <input id="id_is_number__year" name="is_number__year" type="text"/>
+</div>
+<div class="filter_6 col-lg-3 col-md-3 col-sm-6">
+<label class="control-label" id="id_label_6">IS Title or Product</label> <select id="id_is_title" name="is_title">
+<option selected="" value="">---------</option>
+<option value="">---------</option>
+<option value="1">Ordinary portland cement - Specification (Sixth Revision)</option>
+<option value="62265">Ordinary Portland Cement, 33 Grade</option>
+</select>
+</div>
+<div class="col-md-3 col-sm-6">
+<button class="btn btn-primary filterprimary" type="submit">Search </button>
+</div>
+</div>
+</form>
+</div>
+</div>
+<div class="table-responsive">
+<table cellspacing="0" class="table table-bordered customTable" id="dataTable" width="100%">
+<thead>
+<tr>
+<th scope="col" width="40">S.No.</th>
+<th scope="col">Lab Name</th>
+<th scope="col">Osl Code</th>
+<th scope="col">Indian Standard No.</th>
+<th scope="col">Product</th>
+<th scope="col">Grade / Type / Size / Designation etc.</th>
+<!-- <th scope="col">Exclusion</th> -->
+<th scope="col">Testing Charges (Excl. Of Taxes)</th>
+<!-- <th scope="col">Facility Type</th> -->
+<!-- <th scope="col">Effective Date</th> -->
+<th scope="col">Validity Date</th>
+<th scope="col">Remark</th>
+</tr>
+</thead>
+<tbody>
+<tr id="tr_45525">
+<td>1</td>
+<td>National Test House (WR) - NTH, Mumbai
+                  </td><td>7107604
+                  
+                  </td><td>IS 269 (2015)</td>
+<td>Ordinary portland cement - Specification (Sixth Revision)</td>
+<td>-</td>
+<!-- <td>
+                    
+                    -
+                     -->
+<td>
+<i aria-hidden="true" class="fa fa-inr"></i>10000 <a class="btn btn-primary btn-sm Generate" data-target="#testingChargesModal45525" data-toggle="modal" href="#">View breakup</a><br/>
+                    -
+                    <!-- Model popup for Refer back -->
+<div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="testingChargesModal45525" role="dialog" tabindex="-1">
+<div class="modal-dialog modal-large" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="exampleModalLabel">TESTING CHARGES</h5>
+<button aria-label="Close" class="close" data-dismiss="modal" type="button">
+<span aria-hidden="true">×</span>
+</button>
+</div>
+<div class="modal-body">
+<div class="table-responsive">
+<table class="table customTable" id="assign_audit_list_table">
+<thead>
+<tr>
+<th scope="col">Clause No.</th>
+<th scope="col">Exclusion</th>
+<th scope="col">Testing Charges (Excl. Of Taxes)</th>
+<th scope="col">Effective Date</th>
+<th scope="col">Remark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td scope="col">6.1 Table-2 viii(Alkali content)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 vii(Chloride content)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 vi(Loss on ignition)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 v(Total Sulphur Content calculated as Sulphuric Anhydride)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 iii.(Insoluble residue)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 ii.(Ratio of percentage of alumina to that of iron oxide)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6 - Table - 1 i(Ratio of percentage of lime to percentages of silica, alumina and iron oxide - Cl 4 of IS 4032:1985)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 i.(Fineness)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 ii a(Expansion by Le Chatelier)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 ii b(Expansion by Autoclave)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iii a(Setting Time Initial)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iii b(Setting Time Final)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv a(Compressive Strength At  72  hrs  ± 1 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>2500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv b(Compressive Strength At  168  hrs  ± 2 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>2500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv c(Compressive Strength At  672  hrs  ± 4 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>2500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
+</div>
+</div>
+</div>
+</div>
+</td>
+<!-- <td>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">2500</div>
+                      <div class="mb-1">2500</div>
+                      <div class="mb-1">2500</div></td> -->
+<!-- <td>
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    </td> -->
+<!-- <td>
+                      
+                      Complete
+                    
+                    </td>
+                  <td></td> -->
+<td>-</td>
+<td><b>-</b><br/>-</td>
+<!-- <td>
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    </td> -->
+</tr>
+<tr id="tr_45518">
+<td>2</td>
+<td>National Test House (NWR) - NTH, Jaipur
+                  </td><td>8122904
+                  
+                  </td><td>IS 269 (2015)</td>
+<td>Ordinary portland cement - Specification (Sixth Revision)</td>
+<td>-</td>
+<!-- <td>
+                    
+                    -
+                     -->
+<td>
+<i aria-hidden="true" class="fa fa-inr"></i>10000 <a class="btn btn-primary btn-sm Generate" data-target="#testingChargesModal45518" data-toggle="modal" href="#">View breakup</a><br/>
+                    -
+                    <!-- Model popup for Refer back -->
+<div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="testingChargesModal45518" role="dialog" tabindex="-1">
+<div class="modal-dialog modal-large" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="exampleModalLabel">TESTING CHARGES</h5>
+<button aria-label="Close" class="close" data-dismiss="modal" type="button">
+<span aria-hidden="true">×</span>
+</button>
+</div>
+<div class="modal-body">
+<div class="table-responsive">
+<table class="table customTable" id="assign_audit_list_table">
+<thead>
+<tr>
+<th scope="col">Clause No.</th>
+<th scope="col">Exclusion</th>
+<th scope="col">Testing Charges (Excl. Of Taxes)</th>
+<th scope="col">Effective Date</th>
+<th scope="col">Remark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td scope="col">7 Table-3 iv c(Compressive Strength At  672  hrs  ± 4 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv c(Compressive Strength At  672  hrs  ± 4 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv c(Compressive Strength At  672  hrs  ± 4 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv b(Compressive Strength At  168  hrs  ± 2 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv b(Compressive Strength At  168  hrs  ± 2 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv b(Compressive Strength At  168  hrs  ± 2 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iii b(Setting Time Final)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iii a(Setting Time Initial)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 ii b(Expansion after aeration)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 ii b(Expansion by Autoclave)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 ii a(Expansion by Le Chatelier)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>2000</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 i.(Fineness)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv a(Compressive Strength At  72  hrs  ± 1 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv a(Compressive Strength At  72  hrs  ± 1 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv a(Compressive Strength At  72  hrs  ± 1 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">--</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 viii(Alkali content)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 vii(Chloride content)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 vi(Loss on ignition)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 v(Total Sulphur Content calculated as Sulphuric Anhydride)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 iv(Magnesia)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 iii.(Insoluble residue)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 ii.(Ratio of percentage of alumina to that of iron oxide)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 i.(Ratio of percentage of lime to percentage of silica, alumina and iron oxide)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
+</div>
+</div>
+</div>
+</div>
+</td>
+<!-- <td>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">2000</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div></td> -->
+<!-- <td>
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    </td> -->
+<!-- <td>
+                      
+                      Complete
+                    
+                    </td>
+                  <td></td> -->
+<td>31 Dec, 2026</td>
+<td><b>-</b><br/>-</td>
+<!-- <td>
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> --</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    </td> -->
+</tr>
+<tr id="tr_45463">
+<td>3</td>
+<td>NATIONAL TEST HOUSE-ER (NTH), KOLKATA
+                  </td><td>5140804
+                  
+                  </td><td>IS 269 (2015)</td>
+<td>Ordinary portland cement - Specification (Sixth Revision)</td>
+<td>-</td>
+<!-- <td>
+                    
+                    -
+                     -->
+<td>
+<i aria-hidden="true" class="fa fa-inr"></i>10000 <a class="btn btn-primary btn-sm Generate" data-target="#testingChargesModal45463" data-toggle="modal" href="#">View breakup</a><br/>
+                    -
+                    <!-- Model popup for Refer back -->
+<div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="testingChargesModal45463" role="dialog" tabindex="-1">
+<div class="modal-dialog modal-large" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="exampleModalLabel">TESTING CHARGES</h5>
+<button aria-label="Close" class="close" data-dismiss="modal" type="button">
+<span aria-hidden="true">×</span>
+</button>
+</div>
+<div class="modal-body">
+<div class="table-responsive">
+<table class="table customTable" id="assign_audit_list_table">
+<thead>
+<tr>
+<th scope="col">Clause No.</th>
+<th scope="col">Exclusion</th>
+<th scope="col">Testing Charges (Excl. Of Taxes)</th>
+<th scope="col">Effective Date</th>
+<th scope="col">Remark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td scope="col">7 Table-3 i.(Fineness)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 ii a(Expansion by Le Chatelier)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 ii b(Expansion by Autoclave)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 ii b(Expansion after aeration)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>0</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iii a(Setting Time Initial)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>250</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iii b(Setting Time Final)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>250</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv a(Compressive Strength At  72  hrs  ± 1 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv b(Compressive Strength At  168  hrs  ± 2 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv c(Compressive Strength At  672  hrs  ± 4 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 viii(Alkali content)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 vii(Chloride content)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 vi(Loss on ignition)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 v(Total Sulphur Content calculated as Sulphuric Anhydride)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 iv(Magnesia)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 iii.(Insoluble residue)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 ii.(Ratio of percentage of alumina to that of iron oxide)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 i.(Ratio of percentage of lime to percentage of silica, alumina and iron oxide)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
+</div>
+</div>
+</div>
+</div>
+</td>
+<!-- <td>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">0</div>
+                      <div class="mb-1">250</div>
+                      <div class="mb-1">250</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div></td> -->
+<!-- <td>
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    </td> -->
+<!-- <td>
+                      
+                      Complete
+                    
+                    </td>
+                  <td></td> -->
+<td>14 Jun, 2027</td>
+<td><b>-</b><br/>-</td>
+<!-- <td>
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    </td> -->
+</tr>
+<tr id="tr_45421">
+<td>4</td>
+<td>National Test House (NER) - NTH, Guwahati
+                  </td><td>5169204
+                  
+                  </td><td>IS 269 (2015)</td>
+<td>Ordinary portland cement - Specification (Sixth Revision)</td>
+<td>OPC 33/43/ 53 Grade,OPC 43S  &amp; 53S Grade</td>
+<!-- <td>
+                    
+                    -
+                     -->
+<td>
+<i aria-hidden="true" class="fa fa-inr"></i>12000 <a class="btn btn-primary btn-sm Generate" data-target="#testingChargesModal45421" data-toggle="modal" href="#">View breakup</a><br/>
+                    -
+                    <!-- Model popup for Refer back -->
+<div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="testingChargesModal45421" role="dialog" tabindex="-1">
+<div class="modal-dialog modal-large" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="exampleModalLabel">TESTING CHARGES</h5>
+<button aria-label="Close" class="close" data-dismiss="modal" type="button">
+<span aria-hidden="true">×</span>
+</button>
+</div>
+<div class="modal-body">
+<div class="table-responsive">
+<table class="table customTable" id="assign_audit_list_table">
+<thead>
+<tr>
+<th scope="col">Clause No.</th>
+<th scope="col">Exclusion</th>
+<th scope="col">Testing Charges (Excl. Of Taxes)</th>
+<th scope="col">Effective Date</th>
+<th scope="col">Remark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td scope="col">6.1 Table-2 vii(Chloride content)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 viii(Alkali content)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>2000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 vi(Loss on ignition)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 v(Total Sulphur Content calculated as Sulphuric Anhydride)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 iv(Magnesia)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6 - Table - 1 iii(Insoluble residue - Cl 4.10 of IS 4032:1985)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 ii.(Ratio of percentage of alumina to that of iron oxide)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">6.1 Table-2 i.(Ratio of percentage of lime to percentage of silica, alumina and iron oxide)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 i.(Fineness)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 ii a(Expansion by Le Chatelier)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 ii b(Expansion by Autoclave)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iii a(Setting Time Initial)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iii b(Setting Time Final)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>500</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv a(Compressive Strength At  72  hrs  ± 1 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv b(Compressive Strength At  168  hrs  ± 2 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+<tr>
+<td scope="col">7 Table-3 iv c(Compressive Strength At  672  hrs  ± 4 hr - IS 4031 Part 6)</td>
+<td scope="col">-</td>
+<td scope="col"><i aria-hidden="true" class="fa fa-inr"></i>1000</td>
+<td scope="col"></td>
+<td scope="col">-</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
+</div>
+</div>
+</div>
+</div>
+</td>
+<!-- <td>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">2000</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">500</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">1000</div>
+                      <div class="mb-1">1000</div></td> -->
+<!-- <td>
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    </td> -->
+<!-- <td>
+                      
+                      Complete
+                    
+                    </td>
+                  <td></td> -->
+<td>13 Dec, 2027</td>
+<td><b>-</b><br/>-</td>
+<!-- <td>
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    
+                      <div class="mb-1"> -</div>
+                    </td> -->
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tbody>
+</table>
+</div>
+<ul class="pagination pagination-sm justify-content-end">
+<li><a class="btn btn-outline-success active" href="/home/search_is_number/?is_number__doc_no=269&amp;page=1">1</a> </li>
+<li><a class="btn btn-outline-success" href="/home/search_is_number/?is_number__doc_no=269&amp;page=2">2</a> </li>
+<li><a class="btn btn-outline-primary" href="/home/search_is_number/?is_number__doc_no=269&amp;page=2">Next</a> </li>
+<li><a class="btn btn-outline-primary" href="/home/search_is_number/?is_number__doc_no=269&amp;page=2">Last</a> </li>
+</ul>
+</div>
+</div>
+<!-- /.container-fluid -->
+</div>
+<!-- End of Main Content -->
+</div>
+<!-- End of Content Wrapper -->
+<!-- End of Page Wrapper -->
+<!-- Message Modal Starts-->
+
+
+
+
+<!----Footer Start Here---->
+<div id="footerlive">
+<div class="container-fluid">
+<div class="row align-items-center">
+<div class="col-md-4">
+<div class="copy_right">
+<p> Designed, Developed and Maintained by: </p>
+<p><a href="https://www.arohatech.com/" target="_blank"><img src="/static/image/logo-atech.png"/>
+<span class="arohatechName">Arohatech IT Services (P) Ltd.</span>
+</a>
+</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="copy_right">
+<p class="text-md-center">Contact for any query/support:  <a class="text-white" href="mailto:supportlims@bis.gov.in">supportlims@bis.gov.in</a></p>
+</div>
+</div>
+<div class="col-md-4 text-md-right">
+<img class="w-150" src="/static/image/footerlogos.png"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Bootstrap core JS -->
+
+<!--script src="/static/js/bootstrap.js" type="text/javascript"></script-->
+
+<!-- <script type="text/javascript" language="javascript" src="{ static 'js/jquery-latest.js' %}"></script> -->
+
+
+
+
+
+</body></html>

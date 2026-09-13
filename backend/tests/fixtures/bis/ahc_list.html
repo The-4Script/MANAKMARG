@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"/><title>AHC list</title></head><body>
+<div>
+<div class="container">
+<div style="width:100%;background-color: #87CEEB;text-align: center;font-weight:bold;font-size:20px;">
+<label>List of Assaying &amp; Hallmarking Centres</label>
+</div>
+<div style="width:100%;background-color: #87CEEB;">
+<fieldset>
+<legend>Filters</legend>
+<label>Region:</label>
+<select class="select2" id="selectRegionId" name="selectRegionId" onchange="setFormVal(0)" style="width:200px;">
+<option value="0">---SELECT---</option>
+<option value="8">CENTRAL REGION</option>
+<option value="5">EASTERN REGION</option>
+<option value="9">NORTHERN REGION</option>
+<option value="6">SOUTH REGION</option>
+<option value="7">WESTERN REGION</option>
+</select>
+
+			      
+			<label>OR</label>      
+			<span>
+<label>State:</label>   
+				<select class="select2" id="selectStateId" name="selectStateId" onchange="setFormVal(1)" style="width:250px;">
+<option value="0">--Select--</option>
+<option value="1">ANDAMAN &amp; NICOBAR</option>
+<option value="2">ANDHRA PRADESH</option>
+<option value="3">ARUNACHAL PRADESH</option>
+<option value="4">ASSAM</option>
+<option value="5">BIHAR</option>
+<option value="6">CHANDIGARH</option>
+<option value="7">CHHATTISGARH</option>
+<option value="8">DADRA &amp; NAGAR HAVELI</option>
+<option value="9">DAMAN &amp; DIU</option>
+<option value="10">DELHI</option>
+<option value="11">GOA</option>
+<option value="12">GUJARAT</option>
+<option value="13">HARYANA</option>
+<option value="14">HIMACHAL PRADESH</option>
+<option value="16">JAMMU &amp; KASHMIR</option>
+<option value="15">JHARKHAND</option>
+<option value="17">KARNATAKA</option>
+<option value="18">KERALA</option>
+<option value="37">LADAKH</option>
+<option value="19">LAKSHADWEEP</option>
+<option value="20">MADHYA PRADESH</option>
+<option value="21">MAHARASHTRA</option>
+<option value="22">MANIPUR</option>
+<option value="23">MEGHALAYA</option>
+<option value="24">MIZORAM</option>
+<option value="25">NAGALAND</option>
+<option value="26">ODISHA</option>
+<option value="27">PONDICHERY</option>
+<option value="28">PUNJAB</option>
+<option value="29">RAJASTHAN</option>
+<option value="30">SIKKIM</option>
+<option value="31">TAMIL NADU</option>
+<option value="32">TELANGANA</option>
+<option value="33">TRIPURA</option>
+<option value="35">UTTARAKHAND</option>
+<option value="34">UTTAR PRADESH</option>
+<option value="36">WEST BENGAL</option>
+</select>
+</span>
+			      
+			<span>
+<label>District:</label>   
+				<select class="select2" id="selectDistrictId" name="selectDistrictId" onchange="setFormVal(1)" style="width:250px;">
+<option value="0">--Select--</option>
+</select>
+</span>
+		    <span><button class="btn btn-primary" onclick="submitFrm();" style="width:50px;" type="button">Show</button> <button class="btn btn-danger" onclick="clearFrm();" style="width:50px;" type="button">Clear</button></span>
+</fieldset>
+<br/>
+</div>
+<div style="margin-top:25px;">
+<table border="1" class="table" id="ahcDetailsTbl">
+<thead>
+<tr>
+<th>
+<label>Sl.No.</label>
+</th>
+<th>
+<label>AHC Details</label>
+</th>
+<th>
+<label>Contact Person Details</label>
+</th>
+<th>
+<label>Status</label>
+</th>
+<!-- <th>	
+						<label>AHC Logo</label>
+					</th> -->
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<label>1 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110002</label><br/>
+<label><b>Validity:31/07/2028</b></label><br/>
+<label><b>M/s Jalan Hallmarking Centre</b></label><br/>
+<label>II-C/16 Lajpat Nagar Central Market New Delhi, SOUTH DELHI, LAJPAT NAGAR (SOUTH DELHI), DELHI ,110025</label><br/>
+<label><b>Recognized for Yellow Gold,Silver Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9810009929</label><br/>
+<label>Email:jalan@jalanco.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>2 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110006</label><br/>
+<label><b>Validity:21/01/2028</b></label><br/>
+<label><b>SHRI SALASAR BALAJI HALLMARKING CENTRE</b></label><br/>
+<label>1189 JORAWAR BHAWAN,2nd FLOOR PARTANIO KA RASTAJOHARI BAZAR, JAIPUR, JAIPUR CITY, RAJASTHAN ,302003</label><br/>
+<label><b>Recognized for Gold &amp; Silver Both Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9166644429</label><br/>
+<label>Email:soniudaysoni78@yahoo.co.in</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>3 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110017</label><br/>
+<label><b>Validity:10/04/2029</b></label><br/>
+<label><b>City Hallmarking Centre</b></label><br/>
+<label>2780/20, 1st Floor, Beadon Pura,Karol Bagh, New Delhi, CENTRAL DELHI, KAROL BAGH, DELHI ,110005</label><br/>
+<label><b>Recognized for Gold &amp; Silver Both Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9818747978</label><br/>
+<label>Email:cityhallmarking@gmail.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>4 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110031</label><br/>
+<label><b>Validity:14/06/2027</b></label><br/>
+<label><b>SIDDHNATH ASSAYING &amp; HALLMARKING CENTRE</b></label><br/>
+<label>137 S/F, Moti Bazar, Chandni ChowkDelhi, NORTH DELHI, CHANDNI CHOWK, DELHI ,110006</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9811743008</label><br/>
+<label>Email:siddhnathhcentre@yahoo.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>5 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110033</label><br/>
+<label><b>Validity:11/02/2028</b></label><br/>
+<label><b>SAVITREE HALLMARKING &amp; REFINERY</b></label><br/>
+<label>2165-2166,4th FLOOR, CHAKSU KA CHOWKHALDIYON KA RASTA, JOHARI BAZAR JAIPUR, JAIPUR, JAIPUR CITY, RAJASTHAN ,302003</label><br/>
+<label><b>Recognized for Gold &amp; Silver Both Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:8104045000</label><br/>
+<label>Email:SAVITREE.HM.JPR@GMAIL.COM</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>6 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110041</label><br/>
+<label><b>Validity:26/11/2027</b></label><br/>
+<label><b>LAWAT HALLMARKING CENTER PRIVATE LIMITED</b></label><br/>
+<label>1733, Jat Ke Kue Ka Rasta,Chandpole Bazar,, JAIPUR, JAIPUR, RAJASTHAN ,302001</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9928788882</label><br/>
+<label>Email:lawathallmarkingcenter@gmail.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>7 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110042</label><br/>
+<label><b>Validity:06/12/2027</b></label><br/>
+<label><b>SAMRIDDHI ASSAYING &amp; HALLMARKING CENTRE</b></label><br/>
+<label>1170, 4th Floor, Kucha Mahajani,Chandni Chowk, Delhi, NORTH DELHI, CHANDNI CHOWK, DELHI ,110006</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9910117752</label><br/>
+<label>Email:samriddhi1170@yahoo.in</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>8 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110045</label><br/>
+<label><b>Validity:27/07/2028</b></label><br/>
+<label><b>Prince Hallmarking and Refinery Private Limited</b></label><br/>
+<label>Shri Balaji Complex, Shop No G -2Ground Floor No 68, BADA SARAFA, INDORE, INDORE CLOTH MARKET, MADHYA PRADESH ,452002</label><br/>
+<label><b>Recognized for Gold &amp; Silver Both Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9589019191</label><br/>
+<label>Email:nakodahmc2013@gmail.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>9 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110046</label><br/>
+<label><b>Validity:01/05/2028</b></label><br/>
+<label><b>M/s Shree Katyayani Enterprises</b></label><br/>
+<label>Prop No. 1072, 3rd Floor, Kucha Natwan,Chandni Chowk Area, New Delhi, Central Delhi – 110 006, NORTH DELHI, CHANDNI CHOWK, DELHI ,110006</label><br/>
+<label><b>Recognized for Yellow Gold,Silver Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9773677329</label><br/>
+<label>Email:shreekatyayani2025@gmail.com</label><br/>
+</td>
+<td>
+<label>Under Suspension</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>10 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110049</label><br/>
+<label><b>Validity:08/02/2029</b></label><br/>
+<label><b>HRDK HALLMARKING CENTRE</b></label><br/>
+<label>NEAR JULAHO KI MASJID, BAIJI KA TALAB, JODHPUR, JODHPUR CITY, RAJASTHAN ,342001</label><br/>
+<label><b>Recognized for Gold &amp; Silver Both Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9414476008</label><br/>
+<label>Email:HRDKHALLMARKING@GMAIL.COM</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>11 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110051</label><br/>
+<label><b>Validity:02/02/2029</b></label><br/>
+<label><b>SRI GANGANAGAR HALLMARKING CENTRE</b></label><br/>
+<label>SHOP NO.-59 FIRST FLOOR OLD DHAN MANDISRI GANGANAGAR, GANGANAGAR, SRIGANGANAGAR, RAJASTHAN ,335001</label><br/>
+<label><b>Recognized for Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9982947667</label><br/>
+<label>Email:sgnrhallmarking@gmail.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>12 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110053</label><br/>
+<label><b>Validity:09/01/2029</b></label><br/>
+<label><b>Ms Swarn Assaying &amp; Hallmarking Centre</b></label><br/>
+<label>B-1/17  krishna nagarDelhi-110051, EAST DELHI, KRISHNA NAGAR, DELHI ,110051</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9999349525</label><br/>
+<label>Email:swarnhallmarkcenter@gmail.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>13 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110056</label><br/>
+<label><b>Validity:15/06/2029</b></label><br/>
+<label><b>Shri Salasar Balaji Hallmarking Centre</b></label><br/>
+<label>G 1-5 &amp; 6, EPIPSitapura IndustrialArea, Tonk Road, JAIPUR, SITAPURA INDUSTRIAL AREA, RAJASTHAN ,302022</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9166644429</label><br/>
+<label>Email:soniudaysoni78@yahoo.co.in</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>14 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110058</label><br/>
+<label><b>Validity:29/10/2026</b></label><br/>
+<label><b>M/s Mahalaxmi Hallmarking Centre</b></label><br/>
+<label>B-111, First Floor, Khasra No 84/22Arya Samaj Road, Uttam Nagar, Delhi, WEST DELHI, UTTAM NAGAR, DELHI ,110059</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9810430972</label><br/>
+<label>Email:mahalaxmihc@gmail.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>15 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110059</label><br/>
+<label><b>Validity:30/09/2026</b></label><br/>
+<label><b>DELHI HALLMARKING CENTRE</b></label><br/>
+<label>2782/20-21, 1st floor Beadon puraKarol Bagh Delhi, CENTRAL DELHI, KAROL BAGH, DELHI ,110005</label><br/>
+<label><b>Recognized for Yellow Gold,Silver Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9811251188</label><br/>
+<label>Email:delhihallmarkingcentre@gmail.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>16 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110062</label><br/>
+<label><b>Validity:17/11/2026</b></label><br/>
+<label><b>P S HALLMARKING CENTRE</b></label><br/>
+<label>29/3A 4A 5A 6A 7A 8A,SARRAFA BAZARKUCHA NEEL,MEERUT, MEERUT, MEERUT CITY, UTTAR PRADESH ,250002</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:7417505040</label><br/>
+<label>Email:pshallmarking@yahoo.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>17 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110068</label><br/>
+<label><b>Validity:16/03/2027</b></label><br/>
+<label><b> S R ASSAYING AND HALLMARKING CENTRE</b></label><br/>
+<label>23/20-B, First FloolTilak Nagar, New Delhi, WEST DELHI, TILAK NAGAR  (WEST DELHI), DELHI ,110018</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9871515167</label><br/>
+<label>Email:s.r.hallmarkingcentre111@gmail.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>18 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110070</label><br/>
+<label><b>Validity:06/09/2027</b></label><br/>
+<label><b>Krishna Hallmarking Centre</b></label><br/>
+<label>A-7/29, Frist Floor, Krishna NagarNew delhi, NEW DELHI, NEW DELHI G.P.O., DELHI ,110051</label><br/>
+<label><b>Recognized for Yellow Gold,Silver Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9811298081</label><br/>
+<label>Email:krishnahallmarkingcentre2014@gmail.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>19 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110072</label><br/>
+<label><b>Validity:20/05/2027</b></label><br/>
+<label><b>SHRI BALAJI HALLMARKING CENTRE</b></label><br/>
+<label>WARD NO 16, NAYA SHAHAR, NEAR DUJOD GATESIKAR , RAJASTHAN, SIKAR, SIKAR, RAJASTHAN ,332001</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9414214121</label><br/>
+<label>Email:shribalajihmc@gmail.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>20 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110075</label><br/>
+<label><b>Validity:22/09/2027</b></label><br/>
+<label><b>IDGL Hallmarking Centre</b></label><br/>
+<label>91-A, Block-A, First Floor, Central MarketLajpat Nagar-ll , New Delhi, SOUTH DELHI, LAJPAT NAGAR (SOUTH DELHI), DELHI ,110024</label><br/>
+<label><b>Recognized for Yellow Gold,Silver Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9810101625</label><br/>
+<label>Email:idgl91@yahoo.com</label><br/>
+</td>
+<td>
+<label>Operative</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>21 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110077</label><br/>
+<label><b>Validity:18/10/2027</b></label><br/>
+<label><b>CHETNA ASSAYING AND HALLMARKING CENTRE</b></label><br/>
+<label>1164, 4th Floor, Kuchamahajani,Chadni Chowk, Delhi, NORTH DELHI, CHANDNI CHOWK, DELHI ,110006</label><br/>
+<label><b>Recognized for Yellow Gold,Silver Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9999804777</label><br/>
+<label>Email:chetna1184@gmail.com</label><br/>
+</td>
+<td>
+<label>Under Suspension(Gold Only)</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>24 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110082</label><br/>
+<label><b>Validity:08/03/2028</b></label><br/>
+<label><b>J P Testing and gold hallmarking Centre</b></label><br/>
+<label>Ward no 7, Holi darwaja , Dulhe Singh RastaChomu , Distt Jaipur Rural, JAIPUR, JAIPUR, RAJASTHAN ,303702</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9829197452</label><br/>
+<label>Email:jptestinghallmarking@gmail.com</label><br/>
+</td>
+<td>
+<label>Under Suspension</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>26 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110085</label><br/>
+<label><b>Validity:27/04/2022</b></label><br/>
+<label><b>M/s National Hallmarking Centre</b></label><br/>
+<label>1170/1240, 5th Floor Kucha MahajaniChandni Chowk, Delhi, NORTH DELHI, CHANDNI CHOWK, DELHI ,110006</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9899724004</label><br/>
+<label>Email:nationalhallmarkingcentre2015@gmail.com</label><br/>
+</td>
+<td>
+<label>Under Suspension</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>49 </label>
+</td>
+<td>
+<label>Recognition No.: CRO/RAHC/R-110127</label><br/>
+<label><b>Validity:01/08/2029</b></label><br/>
+<label><b>BRIJ HALLMARKING CENTER</b></label><br/>
+<label>1st FLOOR HARI COMPLEX KOTWALI ROAD MATHURAMATHURA, MATHURA, MATHURA, UTTAR PRADESH ,281001</label><br/>
+<label><b>Recognized for Gold &amp; Silver Both Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9837206457</label><br/>
+<label>Email:brijhallmarkingcenter@gmail.com</label><br/>
+</td>
+<td>
+<label>Under Suspension(Gold Only)</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>295 </label>
+</td>
+<td>
+<label>Recognition No.: ERO/RAHC/R-4917042</label><br/>
+<label><b>Validity:04/12/2026</b></label><br/>
+<label><b>Akshay Hallmarking Centre</b></label><br/>
+<label>2nd Floor, Laxmi Bhawan,Sadar Bazar,, RAIPUR, RAIPUR, CHHATTISGARH ,492001</label><br/>
+<label><b>Recognized for Gold &amp; Silver Both Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9111556925</label><br/>
+<label>Email:akshayhmc1@gmail.com</label><br/>
+</td>
+<td>
+<label>Under Suspension(Gold Only)</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>305 </label>
+</td>
+<td>
+<label>Recognition No.: ERO/RAHC/R-700060</label><br/>
+<label><b>Validity:14/02/2021</b></label><br/>
+<label><b>M/S.JAI MAA AMBAY HALLMARKING CENTRE</b></label><br/>
+<label>HOLDING NO. 67/N,NACHAN ROAD,BENACHITY,DURGAPURDURGAPUR-713213, BARDHAMAN, , WEST BENGAL ,713213</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label></label><br/>
+<label></label><br/>
+<label>Tel:8145262626</label><br/>
+<label>Email:mvapldgp@gmail.com</label><br/>
+</td>
+<td>
+<label>Deferment Letter Generated</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>350 </label>
+</td>
+<td>
+<label>Recognition No.: ERO/RAHC/R-700594</label><br/>
+<label><b>Validity:25/10/2020</b></label><br/>
+<label><b>M/S SAI HALLMARKING CENTRE</b></label><br/>
+<label>FIRINGI BAZAR, PO - TELENGA BAZAR, DIST - CUTTACKODISHA - 753009, CUTTACK, CUTTACK G.P.O., ODISHA ,753009</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label></label><br/>
+<label></label><br/>
+<label>Tel:9583001072</label><br/>
+<label>Email:saihallmarkingcentre@gmail.com</label><br/>
+</td>
+<td>
+<label>Deferment Letter Generated</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>374 </label>
+</td>
+<td>
+<label>Recognition No.: ERO/RAHC/R-700618</label><br/>
+<label><b>Validity:05/04/2021</b></label><br/>
+<label><b>M/s- BALAJEE HALLMARKING CENTRE</b></label><br/>
+<label>309, INDUSTRY HOUSE, 3RD FLOOR, BANK MOREDHANBAD- 826001, DHANBAD, DHANBAD, JHARKHAND ,826001</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label></label><br/>
+<label></label><br/>
+<label>Tel:9431376042</label><br/>
+<label>Email:balajeehallmarking@gmail.com</label><br/>
+</td>
+<td>
+<label>Deferment Letter Generated</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>481 </label>
+</td>
+<td>
+<label>Recognition No.: ERO/RAHC/R-7024777</label><br/>
+<label><b>Validity:19/06/2026</b></label><br/>
+<label><b>SIDHNATH HALLMARKING CENTRE</b></label><br/>
+<label>172, B B GANGULY STREETROMM NO 133,, KOLKATA, BOWBAZAR  (KOLKATA), WEST BENGAL ,700012</label><br/>
+<label><b>Recognized for Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9123814530</label><br/>
+<label>Email:SIDHNATHHALLMARKING916@GMAIL.COM</label><br/>
+</td>
+<td>
+<label>Deferred</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>674 </label>
+</td>
+<td>
+<label>Recognition No.: ERO/RAHC/R-8529840</label><br/>
+<label><b>Validity:15/06/2026</b></label><br/>
+<label><b>KANISHKA HALLMARKING CENTRE</b></label><br/>
+<label>MADHUBANI BAZAR,PURNEA, PURNIA, MADHUBANI, BIHAR ,854301</label><br/>
+<label><b>Recognized for Yellow Gold Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9990844795</label><br/>
+<label>Email:kanishkahallmarkingcentre01@gmail.com</label><br/>
+</td>
+<td>
+<label>Deferred</label>
+</td>
+</tr>
+<tr>
+<td>
+<label>1028 </label>
+</td>
+<td>
+<label>Recognition No.: SRO/RAHC/R-600674</label><br/>
+<label><b>Validity:02/03/2025</b></label><br/>
+<label><b>AORIC HALLMARKING</b></label><br/>
+<label>#19,3RD FLOOR , 5TH MAIN5TH BLOCK, KORAMANGALA, BANGALORE URBAN, KORAMANGALA, KARNATAKA ,560095</label><br/>
+<label><b>Recognized for Gold And silver Hallmarking</b></label><br/>
+</td>
+<td>
+<label>_</label><br/>
+<label>_</label><br/>
+<label>Tel:9886422916</label><br/>
+<label>Email:aorichallmarking@gmail.com</label><br/>
+</td>
+<td>
+<label>Deferred</label>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<form action="AHCListForWebsite" id="ahcListFrm" method="POST" name="ahcListFrm">
+<input id="hdnStateId" name="stateId" type="hidden" value="0"/>
+<input id="hdnDistrictId" name="districtId" type="hidden" value=""/>
+<input id="hdnRegionId" name="regionId" type="hidden" value="0"/>
+</form>
+</div>
+</body></html>

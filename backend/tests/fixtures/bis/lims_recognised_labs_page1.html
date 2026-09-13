@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"/><title>LIMS recognised labs</title></head><body>
+<div class="R-header3 py-2">
+<div class="container-fluid">
+<div class="row align-items-center">
+<div class="col-sm-4">
+<div class="logoshomes">
+<div class="wrap-logof">
+<img src="/static/image/manak.png"/>
+</div>
+<div class="cogo_text">
+<a href="/">
+<h2><span class="logo_heads">Bureau of Indian Standards</span></h2>
+<h3>The National Standards Body of India</h3>
+</a>
+</div>
+</div>
+</div>
+<div class="col-sm-4 col-4 text-center">
+<a href="/accounts/login/"><img src="/static/image/eBis.png" width="134"/></a>
+</div>
+<div class="col-sm-4 col-8 text-right">
+<div class="d-inline-flex align-items-center menubar justify-content-end">
+<a class="" href="https://iconnect.manakonline.in/" target="_blank"><img src="/static/image/iconnect.png" width="60"/></a>
+<div class="Buttontop ml-3 d-none d-sm-block">
+<button class="decrease">A-</button>
+<button class="resetMe">A</button>
+<button class="increase">A+</button>
+</div>
+<a class="header-login" href="/accounts/login/">Login <img src="/static/image/lock.png"/></a>
+</div>
+<!-- <div class="d-flex align-items-center justify-content-end pt-2 border-top ">
+            <div class="padrightn d-none d-sm-block"><i class="fa fa-calendar"></i> MONTH: </div>
+            <div class="dropme ml-3 d-none d-sm-block">
+              <select class="yearmonthvalu" id="yearmonthvalu">
+                <option value="202011">January - 2021</option>
+                <option value="202010">February - 2021</option>
+                <option value="202009">March - 2021</option>
+              </select>
+            </div>
+            </ul>
+          </div> -->
+</div>
+</div>
+<div class="bgb row mt-2">
+<div class="col-md-7 mainmenubars">
+</div>
+<div class="col-md-5 nopdlef">
+<div class="container-marquee">
+<ol class="breadcrumb breadcrumb-arrow">
+<!--<li><a href="#">  <span style="font-size:30px;cursor:pointer" onclick="openNav()"> <i class="fa fa-bars marto white-text" aria-hidden="true"></i>
+  </span>
+  </a></li>-->
+<li><a href="#"><i class="fa fa-bell white-text fs-18"></i></a></li>
+<li class="active"><span class="white-texts">
+<marquee behavior="scroll" direction="left" onmouseout="this.start();" onmouseover="this.stop();" scrollamount="5">
+<a href="https://www.youtube.com/watch?v=0_sk9WzQmMs" style="color: red !important; background: none;text-decoration: none; border: none;" target="_blank">
+<span class="blink">Standards Watch Video on BIS Laboratories</span>
+</a>
+<br/>
+</marquee>
+</span></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- % include 'home_header_inner.html' %} -->
+<!-- -->
+<!-- Page Wrapper -->
+<div id="wrapper">
+<!-- Content Wrapper -->
+<div class="d-flex flex-column" id="content-wrapper">
+<!-- Main Content -->
+<div id="content">
+<!-- Begin Page Content -->
+<div class="container-fluid adminpage">
+<!-- Page Heading -->
+<!-- <h1 class="h3 mb-2 text-gray-800">Lab Details</h1>
+        <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below. For more
+          information about DataTables, please visit the</p> -->
+<!-- DataTales Example -->
+<div class="table-header mb-3">
+<div class="d-flex justify-content-between">
+<div class="d-flex align-items-center">
+<h5 class="m-0 font-weight-bold text-primary">
+                BIS Recognized Labs              
+              </h5>
+<button aria-controls="Filter" aria-expanded="false" aria-label="Toggle navigation" class="btn btn-filter ml-3 position-relative" data-target="#Filter" data-toggle="collapse"><i aria-hidden="true" class="fa fa-filter mr-1"></i> Filter 
+				</button>
+<a class="ResetBtns" href="/home/labs/">Reset</a>
+<div class="counts ml-3 textcolor">431 Results</div>
+</div>
+</div>
+<form action="" class="filterbox" method="get">
+<div class="collapse filter-form" id="Filter">
+<!-- <form action="" method="get" class="filter-form"> -->
+<div class="row align-items-end">
+<div class="filter_1 col-lg-2 col-md-4 col-sm-6">
+<label class="control-label" id="id_label_1">Laboratory Name</label> <input id="id_lab_name__icontains" name="lab_name__icontains" type="text"/></div>
+<div class="filter_2 col-lg-2 col-md-4 col-sm-6">
+<label class="control-label" id="id_label_2">OSL Code</label> <input id="id_osl_code__icontains" name="osl_code__icontains" type="text"/></div>
+<div class="filter_3 col-lg-2 col-md-4 col-sm-6">
+<label class="control-label" id="id_label_3">State</label> <select id="id_lab_state" name="lab_state">
+<option selected="" value="">---------</option>
+<option value="3">Andaman &amp; Nicobar</option>
+<option value="4">Andhra Pradesh</option>
+<option value="5">Arunachal Pradesh</option>
+<option value="6">Assam</option>
+<option value="7">Bihar</option>
+<option value="8">Chandigarh</option>
+<option value="9">Chhattisgarh</option>
+<option value="10">Dadra &amp; Nagar Haveli</option>
+<option value="11">Daman &amp; Diu</option>
+<option value="12">Delhi</option>
+<option value="13">Goa</option>
+<option value="14">Gujarat</option>
+<option value="2">Haryana</option>
+<option value="15">Himachal Pradesh</option>
+<option value="16">Jammu &amp; Kashmir</option>
+<option value="17">Jharkhand</option>
+<option value="18">Karnataka</option>
+<option value="19">Kerala</option>
+<option value="52">Ladakh</option>
+<option value="20">Lakshadweep</option>
+<option value="21">Madhya Pradesh</option>
+<option value="22">Maharashtra</option>
+<option value="23">Manipur</option>
+<option value="24">Meghalaya</option>
+<option value="25">Mizoram</option>
+<option value="26">Nagaland</option>
+<option value="27">Odisha</option>
+<option value="53">Pondichery</option>
+<option value="28">Puducherry</option>
+<option value="29">Punjab</option>
+<option value="30">Rajasthan</option>
+<option value="31">Sikkim</option>
+<option value="32">Tamil Nadu</option>
+<option value="33">Telangana</option>
+<option value="34">Tripura</option>
+<option value="1">Uttar Pradesh</option>
+<option value="35">Uttarakhand</option>
+<option value="36">West Bengal</option>
+</select></div>
+<div class="filter_4 col-lg-2 col-md-4 col-sm-6">
+<label class="control-label" id="id_label_4">District</label> <select id="id_lab_district" name="lab_district">
+<option selected="" value="">---------</option>
+<option value="1">Nicobars</option>
+<option value="2">South Andamans</option>
+<option value="4">Anantapur</option>
+<option value="5">Chittoor</option>
+<option value="6">East Godavari</option>
+<option value="7">Guntur</option>
+<option value="8">Krishna</option>
+<option value="9">Kurnool</option>
+<option value="10">Prakasam</option>
+<option value="11">Spsr Nellore</option>
+<option value="12">Srikakulam</option>
+<option value="13">Visakhapatanam</option>
+<option value="14">Vizianagaram</option>
+<option value="15">West Godavari</option>
+<option value="16">Y.S.R.</option>
+<option value="17">Anjaw</option>
+<option value="18">Changlang</option>
+<option value="19">Dibang Valley</option>
+<option value="20">East Kameng</option>
+<option value="21">East Siang</option>
+<option value="22">Kamle</option>
+<option value="23">Kra  Daadi</option>
+<option value="24">Kurung Kumey</option>
+<option value="25">Lohit</option>
+<option value="26">Longding</option>
+<option value="27">Lower Dibang Valley</option>
+<option value="28">Lower Siang</option>
+<option value="29">Lower Subansiri</option>
+<option value="30">Namsai</option>
+<option value="31">Pakke Kessang</option>
+<option value="32">Papum Pare</option>
+<option value="33">Siang</option>
+<option value="34">Tawang</option>
+<option value="35">Tirap</option>
+<option value="36">Upper Siang</option>
+<option value="37">Upper Subansiri</option>
+<option value="38">West Kameng</option>
+<option value="39">West Siang</option>
+<option value="40">Baksa</option>
+<option value="41">Barpeta</option>
+<option value="42">Biswanath</option>
+<option value="43">Bongaigaon</option>
+<option value="44">Cachar</option>
+<option value="45">Charaideo</option>
+<option value="46">Chirang</option>
+<option value="47">Darrang</option>
+<option value="48">Dhemaji</option>
+<option value="49">Dhubri</option>
+<option value="50">Dibrugarh</option>
+<option value="51">Dima Hasao</option>
+<option value="52">Goalpara</option>
+<option value="53">Golaghat</option>
+<option value="54">Hailakandi</option>
+<option value="55">Hojai</option>
+<option value="56">Jorhat</option>
+<option value="57">Kamrup</option>
+<option value="58">Kamrup Metro</option>
+<option value="59">Karbi Anglong</option>
+<option value="60">Karimganj</option>
+<option value="61">Kokrajhar</option>
+<option value="62">Lakhimpur</option>
+<option value="63">Majuli</option>
+<option value="64">Marigaon</option>
+<option value="65">Nagaon</option>
+<option value="66">Nalbari</option>
+<option value="67">Sivasagar</option>
+<option value="68">Sonitpur</option>
+<option value="69">South Salmara Mancachar</option>
+<option value="70">Tinsukia</option>
+<option value="71">Udalguri</option>
+<option value="72">West Karbi Anglong</option>
+<option value="73">Araria</option>
+<option value="74">Arwal</option>
+<option value="75">Aurangabad</option>
+<option value="76">Banka</option>
+<option value="77">Begusarai</option>
+<option value="78">Bhagalpur</option>
+<option value="79">Bhojpur</option>
+<option value="80">Buxar</option>
+<option value="81">Darbhanga</option>
+<option value="82">Gaya</option>
+<option value="83">Gopalganj</option>
+<option value="84">Jamui</option>
+<option value="85">Jehanabad</option>
+<option value="86">Kaimur (Bhabua)</option>
+<option value="87">Katihar</option>
+<option value="88">Khagaria</option>
+<option value="89">Kishanganj</option>
+<option value="90">Lakhisarai</option>
+<option value="91">Madhepura</option>
+<option value="92">Madhubani</option>
+<option value="93">Munger</option>
+<option value="94">Muzaffarpur</option>
+<option value="95">Nalanda</option>
+<option value="96">Nawada</option>
+<option value="97">Pashchim Champaran</option>
+<option value="98">Patna</option>
+<option value="99">Purbi Champaran</option>
+<option value="100">Purnia</option>
+<option value="101">Rohtas</option>
+<option value="102">Saharsa</option>
+<option value="103">Samastipur</option>
+<option value="104">Saran</option>
+<option value="105">Sheikhpura</option>
+<option value="106">Sheohar</option>
+<option value="107">Sitamarhi</option>
+<option value="108">Siwan</option>
+<option value="109">Supaul</option>
+<option value="110">Vaishali</option>
+<option value="111">Chandigarh</option>
+<option value="112">Balod</option>
+<option value="113">Baloda Bazar</option>
+<option value="114">Balrampur</option>
+<option value="115">Bastar</option>
+<option value="116">Bemetara</option>
+<option value="117">Bijapur</option>
+<option value="118">Bilaspur</option>
+<option value="119">Dantewada</option>
+<option value="120">Dhamtari</option>
+<option value="121">Durg</option>
+<option value="122">Gariyaband</option>
+<option value="123">Janjgir-Champa</option>
+<option value="124">Jashpur</option>
+<option value="125">Kabirdham</option>
+<option value="126">Kanker</option>
+<option value="127">Kondagaon</option>
+<option value="128">Korba</option>
+<option value="129">Korea</option>
+<option value="130">Mahasamund</option>
+<option value="131">Mungeli</option>
+<option value="132">Narayanpur</option>
+<option value="133">Raigarh</option>
+<option value="134">Raipur</option>
+<option value="135">Rajnandgaon</option>
+<option value="136">Sukma</option>
+<option value="137">Surajpur</option>
+<option value="138">Surguja</option>
+<option value="139">Dadra And Nagar Haveli</option>
+<option value="140">Daman</option>
+<option value="141">Diu</option>
+<option value="142">Central</option>
+<option value="143">East</option>
+<option value="144">New Delhi</option>
+<option value="145">North</option>
+<option value="146">North East</option>
+<option value="147">North West</option>
+<option value="148">Shahdara</option>
+<option value="149">South</option>
+<option value="150">South East</option>
+<option value="151">South West</option>
+<option value="152">West</option>
+<option value="153">North Goa</option>
+<option value="154">South Goa</option>
+<option value="155">Ahmadabad</option>
+<option value="156">Amreli</option>
+<option value="157">Anand</option>
+<option value="158">Arvalli</option>
+<option value="159">Banas Kantha</option>
+<option value="160">Bharuch</option>
+<option value="161">Bhavnagar</option>
+<option value="162">Botad</option>
+<option value="163">Chhotaudepur</option>
+<option value="164">Dang</option>
+<option value="165">Devbhumi Dwarka</option>
+<option value="166">Dohad</option>
+<option value="167">Gandhinagar</option>
+<option value="168">Gir Somnath</option>
+<option value="169">Jamnagar</option>
+<option value="170">Junagadh</option>
+<option value="171">Kachchh</option>
+<option value="172">Kheda</option>
+<option value="173">Mahesana</option>
+<option value="174">Mahisagar</option>
+<option value="175">Morbi</option>
+<option value="176">Narmada</option>
+<option value="177">Navsari</option>
+<option value="178">Panch Mahals</option>
+<option value="179">Patan</option>
+<option value="180">Porbandar</option>
+<option value="181">Rajkot</option>
+<option value="182">Sabar Kantha</option>
+<option value="183">Surat</option>
+<option value="184">Surendranagar</option>
+<option value="185">Tapi</option>
+<option value="186">Vadodara</option>
+<option value="187">Valsad</option>
+<option value="189">Ambala</option>
+<option value="190">Bhiwani</option>
+<option value="191">Charki Dadri</option>
+<option value="192">Faridabad</option>
+<option value="193">Fatehabad</option>
+<option value="194">Gurugram</option>
+<option value="195">Hisar</option>
+<option value="196">Jhajjar</option>
+<option value="197">Jind</option>
+<option value="198">Kaithal</option>
+<option value="199">Karnal</option>
+<option value="200">Kurukshetra</option>
+<option value="201">Mahendragarh</option>
+<option value="202">Nuh</option>
+<option value="203">Palwal</option>
+<option value="204">Panchkula</option>
+<option value="205">Panipat</option>
+<option value="206">Rewari</option>
+<option value="207">Rohtak</option>
+<option value="208">Sirsa</option>
+<option value="209">Sonipat</option>
+<option value="188">Yamunanagar</option>
+<option value="210">Bilaspur</option>
+<option value="211">Chamba</option>
+<option value="212">Hamirpur</option>
+<option value="213">Kangra</option>
+<option value="214">Kinnaur</option>
+<option value="215">Kullu</option>
+<option value="216">Lahul And Spiti</option>
+<option value="217">Mandi</option>
+<option value="218">Shimla</option>
+<option value="219">Sirmaur</option>
+<option value="220">Solan</option>
+<option value="221">Una</option>
+<option value="222">Anantnag</option>
+<option value="223">Badgam</option>
+<option value="224">Bandipora</option>
+<option value="225">Baramulla</option>
+<option value="226">Doda</option>
+<option value="227">Ganderbal</option>
+<option value="228">Jammu</option>
+<option value="229">Kargil</option>
+<option value="230">Kathua</option>
+<option value="231">Kishtwar</option>
+<option value="232">Kulgam</option>
+<option value="233">Kupwara</option>
+<option value="234">Leh Ladakh</option>
+<option value="235">Poonch</option>
+<option value="236">Pulwama</option>
+<option value="237">Rajauri</option>
+<option value="238">Ramban</option>
+<option value="239">Reasi</option>
+<option value="240">Samba</option>
+<option value="241">Shopian</option>
+<option value="242">Srinagar</option>
+<option value="243">Udhampur</option>
+<option value="244">Bokaro</option>
+<option value="245">Chatra</option>
+<option value="246">Deoghar</option>
+<option value="247">Dhanbad</option>
+<option value="248">Dumka</option>
+<option value="249">East Singhbum</option>
+<option value="250">Garhwa</option>
+<option value="251">Giridih</option>
+<option value="252">Godda</option>
+<option value="253">Gumla</option>
+<option value="254">Hazaribagh</option>
+<option value="255">Jamtara</option>
+<option value="256">Khunti</option>
+<option value="257">Koderma</option>
+<option value="258">Latehar</option>
+<option value="259">Lohardaga</option>
+<option value="260">Pakur</option>
+<option value="261">Palamu</option>
+<option value="262">Ramgarh</option>
+<option value="263">Ranchi</option>
+<option value="264">Sahebganj</option>
+<option value="265">Saraikela Kharsawan</option>
+<option value="266">Simdega</option>
+<option value="267">West Singhbhum</option>
+<option value="268">Bagalkot</option>
+<option value="269">Ballari</option>
+<option value="270">Belagavi</option>
+<option value="271">Bengaluru Rural</option>
+<option value="272">Bengaluru Urban</option>
+<option value="273">Bidar</option>
+<option value="274">Chamarajanagar</option>
+<option value="275">Chikballapur</option>
+<option value="276">Chikkamagaluru</option>
+<option value="277">Chitradurga</option>
+<option value="278">Dakshin Kannad</option>
+<option value="279">Davangere</option>
+<option value="280">Dharwad</option>
+<option value="281">Gadag</option>
+<option value="282">Hassan</option>
+<option value="283">Haveri</option>
+<option value="284">Kalaburagi</option>
+<option value="285">Kodagu</option>
+<option value="286">Kolar</option>
+<option value="287">Koppal</option>
+<option value="288">Mandya</option>
+<option value="289">Mysuru</option>
+<option value="290">Raichur</option>
+<option value="291">Ramanagara</option>
+<option value="292">Shivamogga</option>
+<option value="293">Tumakuru</option>
+<option value="294">Udupi</option>
+<option value="295">Uttar Kannad</option>
+<option value="296">Vijayapura</option>
+<option value="297">Yadgir</option>
+<option value="298">Alappuzha</option>
+<option value="299">Ernakulam</option>
+<option value="300">Idukki</option>
+<option value="301">Kannur</option>
+<option value="302">Kasaragod</option>
+<option value="303">Kollam</option>
+<option value="304">Kottayam</option>
+<option value="305">Kozhikode</option>
+<option value="306">Malappuram</option>
+<option value="307">Palakkad</option>
+<option value="308">Pathanamthitta</option>
+<option value="309">Thiruvananthapuram</option>
+<option value="310">Thrissur</option>
+<option value="311">Wayanad</option>
+<option value="312">Lakshadweep District</option>
+<option value="313">Agar Malwa</option>
+<option value="314">Alirajpur</option>
+<option value="315">Anuppur</option>
+<option value="316">Ashoknagar</option>
+<option value="317">Balaghat</option>
+<option value="318">Barwani</option>
+<option value="319">Betul</option>
+<option value="320">Bhind</option>
+<option value="321">Bhopal</option>
+<option value="322">Burhanpur</option>
+<option value="323">Chhatarpur</option>
+<option value="324">Chhindwara</option>
+<option value="325">Damoh</option>
+<option value="326">Datia</option>
+<option value="327">Dewas</option>
+<option value="328">Dhar</option>
+<option value="329">Dindori</option>
+<option value="330">East Nimar</option>
+<option value="331">Guna</option>
+<option value="332">Gwalior</option>
+<option value="333">Harda</option>
+<option value="334">Hoshangabad</option>
+<option value="335">Indore</option>
+<option value="336">Jabalpur</option>
+<option value="337">Jhabua</option>
+<option value="338">Katni</option>
+<option value="339">Khargone</option>
+<option value="340">Mandla</option>
+<option value="341">Mandsaur</option>
+<option value="342">Morena</option>
+<option value="343">Narsinghpur</option>
+<option value="344">Neemuch</option>
+<option value="345">Niwari</option>
+<option value="346">Panna</option>
+<option value="347">Raisen</option>
+<option value="348">Rajgarh</option>
+<option value="349">Ratlam</option>
+<option value="350">Rewa</option>
+<option value="351">Sagar</option>
+<option value="352">Satna</option>
+<option value="353">Sehore</option>
+<option value="354">Seoni</option>
+<option value="355">Shahdol</option>
+<option value="356">Shajapur</option>
+<option value="357">Sheopur</option>
+<option value="358">Shivpuri</option>
+<option value="359">Sidhi</option>
+<option value="360">Singrauli</option>
+<option value="361">Tikamgarh</option>
+<option value="362">Ujjain</option>
+<option value="363">Umaria</option>
+<option value="364">Vidisha</option>
+<option value="365">Ahmednagar</option>
+<option value="366">Akola</option>
+<option value="367">Amravati</option>
+<option value="368">Aurangabad</option>
+<option value="369">Beed</option>
+<option value="370">Bhandara</option>
+<option value="371">Buldhana</option>
+<option value="372">Chandrapur</option>
+<option value="373">Dhule</option>
+<option value="374">Gadchiroli</option>
+<option value="375">Gondia</option>
+<option value="376">Hingoli</option>
+<option value="377">Jalgaon</option>
+<option value="378">Jalna</option>
+<option value="379">Kolhapur</option>
+<option value="380">Latur</option>
+<option value="381">Mumbai</option>
+<option value="382">Mumbai Suburban</option>
+<option value="383">Nagpur</option>
+<option value="384">Nanded</option>
+<option value="385">Nandurbar</option>
+<option value="386">Nashik</option>
+<option value="387">Osmanabad</option>
+<option value="388">Palghar</option>
+<option value="389">Parbhani</option>
+<option value="390">Pune</option>
+<option value="391">Raigad</option>
+<option value="392">Ratnagiri</option>
+<option value="393">Sangli</option>
+<option value="394">Satara</option>
+<option value="395">Sindhudurg</option>
+<option value="396">Solapur</option>
+<option value="397">Thane</option>
+<option value="398">Wardha</option>
+<option value="399">Washim</option>
+<option value="400">Yavatmal</option>
+<option value="401">Bishnupur</option>
+<option value="402">Chandel</option>
+<option value="403">Churachandpur</option>
+<option value="404">Imphal East</option>
+<option value="405">Imphal West</option>
+<option value="406">Jiribam</option>
+<option value="407">Kakching</option>
+<option value="408">Kamjong</option>
+<option value="409">Kangpokpi</option>
+<option value="410">Noney</option>
+<option value="411">Pherzawl</option>
+<option value="412">Senapati</option>
+<option value="413">Tamenglong</option>
+<option value="414">Tengnoupal</option>
+<option value="415">Thoubal</option>
+<option value="416">Ukhrul</option>
+<option value="417">East Garo Hills</option>
+<option value="418">East Jaintia Hills</option>
+<option value="419">East Khasi Hills</option>
+<option value="420">North Garo Hills</option>
+<option value="421">Ri Bhoi</option>
+<option value="422">South Garo Hills</option>
+<option value="423">South West Garo Hills</option>
+<option value="424">South West Khasi Hills</option>
+<option value="425">West Garo Hills</option>
+<option value="426">West Jaintia Hills</option>
+<option value="427">West Khasi Hills</option>
+<option value="428">Aizawl</option>
+<option value="429">Champhai</option>
+<option value="430">Kolasib</option>
+<option value="431">Lawngtlai</option>
+<option value="432">Lunglei</option>
+<option value="433">Mamit</option>
+<option value="434">Saiha</option>
+<option value="435">Serchhip</option>
+<option value="436">Dimapur</option>
+<option value="437">Kiphire</option>
+<option value="438">Kohima</option>
+<option value="439">Longleng</option>
+<option value="440">Mokokchung</option>
+<option value="441">Mon</option>
+<option value="442">Peren</option>
+<option value="443">Phek</option>
+<option value="444">Tuensang</option>
+<option value="445">Wokha</option>
+<option value="446">Zunheboto</option>
+<option value="447">Anugul</option>
+<option value="448">Balangir</option>
+<option value="449">Baleshwar</option>
+<option value="450">Bargarh</option>
+<option value="451">Bhadrak</option>
+<option value="452">Boudh</option>
+<option value="453">Cuttack</option>
+<option value="454">Deogarh</option>
+<option value="455">Dhenkanal</option>
+<option value="456">Gajapati</option>
+<option value="457">Ganjam</option>
+<option value="458">Jagatsinghapur</option>
+<option value="459">Jajapur</option>
+<option value="460">Jharsuguda</option>
+<option value="461">Kalahandi</option>
+<option value="462">Kandhamal</option>
+<option value="463">Kendrapara</option>
+<option value="464">Kendujhar</option>
+<option value="465">Khordha</option>
+<option value="466">Koraput</option>
+<option value="467">Malkangiri</option>
+<option value="468">Mayurbhanj</option>
+<option value="469">Nabarangpur</option>
+<option value="470">Nayagarh</option>
+<option value="471">Nuapada</option>
+<option value="472">Puri</option>
+<option value="473">Rayagada</option>
+<option value="474">Sambalpur</option>
+<option value="475">Sonepur</option>
+<option value="476">Sundargarh</option>
+<option value="477">Karaikal</option>
+<option value="478">Mahe</option>
+<option value="479">Pondicherry</option>
+<option value="480">Yanam</option>
+<option value="481">Amritsar</option>
+<option value="482">Barnala</option>
+<option value="483">Bathinda</option>
+<option value="484">Faridkot</option>
+<option value="485">Fatehgarh Sahib</option>
+<option value="486">Fazilka</option>
+<option value="487">Firozepur</option>
+<option value="488">Gurdaspur</option>
+<option value="489">Hoshiarpur</option>
+<option value="490">Jalandhar</option>
+<option value="491">Kapurthala</option>
+<option value="492">Ludhiana</option>
+<option value="493">Mansa</option>
+<option value="494">Moga</option>
+<option value="495">Pathankot</option>
+<option value="496">Patiala</option>
+<option value="497">Rupnagar</option>
+<option value="499">S.A.S Nagar</option>
+<option value="498">Sangrur</option>
+<option value="500">Shahid Bhagat Singh Nagar</option>
+<option value="501">Sri Muktsar Sahib</option>
+<option value="502">Taran Taran</option>
+<option value="503">Ajmer</option>
+<option value="504">Alwar</option>
+<option value="505">Banswara</option>
+<option value="506">Baran</option>
+<option value="507">Barmer</option>
+<option value="508">Bharatpur</option>
+<option value="509">Bhilwara</option>
+<option value="510">Bikaner</option>
+<option value="511">Bundi</option>
+<option value="512">Chittorgarh</option>
+<option value="513">Churu</option>
+<option value="514">Dausa</option>
+<option value="515">Dholpur</option>
+<option value="516">Dungarpur</option>
+<option value="517">Ganganagar</option>
+<option value="518">Hanumangarh</option>
+<option value="519">Jaipur</option>
+<option value="520">Jaisalmer</option>
+<option value="521">Jalore</option>
+<option value="522">Jhalawar</option>
+<option value="523">Jhunjhunu</option>
+<option value="524">Jodhpur</option>
+<option value="525">Karauli</option>
+<option value="526">Kota</option>
+<option value="527">Nagaur</option>
+<option value="528">Pali</option>
+<option value="529">Pratapgarh</option>
+<option value="530">Rajsamand</option>
+<option value="531">Sawai Madhopur</option>
+<option value="532">Sikar</option>
+<option value="533">Sirohi</option>
+<option value="534">Tonk</option>
+<option value="535">Udaipur</option>
+<option value="536">East District</option>
+<option value="537">North District</option>
+<option value="538">South District</option>
+<option value="539">West District</option>
+<option value="540">Ariyalur</option>
+<option value="541">Chennai</option>
+<option value="542">Coimbatore</option>
+<option value="543">Cuddalore</option>
+<option value="544">Dharmapuri</option>
+<option value="545">Dindigul</option>
+<option value="546">Erode</option>
+<option value="547">Kanchipuram</option>
+<option value="548">Kanniyakumari</option>
+<option value="549">Karur</option>
+<option value="550">Krishnagiri</option>
+<option value="551">Madurai</option>
+<option value="552">Nagapattinam</option>
+<option value="553">Namakkal</option>
+<option value="554">Perambalur</option>
+<option value="555">Pudukkottai</option>
+<option value="556">Ramanathapuram</option>
+<option value="557">Salem</option>
+<option value="558">Sivaganga</option>
+<option value="559">Thanjavur</option>
+<option value="561">The Nilgiris</option>
+<option value="560">Theni</option>
+<option value="562">Thiruvallur</option>
+<option value="563">Thiruvarur</option>
+<option value="564">Tiruchirappalli</option>
+<option value="565">Tirunelveli</option>
+<option value="566">Tiruppur</option>
+<option value="567">Tiruvannamalai</option>
+<option value="568">Tuticorin</option>
+<option value="569">Vellore</option>
+<option value="570">Villupuram</option>
+<option value="571">Virudhunagar</option>
+<option value="572">Adilabad</option>
+<option value="573">Bhadradri Kothagudem</option>
+<option value="574">Hyderabad</option>
+<option value="575">Jagitial</option>
+<option value="576">Jangoan</option>
+<option value="577">Jayashankar Bhupalapally</option>
+<option value="578">Jogulamba Gadwal</option>
+<option value="579">Kamareddy</option>
+<option value="580">Karimnagar</option>
+<option value="581">Khammam</option>
+<option value="582">Kumuram Bheem Asifabad</option>
+<option value="583">Mahabubabad</option>
+<option value="584">Mahabubnagar</option>
+<option value="585">Mancherial</option>
+<option value="586">Medak</option>
+<option value="587">Medchal Malkajgiri</option>
+<option value="588">Mulugu</option>
+<option value="589">Nagarkurnool</option>
+<option value="590">Nalgonda</option>
+<option value="591">Narayanpet</option>
+<option value="592">Nirmal</option>
+<option value="593">Nizamabad</option>
+<option value="594">Peddapalli</option>
+<option value="595">Rajanna Sircilla</option>
+<option value="596">Ranga Reddy</option>
+<option value="597">Sangareddy</option>
+<option value="598">Siddipet</option>
+<option value="599">Suryapet</option>
+<option value="600">Vikarabad</option>
+<option value="601">Wanaparthy</option>
+<option value="603">Warangal Urban</option>
+<option value="604">Yadadri Bhuvanagiri</option>
+<option value="605">Dhalai</option>
+<option value="606">Gomati</option>
+<option value="607">Khowai</option>
+<option value="608">North Tripura</option>
+<option value="609">Sepahijala</option>
+<option value="610">South Tripura</option>
+<option value="611">Unakoti</option>
+<option value="612">West Tripura</option>
+<option value="626">Agra</option>
+<option value="627">Aligarh</option>
+<option value="628">Ambedkar Nagar</option>
+<option value="629">Amethi</option>
+<option value="630">Amroha</option>
+<option value="631">Auraiya</option>
+<option value="632">Azamgarh</option>
+<option value="633">Baghpat</option>
+<option value="634">Bahraich</option>
+<option value="635">Ballia</option>
+<option value="636">Balrampur</option>
+<option value="637">Banda</option>
+<option value="638">Barabanki</option>
+<option value="639">Bareilly</option>
+<option value="640">Basti</option>
+<option value="641">Bhadohi</option>
+<option value="642">Bijnor</option>
+<option value="643">Budaun</option>
+<option value="644">Bulandshahr</option>
+<option value="645">Chandauli</option>
+<option value="646">Chitrakoot</option>
+<option value="647">Deoria</option>
+<option value="648">Etah</option>
+<option value="649">Etawah</option>
+<option value="650">Faizabad</option>
+<option value="651">Farrukhabad</option>
+<option value="652">Fatehpur</option>
+<option value="653">Firozabad</option>
+<option value="654">Gautam Buddha Nagar</option>
+<option value="655">Ghaziabad</option>
+<option value="656">Ghazipur</option>
+<option value="657">Gonda</option>
+<option value="658">Gorakhpur</option>
+<option value="659">Hamirpur</option>
+<option value="660">Hapur</option>
+<option value="661">Hardoi</option>
+<option value="662">Hathras</option>
+<option value="663">Jalaun</option>
+<option value="664">Jaunpur</option>
+<option value="665">Jhansi</option>
+<option value="666">Kannauj</option>
+<option value="667">Kanpur Dehat</option>
+<option value="668">Kanpur Nagar</option>
+<option value="669">Kasganj</option>
+<option value="670">Kaushambi</option>
+<option value="671">Kheri</option>
+<option value="672">Kushi Nagar</option>
+<option value="673">Lalitpur</option>
+<option value="674">Lucknow</option>
+<option value="675">Maharajganj</option>
+<option value="676">Mahoba</option>
+<option value="677">Mainpuri</option>
+<option value="678">Mathura</option>
+<option value="679">Mau</option>
+<option value="680">Meerut</option>
+<option value="681">Mirzapur</option>
+<option value="682">Moradabad</option>
+<option value="683">Muzaffarnagar</option>
+<option value="684">Pilibhit</option>
+<option value="685">Pratapgarh</option>
+<option value="686">Prayagraj</option>
+<option value="687">Rae Bareli</option>
+<option value="688">Rampur</option>
+<option value="689">Saharanpur</option>
+<option value="690">Sambhal</option>
+<option value="691">Sant Kabeer Nagar</option>
+<option value="692">Shahjahanpur</option>
+<option value="693">Shamli</option>
+<option value="694">Shravasti</option>
+<option value="695">Siddharth Nagar</option>
+<option value="696">Sitapur</option>
+<option value="697">Sonbhadra</option>
+<option value="699">Sultanpur</option>
+<option value="700">Unnao</option>
+<option value="698">Varanasi</option>
+<option value="613">Almora</option>
+<option value="614">Bageshwar</option>
+<option value="615">Chamoli</option>
+<option value="616">Champawat</option>
+<option value="617">Dehradun</option>
+<option value="618">Haridwar</option>
+<option value="619">Nainital</option>
+<option value="620">Pauri Garhwal</option>
+<option value="621">Pithoragarh</option>
+<option value="622">Rudra Prayag</option>
+<option value="623">Tehri Garhwal</option>
+<option value="624">Udam Singh Nagar</option>
+<option value="625">Uttar Kashi</option>
+<option value="701">24 PARAGANAS NORTH</option>
+<option value="702">24 Paraganas South</option>
+<option value="703">Alipurduar</option>
+<option value="704">Bankura</option>
+<option value="705">Birbhum</option>
+<option value="706">Coochbehar</option>
+<option value="707">Darjeeling</option>
+<option value="708">Dinajpur Dakshin</option>
+<option value="709">Dinajpur Uttar</option>
+<option value="710">Hooghly</option>
+<option value="711">Howrah</option>
+<option value="712">Jalpaiguri</option>
+<option value="713">Jhargram</option>
+<option value="714">Kalimpong</option>
+<option value="715">Kolkata</option>
+<option value="716">Maldah</option>
+<option value="717">Medinipur East</option>
+<option value="718">Medinipur West</option>
+<option value="719">Murshidabad</option>
+<option value="720">Nadia</option>
+<option value="721">Paschim Bardhaman</option>
+<option value="722">Purba Bardhaman</option>
+<option value="723">Purulia</option>
+</select></div>
+<div class="col-md-4 col-sm-6">
+<button class="btn btn-primary filterprimary" type="submit">Filter</button>
+</div>
+</div>
+</div>
+<div class="form-group d-flex justify-content-between">
+<h2 class="panel-title mb-0"></h2>
+<div class="Searchbox m-0 d-flex align-items-center">
+<input class="form-control scope-search-box" id="scope-search-box" name="search_text" placeholder="Search by Lab Name, First Name, Last Name, Phone, Email, Address etc" type="text" value=""/>
+<button class="btn-primary btn" type="submit"><span class="fa fa-search search_lab" title="Search"></span></button>
+<a class="btn-light btn" href="/home/labs/">Reset</a>
+</div>
+</div>
+</form>
+</div>
+<div class="table-responsive">
+<table cellspacing="0" class="table table-bordered customTable" id="dataTable" width="100%">
+<thead>
+<tr>
+<th scope="col" width="40">S.No.</th>
+<th scope="col">Lab Code</th>
+<th class="text-left" scope="col" width="120">Lab Name</th>
+<th scope="col">Address</th>
+<th scope="col">Contact Person</th>
+<th scope="col">Contact Number</th>
+<th scope="col">Email</th>
+<th scope="col">Validity Date</th>
+<th scope="col">View Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr id="tr_15">
+<td>1</td>
+<td>8102006</td>
+<td class="text-left fw-500">
+<img alt="SIIR, Delhi Shriram Institute For Industrial Research" class="img-profile rounded-circle" src="/media/profile/dummylogo_I03KO28.png" style="max-width: 30%;"/>
+                    SIIR, Delhi Shriram Institute For Industrial Research                      
+                  </td>
+<td>
+                    19-University Road, Delhi 110007,
+ Delhi, 
+ North, 
+ Delhi, 
+ India -  110007
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      +91 011 35200445
+                    
+                  </td>
+<td>laxmirawat@shriraminstitute.org</td>
+<td>31 Dec, 2026</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/15/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_16">
+<td>2</td>
+<td>8138306</td>
+<td class="text-left fw-500">
+<img alt="Testtex India Laboratories Private Limited, Noida" class="img-profile rounded-circle" src="/media/profile/foo_131_061eink.jpeg" style="max-width: 30%;"/>
+                    Testtex India Laboratories Private Limited, Noida                      
+                  </td>
+<td>
+                    C - 57, Sector - 65,
+ Noida, 
+ Gautam Buddha Nagar, 
+ Uttar Pradesh, 
+ India -  201301
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      +91 7303 919463
+                    
+                  </td>
+<td>labsindianoida@testtex.com</td>
+<td>31 Dec, 2029</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/16/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_18">
+<td>3</td>
+<td>6126316</td>
+<td class="text-left fw-500">
+<img alt="Intertek India Private Limited (Food Services), Hyderabad" class="img-profile rounded-circle" src="/media/profile/foo_133_CV83CiY.jpeg" style="max-width: 30%;"/>
+                    Intertek India Private Limited (Food Services), Hyderabad                      
+                  </td>
+<td>
+                    Plot No D-53, IDA, Phase-1, Jeedimetla,Qutubullapur Mandal,
+ hyderabad, 
+ Medchal Malkajgiri, 
+ Telangana, 
+ India -  500055
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                    9912463921
+                    
+                  </td>
+<td>gandla.krishnaiah@intertek.com</td>
+<td>18 Mar, 2028</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/18/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_19">
+<td>4</td>
+<td>8125636</td>
+<td class="text-left fw-500">
+<img alt="Kailtech Test and Research Centre Pvt. Ltd., Indore" class="img-profile rounded-circle" src="/media/profile/foo_134_yuXrnlB.jpeg" style="max-width: 30%;"/>
+                    Kailtech Test and Research Centre Pvt. Ltd., Indore                      
+                  </td>
+<td>
+                    141C, Electronic Complex Industrial Area,
+ Indore, 
+ Indore, 
+ Madhya Pradesh, 
+ India -  452010
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      -
+                    
+                  </td>
+<td>contact@kailtech.net</td>
+<td>18 Dec, 2027</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/19/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_48">
+<td>5</td>
+<td>6130526</td>
+<td class="text-left fw-500">
+<img alt="REACT COMPLIANCE AND TESTING LABORATORIES LLP, BENGALURU" class="img-profile rounded-circle" src="/media/profile/foo_414_dUMOqh3.jpeg" style="max-width: 30%;"/>
+                    REACT COMPLIANCE AND TESTING LABORATORIES LLP, BENGALURU                      
+                  </td>
+<td>
+                    #3411, 3rd floor, Service Road, Vijayanagar,
+ BENGALURU, 
+ Bengaluru Urban, 
+ Karnataka, 
+ India -  560040
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      +91 9845716746
+                    
+                  </td>
+<td>info@react-labs.com</td>
+<td>10 Mar, 2027</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/48/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_49">
+<td>6</td>
+<td>6133516</td>
+<td class="text-left fw-500">
+<img alt="CVR LABS PRIVATE LIMITED, CHENNAI" class="img-profile rounded-circle" src="/media/profile/foo_415_iuCrY88.jpeg" style="max-width: 30%;"/>
+                    CVR LABS PRIVATE LIMITED, CHENNAI                      
+                  </td>
+<td>
+                    Dignity Centre, II Floor No 21 Abdulrazack Street, Saidapet,
+ Chennai, 
+ Chennai, 
+ Tamil Nadu, 
+ India -  600015
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      +91 9500121387
+                    
+                  </td>
+<td>bala@cvrlabs.com</td>
+<td>05 Apr, 2028</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/49/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_51">
+<td>7</td>
+<td>9139736</td>
+<td class="text-left fw-500">
+<img alt="Sleen India Biz venture Private Limited, Agra" class="img-profile rounded-circle" src="/media/profile/foo_417_sEjudsU.jpeg" style="max-width: 30%;"/>
+                    Sleen India Biz venture Private Limited, Agra                      
+                  </td>
+<td>
+                    RAHANKALAN ROAD, PART 295, BLOCK-A KUBERPUR, 300 METER FROM RAILWAY CROSSING CHALESHAR ROAD,  Agra, Uttar Pradesh,  India, 282006,
+ Agra, 
+ Agra, 
+ Uttar Pradesh, 
+ India -  282006
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      +91 8193022228
+                    
+                  </td>
+<td>sleen.info@gmail.com</td>
+<td>-</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/51/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_53">
+<td>8</td>
+<td>7139526</td>
+<td class="text-left fw-500">
+<img alt="SUNREN TELECOM LABORATORY, NAVI MUMBAI" class="img-profile rounded-circle" src="/media/profile/dummylogo_KRBGk2U.png" style="max-width: 30%;"/>
+                    SUNREN TELECOM LABORATORY, NAVI MUMBAI                      
+                  </td>
+<td>
+                    C-475, MIDC Pavane, Navi Mumbai,
+ Navi Mumbai, 
+ Thane, 
+ Maharashtra, 
+ India -  400705
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      +91 22 24055281
+                    
+                  </td>
+<td>sunil@sunren.net</td>
+<td>15 Mar, 2027</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/53/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_54">
+<td>9</td>
+<td>8163826</td>
+<td class="text-left fw-500">
+<img alt="SWASTIK ELECTRONICS TESTING CENTRE (OPC) PVT. LTD., GHAZIABAD" class="img-profile rounded-circle" src="/media/profile/foo_420_ki7Diyi.jpeg" style="max-width: 30%;"/>
+                    SWASTIK ELECTRONICS TESTING CENTRE (OPC) PVT. LTD., GHAZIABAD                      
+                  </td>
+<td>
+                    Plot No-16, Mainapur Industrial Area, Ghaziabad, Uttar Pradesh 201003,
+ Ghaziabad, 
+ Ghaziabad, 
+ Uttar Pradesh, 
+ India -  201003
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                    9311299492
+                    
+                  </td>
+<td>head@swastiktestingcentre.com</td>
+<td>15 May, 2028</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/54/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_55">
+<td>10</td>
+<td>9136024</td>
+<td class="text-left fw-500">
+<img alt="National Research and Technology Consortium (NRTC), Parwanoo" class="img-profile rounded-circle" src="/media/profile/dummylogo_XdjRyar.png" style="max-width: 30%;"/>
+                    National Research and Technology Consortium (NRTC), Parwanoo                      
+                  </td>
+<td>
+                    HPCED Building, Department of industries complex, Sector-1,
+ Parwanoo, 
+ Solan, 
+ Himachal Pradesh, 
+ India -  173220
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      +91 1792 234107
+                    
+                  </td>
+<td>nrtcpwn@gmail.com</td>
+<td>10 Apr, 2029</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/55/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_58">
+<td>11</td>
+<td>8125006</td>
+<td class="text-left fw-500">
+<img alt="Ghaziabad Testing Laboratories Pvt Ltd, Ghaziabad" class="img-profile rounded-circle" src="/media/profile/dummylogo_PolNbD7.png" style="max-width: 30%;"/>
+                    Ghaziabad Testing Laboratories Pvt Ltd, Ghaziabad                      
+                  </td>
+<td>
+                    AO 150 Amrit Steel Compound South Side GT Road Industrial Area Ghaziabad (UP),
+ Ghaziabad (UP), 
+ Ghaziabad, 
+ Uttar Pradesh, 
+ India -  201001
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      +91 9891067223
+                    
+                  </td>
+<td>gtaslab@yahoo.com</td>
+<td>30 Sep, 2027</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/58/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_59">
+<td>12</td>
+<td>8112814</td>
+<td class="text-left fw-500">
+<img alt="FOOTWEAR DESIGN AND DEVELOPMENT INSTITUTE (FDDI), NOIDA" class="img-profile rounded-circle" src="/media/profile/dummylogo_RSFu9ZI.png" style="max-width: 30%;"/>
+                    FOOTWEAR DESIGN AND DEVELOPMENT INSTITUTE (FDDI), NOIDA                      
+                  </td>
+<td>
+                    A-10/A GAUTAM BUDDTH NAGAR SECTOR 24 NOIDA,
+ NOIDA, 
+ Gautam Buddha Nagar, 
+ Uttar Pradesh, 
+ India -  201301
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                    9718303177
+                    
+                  </td>
+<td>rajeshmishra@fddiindia.com</td>
+<td>31 May, 2028</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/59/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_60">
+<td>13</td>
+<td>7136414</td>
+<td class="text-left fw-500">
+<img alt="NDDB CALF LIMITED, ANAND" class="img-profile rounded-circle" src="/media/profile/foo_427_S5ER3ZV.jpeg" style="max-width: 30%;"/>
+                    NDDB CALF LIMITED, ANAND                      
+                  </td>
+<td>
+                    Anand, Gujarat,
+ Anand, 
+ Anand, 
+ Gujarat, 
+ India -  388001
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                    9726425080
+                    
+                  </td>
+<td>prohith@nddbcalf.com</td>
+<td>31 Dec, 2029</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/60/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_61">
+<td>14</td>
+<td>8135716</td>
+<td class="text-left fw-500">
+<img alt="FARE Labs Pvt. Ltd., Gurugram" class="img-profile rounded-circle" src="/media/profile/foo_428_BRITVAW.jpeg" style="max-width: 30%;"/>
+                    FARE Labs Pvt. Ltd., Gurugram                      
+                  </td>
+<td>
+                    L-17/3, DLF PHASE-II, IFFCO CHOWK, M.G.ROAD,
+ GURUGRAM, 
+ Gurugram, 
+ Haryana, 
+ India -  122002
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      +91 9289351688
+                    
+                  </td>
+<td>farelabs@farelabs.com</td>
+<td>09 Mar, 2029</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/61/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_62">
+<td>15</td>
+<td>8138426</td>
+<td class="text-left fw-500">
+<img alt="Nemko India (Test Lab) Pvt. Ltd., Faridabad" class="img-profile rounded-circle" src="/media/profile/foo_429_D4OGLRY.jpeg" style="max-width: 30%;"/>
+                    Nemko India (Test Lab) Pvt. Ltd., Faridabad                      
+                  </td>
+<td>
+                    Plot No 193, Sector 68, IMT Faridabad,
+ Faridabad, 
+ Faridabad, 
+ Haryana, 
+ India -  121004
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      +91 9810629447
+                    
+                  </td>
+<td>satish.sankhyan@nemko.com</td>
+<td>31 Dec, 2029</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/62/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_63">
+<td>16</td>
+<td>9135004</td>
+<td class="text-left fw-500">
+<img alt="National Institute of secondary steel technology" class="img-profile rounded-circle" src="/media/profile/foo_430_xdWsAE1.jpeg" style="max-width: 30%;"/>
+                    National Institute of secondary steel technology                      
+                  </td>
+<td>
+                    Post Box No. 92, GT Road, Sirhind Side, Opposite Floating restaurant,
+ MANDI GOBINDGARH, 
+ Fatehgarh Sahib, 
+ Punjab, 
+ India -  147301
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      +91 9815904568
+                    
+                  </td>
+<td>info@nisst.org</td>
+<td>24 Oct, 2028</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/63/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_64">
+<td>17</td>
+<td>9134536</td>
+<td class="text-left fw-500">
+<img alt="Unique Test House LLP" class="img-profile rounded-circle" src="/media/profile/foo_431_ElFYyfL.jpeg" style="max-width: 30%;"/>
+                    Unique Test House LLP                      
+                  </td>
+<td>
+                    VILLAGE:-SARSINI, PO:-LALRU,
+ MOHALI, 
+ S.A.S Nagar, 
+ Punjab, 
+ India -  140501
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      +91 9896169971
+                    
+                  </td>
+<td>-</td>
+<td>07 Sep, 2028</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/64/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_65">
+<td>18</td>
+<td>9126034</td>
+<td class="text-left fw-500">
+<img alt="Institute for Auto Parts and Hand Tools Technology, Ludhiana" class="img-profile rounded-circle" src="/media/profile/foo_433_ANkW0CO.jpeg" style="max-width: 30%;"/>
+                    Institute for Auto Parts and Hand Tools Technology, Ludhiana                      
+                  </td>
+<td>
+                    A-9, Phase-V, Focal Point, Ludhiana,
+ Ludhiana, 
+ Ludhiana, 
+ Punjab, 
+ India -  141010
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                    8427262400
+                    
+                  </td>
+<td>iatldh@iapht.org</td>
+<td>17 Feb, 2028</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/65/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_67">
+<td>19</td>
+<td>8166106</td>
+<td class="text-left fw-500">
+<img alt="Cotecna Inspection India Private Limited, Gurugram" class="img-profile rounded-circle" src="/media/profile/foo_435_rmcng8l.jpeg" style="max-width: 30%;"/>
+                    Cotecna Inspection India Private Limited, Gurugram                      
+                  </td>
+<td>
+                    Plot No-306, Udyog Vihar, Phase-2, Gurugram, Haryana,
+ Gurugram, 
+ Gurugram, 
+ Haryana, 
+ India -  122016
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                    9560271290
+                    
+                  </td>
+<td>jitender.dagar@cotecna.co.in</td>
+<td>-</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/67/">View Scope</a>
+</td>
+</tr>
+<tr id="tr_69">
+<td>20</td>
+<td>5123116</td>
+<td class="text-left fw-500">
+<img alt="Modern Test Center, Berhampur" class="img-profile rounded-circle" src="/media/profile/foo_437_1l7xQzU.jpeg" style="max-width: 30%;"/>
+                    Modern Test Center, Berhampur                      
+                  </td>
+<td>
+                    3rd lane Neelanchal Nagar,
+ Berhampur, 
+ Ganjam, 
+ Odisha, 
+ India -  760010
+                  </td>
+<td>[contact person not stored]</td>
+<td>
+                    
+                      9437358552 7848843034
+                    
+                  </td>
+<td>moderntestcenter@gmail.com</td>
+<td>31 May, 2029</td>
+<td>
+<a class="btn btn-primary btn-sm" href="/home_lab_scope/69/">View Scope</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul class="pagination pagination-sm justify-content-end">
+<li><a class="btn btn-outline-success active" href="?page=1">1</a> </li>
+<li><a class="btn btn-outline-success" href="?page=2">2</a> </li>
+<li><a class="btn btn-outline-success" href="?page=3">3</a> </li>
+<li><a class="btn btn-outline-primary" href="?page=2">Next</a> </li>
+<li><a class="btn btn-outline-primary" href="?page=22">Last</a> </li>
+</ul>
+</div>
+<!-- /.container-fluid -->
+</div>
+<!-- End of Main Content -->
+</div>
+<!-- End of Content Wrapper -->
+</div>
+<!----Footer Start Here---->
+<div id="footerlive">
+<div class="container-fluid">
+<div class="row align-items-center">
+<div class="col-md-4">
+<div class="copy_right">
+<p> Designed, Developed and Maintained by: </p>
+<p><a href="https://www.arohatech.com/" target="_blank"><img src="/static/image/logo-atech.png"/>
+<span class="arohatechName">Arohatech IT Services (P) Ltd.</span>
+</a>
+</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="copy_right">
+<p class="text-md-center">Contact for any query/support:  <a class="text-white" href="mailto:supportlims@bis.gov.in">supportlims@bis.gov.in</a></p>
+</div>
+</div>
+<div class="col-md-4 text-md-right">
+<img class="w-150" src="/static/image/footerlogos.png"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Bootstrap core JS -->
+<!--script src="/static/js/bootstrap.js" type="text/javascript"></script-->
+<!-- <script type="text/javascript" language="javascript" src="{ static 'js/jquery-latest.js' %}"></script> -->
+</body></html>

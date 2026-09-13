@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Segoe UI", "Noto Sans Devanagari", "Nirmala UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+
+  --color-ink-950: #0b1033;
+  --color-ink-900: #121a4a;
+  --color-ink-800: #1e2a78;
+  --color-ink-700: #2d3a93;
+  --color-ink-600: #3f4fb0;
+  --color-ink-100: #e6e9f8;
+  --color-ink-50: #f3f5fc;
+
+  --color-saffron-600: #d97706;
+  --color-saffron-500: #f59e0b;
+  --color-saffron-100: #fef3c7;
+  --color-saffron-50: #fffbeb;
+
+  --color-paper: #f7f7f4;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-paper text-slate-800 antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-saffron-500;
+  }
+}
+
+@layer components {
+  .id-token {
+    @apply font-mono text-[0.85em] tracking-tight whitespace-nowrap;
+  }
+  .prose-answer p + p {
+    @apply mt-2;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+}

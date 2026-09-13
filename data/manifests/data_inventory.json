@@ -1,0 +1,1623 @@
+{
+  "generated_by": "manakmarg.ingest.inventory",
+  "data_dir": "data",
+  "workbook_count": 20,
+  "workbooks": [
+    {
+      "file": "1.xlsx",
+      "bytes": 1524646,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 24016,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 24014,
+          "title_cell": "Total",
+          "generated_on": "2026-09-12T20:17:00+05:30",
+          "classification": "total_export",
+          "domain": "Indian Standards metadata",
+          "description": "Full list of published Indian Standards exported from the BIS Standards portal (title cell 'Total').",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Master list; every other export is compared with it by canonical designation key.",
+          "data_quality_issues": {
+            "null_publish_dates": 386,
+            "type_unspecified": 107,
+            "equivalence_unspecified": 507,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 81
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_export_total",
+          "authority_level": "official_primary",
+          "notes": "No Department or Group column: classification is not derivable from this file.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 19763:2026",
+              "date_of_publish": "04 Aug 2026",
+              "title": "Textile floor coverings - Aircraft Woven Carpet - Specification",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 19822:2026",
+              "date_of_publish": "04 Aug 2026",
+              "title": "FIBRE ROPES — ELECTROSTATIC SURFACE POTENTIAL MEASURING METHOD",
+              "type_of_standard": "Methods of Tests",
+              "degree_of_equivalence": "Identical under dual numbering"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 19783:2026",
+              "date_of_publish": "04 Aug 2026",
+              "title": "Textiles — 100 Percent Nylon Woven Fabric — Specifications",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "2.xlsx",
+      "bytes": 1514143,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 23885,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 23883,
+          "title_cell": null,
+          "generated_on": "2026-09-12T20:32:00+05:30",
+          "classification": "untitled_export",
+          "domain": "Indian Standards metadata",
+          "description": "Second full export of published Indian Standards with an empty title cell; repeated rows point to a view with multi-membership such as Group-wise.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 39,
+            "sample_repeated": [
+              "IS 10172:2023",
+              "IS 13706 (Part 2):2016",
+              "IS 14439 (Part 4):2025",
+              "IS 15627:2022",
+              "IS 16150 (Part 4):2023"
+            ],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Overlaps the master list almost entirely; contributes designations absent from it and the 'present in second export' flag.",
+          "data_quality_issues": {
+            "null_publish_dates": 378,
+            "type_unspecified": 1,
+            "equivalence_unspecified": 459,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 71
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_export_second",
+          "authority_level": "official_primary",
+          "notes": "The export does not name its view; the Group-wise interpretation is an inference from its row pattern.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 19763:2026",
+              "date_of_publish": "04 Aug 2026",
+              "title": "Textile floor coverings - Aircraft Woven Carpet - Specification",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 19822:2026",
+              "date_of_publish": "04 Aug 2026",
+              "title": "FIBRE ROPES — ELECTROSTATIC SURFACE POTENTIAL MEASURING METHOD",
+              "type_of_standard": "Methods of Tests",
+              "degree_of_equivalence": "Identical under dual numbering"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 19783:2026",
+              "date_of_publish": "04 Aug 2026",
+              "title": "Textiles — 100 Percent Nylon Woven Fabric — Specifications",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203455.xlsx",
+      "bytes": 19990,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 76,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 74,
+          "title_cell": "Department of Atomic Energy",
+          "generated_on": "2026-09-12T20:34:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 1,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 0
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 19749:2026",
+              "date_of_publish": "15 May 2026",
+              "title": "Probabilistic Risk Assessment of Nuclear Power Plants - Guidelines",
+              "type_of_standard": "Code of Practice",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 18066 (Part 4):2026",
+              "date_of_publish": "20 Mar 2026",
+              "title": "Measurement of Radioactivity in the Environment - Air Radon-222 Part 4 Integrated Measurement Method for Determining Average Activity Concentration Using Passive Sampling and Delayed Analysis",
+              "type_of_standard": "Methods of Tests",
+              "degree_of_equivalence": "Identical under dual numbering"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 18066 (Part 6):2026",
+              "date_of_publish": "20 Mar 2026",
+              "title": "Measurement of Radioactivity in the Environment - Air Radon-222 Part 6 Spot Measurement Methods of the Activity Concentration",
+              "type_of_standard": "Methods of Tests",
+              "degree_of_equivalence": "Identical under dual numbering"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203532.xlsx",
+      "bytes": 36633,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 378,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 376,
+          "title_cell": "Ministry of Agriculture",
+          "generated_on": "2026-09-12T20:35:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 0,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 1
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 12410:2026",
+              "date_of_publish": "02 Jun 2026",
+              "title": "Soil Reclamation - Terminology (first revision)",
+              "type_of_standard": "Terminology",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 20201:2026",
+              "date_of_publish": "29 May 2026",
+              "title": "Community Seed Bank Management System - Requirements",
+              "type_of_standard": "System Standard",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 11041:2025",
+              "date_of_publish": "29 Dec 2025",
+              "title": "Air-Screen Seed/Grain Cleaner — Specification and Test Code (First Revision)",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203537.xlsx",
+      "bytes": 57605,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 742,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 740,
+          "title_cell": "Ministry of Agriculture - Department of Agriculture and Farmer Welfare",
+          "generated_on": "2026-09-12T20:35:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 0,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 1,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 2
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 17425:2026",
+              "date_of_publish": "21 Jul 2026",
+              "title": "Irrigation Equipment - Quick Coupled Polyethylene Pipes and Fittings for Sprinkler Irrigation Systems - Specification (First Revision)",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 8122 (Part 2):2026",
+              "date_of_publish": "21 Jul 2026",
+              "title": "Combine Harvester — Part 2 Test Code (Second Revision)",
+              "type_of_standard": "Methods of Tests",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 8122 (Part 1):2026",
+              "date_of_publish": "21 Jul 2026",
+              "title": "Combine Harvester - Part 1 Terminology (Second Revision)",
+              "type_of_standard": "Terminology",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203542.xlsx",
+      "bytes": 35367,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 328,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 326,
+          "title_cell": "Ministry of Animal Husbandry, Dairying And Fisheries",
+          "generated_on": "2026-09-12T20:35:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 1,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 0
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 19397:2025",
+              "date_of_publish": "15 Dec 2025",
+              "title": "Compounded Feed for Pregnant Cows and Buffaloes — Specification",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS/IEC 80000-6:2022",
+              "date_of_publish": "18 May 2023",
+              "title": "Quantities and Units Part 6 Electromagnetism",
+              "type_of_standard": "Terminology",
+              "degree_of_equivalence": "Identical under single numbering"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS/ISO 80000-9:2019",
+              "date_of_publish": "18 May 2023",
+              "title": "Quantities and units Part 9: Physical chemistry and molecular physics",
+              "type_of_standard": "Others",
+              "degree_of_equivalence": "Identical under single numbering"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203547.xlsx",
+      "bytes": 14882,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 15,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 13,
+          "title_cell": "Ministry of Animal Husbandry, Dairying And Fisheries - Department of Animal Husbandry and Dairying",
+          "generated_on": "2026-09-12T20:35:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 0,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 0
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 3916:2026",
+              "date_of_publish": "30 Mar 2026",
+              "title": "Pig housing — Code of Practice (First Revision)",
+              "type_of_standard": "Code of Practice",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 9863:2026",
+              "date_of_publish": "25 Mar 2026",
+              "title": "Nutrient Requirements for Poultry ( Second Revision )",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 19532:2026",
+              "date_of_publish": "12 Mar 2026",
+              "title": "Dried Distillers Grain with Solubles (DDGS) as Livestock Feed Ingredient — Specification",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203605.xlsx",
+      "bytes": 14680,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 11,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 9,
+          "title_cell": "Ministry of Animal Husbandry, Dairying And Fisheries - Department of Fisheries",
+          "generated_on": "2026-09-12T20:36:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 0,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 0
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 19784:2026",
+              "date_of_publish": "30 Mar 2026",
+              "title": "Fish Cage Net Structures Used in Aquaculture — Glossary of Terms",
+              "type_of_standard": "Terminology",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 15789:2026",
+              "date_of_publish": "16 Jan 2026",
+              "title": "Fishing Nets — Method of Test for Determination of Mesh Size — Length of Mesh (First Revision)",
+              "type_of_standard": "Methods of Tests",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 9532:2023",
+              "date_of_publish": "28 Feb 2023",
+              "title": "Chakka and Shrikhand — Specification ( First Revision )",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203620.xlsx",
+      "bytes": 31713,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 238,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 236,
+          "title_cell": "Ministry of AYUSH",
+          "generated_on": "2026-09-12T20:36:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 1,
+            "sample_repeated": [
+              "IS 19055:2025"
+            ],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 1,
+            "type_unspecified": 1,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 1
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 19901:2026",
+              "date_of_publish": "03 Aug 2026",
+              "title": "Safe Handling of Biotherapeutic Products Used in Homoeopathy — Guidelines",
+              "type_of_standard": "Code of Practice",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 19897:2026",
+              "date_of_publish": "03 Aug 2026",
+              "title": "Homoeopathic Mother Tinctures (Hydro-Alcoholic Extracts) — Test Methods",
+              "type_of_standard": "Methods of Tests",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 19900:2026",
+              "date_of_publish": "03 Aug 2026",
+              "title": "Echinacea Angustifolia DC. Whole Plant for Use in Traditional Medicine — Specification",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203626.xlsx",
+      "bytes": 49928,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 646,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 644,
+          "title_cell": "Ministry of Chemicals and Fertilizers",
+          "generated_on": "2026-09-12T20:36:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 16,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 0
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 19276:2025",
+              "date_of_publish": "20 Nov 2025",
+              "title": "COUMARIN - SPECIFICATION",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 15963 (Part 8):2022",
+              "date_of_publish": "31 Oct 2022",
+              "title": "Graphic technology -- Process control for the production of half-tone colour separations proof and production prints -- Part 8: Validation print processes working directly from digital data",
+              "type_of_standard": "Others",
+              "degree_of_equivalence": "Identical under dual numbering"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 17261:2022",
+              "date_of_publish": "30 Apr 2022",
+              "title": "Textiles - Polyester continuous filament fully drawn yarns - Specification (first revision)",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203651.xlsx",
+      "bytes": 64517,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 845,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 843,
+          "title_cell": "Ministry of Chemicals and Fertilizers - Department of Chemicals and Petrochemicals (DCPC)",
+          "generated_on": "2026-09-12T20:36:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 15,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 1
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 5647:2026",
+              "date_of_publish": "03 Aug 2026",
+              "title": "p-TOLUIDINE SPECIFICATION",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 5649:2026",
+              "date_of_publish": "03 Aug 2026",
+              "title": "o-Toluidine",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 6156:2026",
+              "date_of_publish": "03 Aug 2026",
+              "title": "Chlorosulphonic Acid — Code of Safety (First Revision)",
+              "type_of_standard": "Code of Practice",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203731.xlsx",
+      "bytes": 14216,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 5,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 3,
+          "title_cell": "Ministry of Chemicals and Fertilizers - Department of Fertilizers (FERT)",
+          "generated_on": "2026-09-12T20:37:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 0,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 0
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 1420:2026",
+              "date_of_publish": "02 Jun 2026",
+              "title": "Light basic magnesium carbonate - Specification (Third Revision)",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 10125:2026",
+              "date_of_publish": "29 May 2026",
+              "title": "Copper Carbonate -- Specification (First Revision)",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 12292:2026",
+              "date_of_publish": "29 May 2026",
+              "title": "lead suboxide (Lead Oxide) for lead - Acid storage battery - Specification (First Revision)",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203736.xlsx",
+      "bytes": 14202,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 4,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 2,
+          "title_cell": "Ministry of Chemicals and Fertilizers - Department of Pharmaceuticals",
+          "generated_on": "2026-09-12T20:37:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 0,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 0
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 15732 (Part 1):2026",
+              "date_of_publish": "03 Aug 2026",
+              "title": "Endoscopes - Medical Endoscopes and Endotherapy Devices Part 1 General Requirements (Second Revision)",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Identical under dual numbering"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 15732 (Part 4):2026",
+              "date_of_publish": "03 Aug 2026",
+              "title": "Endoscopes - Medical endoscopes and endotherapy devices Part 4 Determination of maximum width of insertion portion (Second Revision)",
+              "type_of_standard": "Methods of Tests",
+              "degree_of_equivalence": "Identical under dual numbering"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203741.xlsx",
+      "bytes": 24599,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 139,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 137,
+          "title_cell": "Ministry of Civil Aviation",
+          "generated_on": "2026-09-12T20:37:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 3,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 0
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 19775:2026",
+              "date_of_publish": "26 May 2026",
+              "title": "Aircraft batteries Part 1 general test requirements and performance levels",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Identical under dual numbering"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 6742:2026",
+              "date_of_publish": "04 Feb 2026",
+              "title": "AIRCRAFT — JACKING PADS",
+              "type_of_standard": "Dimensions",
+              "degree_of_equivalence": "Identical under dual numbering"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS/ISO/IEC 30118 (Part 12):2021",
+              "date_of_publish": "15 Jun 2023",
+              "title": "Information technology Open Connectivity Foundation OCF Specification Part 12: Cloud security specification",
+              "type_of_standard": "System Standard",
+              "degree_of_equivalence": "Identical under single numbering"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203745.xlsx",
+      "bytes": 18236,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 56,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 54,
+          "title_cell": "Ministry of Coal",
+          "generated_on": "2026-09-12T20:37:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 1,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 0
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 13618:2026",
+              "date_of_publish": "04 Aug 2026",
+              "title": "Mine Haulages - Direct Rope (50 kW to 150 kW) - General Requirements",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS/ISO 11315 (Part 1):1997",
+              "date_of_publish": "24 Feb 2023",
+              "title": "Photography Projection in indoor rooms Part 1: Screen illumination test for still projectors",
+              "type_of_standard": "Methods of Tests",
+              "degree_of_equivalence": "Identical under single numbering"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 1055:2023",
+              "date_of_publish": "09 Feb 2023",
+              "title": "Nicotine sulfate solution- Specification Second Revision",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203800.xlsx",
+      "bytes": 74617,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 968,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 966,
+          "title_cell": "Ministry of Commerce and Industry",
+          "generated_on": "2026-09-12T20:37:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 7,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 10,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 2
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 19787:2026",
+              "date_of_publish": "14 May 2026",
+              "title": "Tea bags - Specification",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 19773:2026",
+              "date_of_publish": "30 Mar 2026",
+              "title": "High chrome grinding media ball for cement mills - Specification",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 19537:2026",
+              "date_of_publish": "05 Mar 2026",
+              "title": "Hydraulic Torque Wrench — Specification",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203807.xlsx",
+      "bytes": 132744,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 1937,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 1935,
+          "title_cell": "Ministry of Commerce and Industry - Department for Promotion of Industry and Internal Trade (DPIIT)",
+          "generated_on": "2026-09-12T20:38:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 2,
+            "sample_repeated": [
+              "IS 2925:1984",
+              "IS 4553:1983"
+            ],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 32,
+            "type_unspecified": 3,
+            "equivalence_unspecified": 2,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 7
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 8324:2026",
+              "date_of_publish": "04 Aug 2026",
+              "title": "Safe Use and Maintenance on Non Calibrated Round Steel Link Lifting Chains and Chain Slings Code of Practice (Second Revision)",
+              "type_of_standard": "Code of Practice",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 13872:2026",
+              "date_of_publish": "04 Aug 2026",
+              "title": "HOUSEHOLD SEWING MACHINE - STITCH REGULATORS - SPECIFICATION ( First Revision )",
+              "type_of_standard": "Process Specification",
+              "degree_of_equivalence": "Indigenous"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 9874:2026",
+              "date_of_publish": "04 Aug 2026",
+              "title": "Arm and Bed Assembly for Sewing Machines for Household Purposes — Specification ( First Revision )",
+              "type_of_standard": "Product Specification",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203832.xlsx",
+      "bytes": 15200,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 16,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 14,
+          "title_cell": "Ministry of Commerce and Industry - Department of Commerce",
+          "generated_on": "2026-09-12T20:38:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 0,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 0
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 19826:2026",
+              "date_of_publish": "26 May 2026",
+              "title": "Service excellence — Maturity model",
+              "type_of_standard": "Service Specification",
+              "degree_of_equivalence": "Identical under dual numbering"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS 19828:2026",
+              "date_of_publish": "26 May 2026",
+              "title": "Service excellence — Measuring service excellence performance",
+              "type_of_standard": "Service Specification",
+              "degree_of_equivalence": "Identical under dual numbering"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS 19827:2026",
+              "date_of_publish": "26 May 2026",
+              "title": "Service excellence — Implementation approach for ISO 23592",
+              "type_of_standard": "Service Specification",
+              "degree_of_equivalence": "Identical under dual numbering"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203854.xlsx",
+      "bytes": 14018,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 3,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 1,
+          "title_cell": "Ministry of Communications",
+          "generated_on": "2026-09-12T20:38:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 0,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 0
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS 10454:1983",
+              "date_of_publish": "31 Jan 1984",
+              "title": "Guidelines for presentation of translations",
+              "type_of_standard": "Others",
+              "degree_of_equivalence": "Indigenous"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "File_Published_Standards_List_2026-09-12_203859.xlsx",
+      "bytes": 25552,
+      "sheets": [
+        {
+          "sheet": "Published Standards",
+          "state": "visible",
+          "max_row": 158,
+          "max_column": 26,
+          "header_row": 2,
+          "headers": [
+            "Sl#",
+            "Standard Number",
+            "Date of Publish",
+            "Title",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "column_count": 6,
+          "row_count": 156,
+          "title_cell": "Ministry of Communications - Department of Telecommunications (DOT)",
+          "generated_on": "2026-09-12T20:38:00+05:30",
+          "classification": "ministry_node",
+          "domain": "Indian Standards metadata — ministry classification",
+          "description": "Published standards classified under one ministry or ministry-department node named in the title cell.",
+          "important_columns": [
+            "Standard Number",
+            "Title",
+            "Date of Publish",
+            "Type of Standard",
+            "Degree of Equivalence"
+          ],
+          "candidate_key": "Standard Number, normalised to std_key (prefix + number + part/section + suffix + year)",
+          "duplicate_characteristics": {
+            "repeated_designations": 0,
+            "sample_repeated": [],
+            "raw_variants_collapsing_to_one_key": 0
+          },
+          "relationship_to_other_data": "Links standards to a ministry node. 'Ministry – Department' nodes are not subsets of their parent ministry's list.",
+          "data_quality_issues": {
+            "null_publish_dates": 6,
+            "type_unspecified": 0,
+            "equivalence_unspecified": 0,
+            "missing_titles": 0,
+            "unparseable_designations": 0,
+            "designations_with_format_flags": 0
+          },
+          "source_type": "excel_export",
+          "source_id": "bis_std_exports_ministry",
+          "authority_level": "official_primary",
+          "notes": "Ministry exports supplied cover only part of the ministry list.",
+          "sample_records": [
+            {
+              "sheet_row": 3,
+              "standard_number": "IS/IEC 60793 (Part 1/Sec 46):2024",
+              "date_of_publish": "18 Feb 2026",
+              "title": "Optical fibres: Part 1 measurement methods and test procedures: Sec 46 monitoring of changes in optical transmittance first Revision",
+              "type_of_standard": "Methods of Tests",
+              "degree_of_equivalence": "Identical under single numbering"
+            },
+            {
+              "sheet_row": 4,
+              "standard_number": "IS/IEC 60793 (Part 1/Sec 45):2024",
+              "date_of_publish": "18 Feb 2026",
+              "title": "Optical Fibres Part 1 Measurement Methods and Test Procedures Section 45 Mode field diameter Second Revision",
+              "type_of_standard": "Methods of Tests",
+              "degree_of_equivalence": "Identical under single numbering"
+            },
+            {
+              "sheet_row": 5,
+              "standard_number": "IS/IEC 60793 (Part 1/Sec 44):2023",
+              "date_of_publish": "18 Feb 2026",
+              "title": "Optical fibres: Part 1 measurement methods and test procedures: Sec 44 cut - Off wavelength first Revision",
+              "type_of_standard": "Methods of Tests",
+              "degree_of_equivalence": "Identical under single numbering"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "cross_file": {
+    "total_vs_untitled": {
+      "shared": 23843,
+      "only_in_total": 171,
+      "only_in_untitled": 1
+    },
+    "ministry_exports": {
+      "files": 18,
+      "distinct_standards": 5443,
+      "standards_in_more_than_one_node": 1010,
+      "not_in_total_or_untitled": 10,
+      "examples_not_in_total_or_untitled": [
+        "IS 1007:1984",
+        "IS 302 (Part 1):2008",
+        "IS 302 (Part 2/Sec 201):2008",
+        "IS 3062:1995",
+        "IS 3400 (Part 6):2018",
+        "IS 3652:1995",
+        "IS 3906:1995",
+        "IS 7131:2022",
+        "IS 7328:2020",
+        "IS B4199:2001"
+      ]
+    }
+  },
+  "known_gaps": [
+    "None of the supplied exports has a per-row Department or Group column, so BIS Department/Group classification is not available.",
+    "Ministry-wise classification is partial: 18 ministry node export(s) supplied."
+  ]
+}

@@ -1,0 +1,42 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Secrets / local configuration ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.claude/
+
+# --- Generated, cached or private data ---
+# The supplied BIS Excel exports in data/*.xlsx and data/manifests/ are raw inputs and stay tracked.
+# The runtime data bundle (deploy/data/manakmarg-data.tar.gz) is tracked separately; see docs/DEPLOYMENT.md.
+data/raw/
+data/staging/
+data/processed/
+data/indexes/
+data/uploads/
+data/documents/
+data/bundles/
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+*.joblib
+
+# --- Frontend ---
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+
+# --- OS / editors ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "source_id": "curated_search_aids",
+  "note": "Curated matching aids maintained by the MANAK MARG team. They only widen product search, are shown to users as 'matched via synonym', and are never evidence of a requirement, standard or status.",
+  "synonyms": [
+    {"terms": ["steel ke bartan", "steel bartan", "bartan", "बर्तन", "steel utensils", "kitchen utensils", "steel vessels", "utensil"], "expands_to": ["stainless steel utensils", "stainless steel cookware"]},
+    {"terms": ["kadhai", "kadai", "tawa", "कड़ाही", "तवा", "cookware"], "expands_to": ["cookware", "utensils"]},
+    {"terms": ["pressure cooker", "प्रेशर कुकर", "cooker", "कुकर"], "expands_to": ["pressure cookers"]},
+    {"terms": ["ceiling fan", "pankha", "पंखा", "fan"], "expands_to": ["electric ceiling type fans", "fans"]},
+    {"terms": ["two wheeler helmet", "bike helmet", "scooter helmet", "helmet", "हेलमेट"], "expands_to": ["protective helmets for two wheeler riders", "helmets"]},
+    {"terms": ["cement", "opc", "सीमेंट"], "expands_to": ["ordinary portland cement", "cement"]},
+    {"terms": ["tmt bar", "tmt", "saria", "sariya", "सरिया", "rebar"], "expands_to": ["high strength deformed steel bars and wires"]},
+    {"terms": ["khilona", "khilone", "खिलौना", "खिलौने", "toy"], "expands_to": ["toys"]},
+    {"terms": ["bottled water", "mineral water", "packaged water", "पानी की बोतल"], "expands_to": ["packaged drinking water", "packaged natural mineral water"]},
+    {"terms": ["gas stove", "lpg stove", "gas chulha", "chulha", "गैस चूल्हा"], "expands_to": ["domestic gas stoves"]},
+    {"terms": ["water heater", "geyser", "गीजर"], "expands_to": ["storage water heaters", "water heaters"]},
+    {"terms": ["circuit breaker", "mcb"], "expands_to": ["circuit breakers"]},
+    {"terms": ["led bulb", "led lamp", "बल्ब"], "expands_to": ["self ballasted led lamps"]},
+    {"terms": ["laptop", "notebook computer"], "expands_to": ["laptops notebooks tablets", "automatic data processing machines"]},
+    {"terms": ["bicycle reflector", "cycle reflector"], "expands_to": ["retro reflective devices for bicycles"]},
+    {"terms": ["power bank"], "expands_to": ["power banks"]},
+    {"terms": ["tyre", "tire"], "expands_to": ["pneumatic tyres"]},
+    {"terms": ["chappal", "jooti", "shoes", "sandals", "जूते", "चप्पल"], "expands_to": ["footwear"]},
+    {"terms": ["mixer grinder", "mixie"], "expands_to": ["food mixers", "household electrical appliances"]},
+    {"terms": ["electric iron", "istri", "इस्त्री"], "expands_to": ["electric irons", "household electrical appliances"]},
+    {"terms": ["washing machine"], "expands_to": ["washing machines", "household electrical appliances"]},
+    {"terms": ["electric wire", "wire", "cable", "तार"], "expands_to": ["pvc insulated cables", "cables"]},
+    {"terms": ["solar panel", "solar module"], "expands_to": ["photovoltaic modules"]},
+    {"terms": ["ceramic tile", "tiles"], "expands_to": ["ceramic tiles"]},
+    {"terms": ["gold jewellery", "gold jewelry", "jewellery", "sona", "सोना", "गहने"], "expands_to": ["gold jewellery and gold artefacts hallmarking"]}
+  ]
+}

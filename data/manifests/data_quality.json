@@ -1,0 +1,229 @@
+{
+  "generated_by": "manakmarg.ingest.quality",
+  "checked_on": "2026-09-13",
+  "findings": [
+    {
+      "check": "missing_provenance",
+      "severity": "error",
+      "count": 0,
+      "examples": [],
+      "note": "Rows without a source, locator or retrieval time. Every record must be traceable to its source."
+    },
+    {
+      "check": "canonical_collisions",
+      "severity": "error",
+      "count": 0,
+      "examples": [],
+      "note": "Different raw designations normalising to the same key inside one source; rejected for review, never merged."
+    },
+    {
+      "check": "rejected_records",
+      "severity": "warning",
+      "count": 0,
+      "examples": [],
+      "note": "Records rejected by the latest run of each source."
+    },
+    {
+      "check": "failed_runs",
+      "severity": "error",
+      "count": 0,
+      "examples": [],
+      "note": "Sources whose latest ingestion run failed and was rolled back."
+    },
+    {
+      "check": "ministry_only_standards",
+      "severity": "info",
+      "count": 10,
+      "examples": [
+        "IS 1007:1984",
+        "IS 302 (Part 1):2008",
+        "IS 302 (Part 2/Sec 201):2008",
+        "IS 3062:1995",
+        "IS 3400 (Part 6):2018",
+        "IS 3652:1995",
+        "IS 3906:1995",
+        "IS 7131:2022",
+        "IS 7328:2020",
+        "IS B4199:2001"
+      ],
+      "note": "Designations listed in a ministry export but absent from both full exports (often superseded versions); kept with listing_status 'ministry_export_only' and never shown as current."
+    },
+    {
+      "check": "future_publication_dates",
+      "severity": "warning",
+      "count": 0,
+      "examples": [],
+      "note": "Publication dates later than the check date."
+    },
+    {
+      "check": "families_with_multiple_versions",
+      "severity": "info",
+      "count": 442,
+      "examples": [
+        "IS 10009",
+        "IS 10045",
+        "IS 10058",
+        "IS 10080",
+        "IS 101 (Part 1/Sec 3)",
+        "IS 101 (Part 1/Sec 7)",
+        "IS 101 (Part 3/Sec 1)",
+        "IS 101 (Part 4/Sec 1)",
+        "IS 101 (Part 5/Sec 1)",
+        "IS 101 (Part 5/Sec 4)"
+      ],
+      "note": "Standard families with more than one version in the published list; references without a year resolve to the latest version and show the others."
+    },
+    {
+      "check": "titles_shared_by_multiple_standards",
+      "severity": "info",
+      "count": 81,
+      "examples": [
+        "IS 14990 (Part 5):2024 / IS 14990 (Part 5):2026",
+        "IS 7762:1975 / IS 7762:2026",
+        "IS 7758:1975 / IS 7758:2026",
+        "IS 7767:1975 / IS 7767:2026",
+        "IS 5722:1970 / IS 5722:2026"
+      ],
+      "note": "Identical normalised titles under different designations (revisions, indigenous vs adopted standards, possible typos). Records are kept separate."
+    },
+    {
+      "check": "missing_publication_date",
+      "severity": "warning",
+      "count": 387,
+      "examples": [
+        "IS 16125 (Part 2):2013",
+        "IS/ISO 20022 (Part 2):2013",
+        "IS/IEC 60793 (Part 1/Sec 42):2013",
+        "IS/IEC 60793 (Part 1/Sec 47):2017",
+        "IS 13730 (Part 29):1996"
+      ],
+      "note": "Standards whose export row has no publication date."
+    },
+    {
+      "check": "type_unspecified",
+      "severity": "info",
+      "count": 107,
+      "examples": [
+        "IS 17550 (Part 3):2025",
+        "IS 13489:2025",
+        "IS 14756:2024",
+        "IS 16890:2024",
+        "IS 17550 (Part 2):2024"
+      ],
+      "note": "Standards whose 'Type of Standard' is '-' in the export; stored as unknown."
+    },
+    {
+      "check": "equivalence_unspecified",
+      "severity": "info",
+      "count": 507,
+      "examples": [
+        "SP 74:2025",
+        "IS 3097:2025",
+        "IS 12823:2025",
+        "IS 3087:2025",
+        "IS 4993:2025"
+      ],
+      "note": "Standards whose 'Degree of Equivalence' is '-' in the export; stored as unknown."
+    },
+    {
+      "check": "designation_flag:duplicate_year",
+      "severity": "info",
+      "count": 4,
+      "examples": [
+        "IS 6560:2017",
+        "IS/ISO 7130:2013",
+        "IS/ISO 14790:2005",
+        "IS/ISO 21949:2001"
+      ],
+      "note": "Year written twice (e.g. ':2017:2017')."
+    },
+    {
+      "check": "designation_flag:malformed_repaired",
+      "severity": "warning",
+      "count": 9,
+      "examples": [
+        "IS/IEC 60794 (Part 1/Sec 1):2023",
+        "IS 5887 (Part 5/Sec 1):2023",
+        "IS/IEEE 1523 Tm:2018",
+        "IS 16502 (Part 3):2020",
+        "IS 6398 (Part 2):2020"
+      ],
+      "note": "Malformed designation punctuation repaired (e.g. 'IS):7779 ( (Part 1/Sec 1)):1975')."
+    },
+    {
+      "check": "designation_flag:missing_year_colon",
+      "severity": "info",
+      "count": 2,
+      "examples": [
+        "IS 16910 (Part 2/Sec 33):2026",
+        "IS 16910 (Part 2/Sec 11):2026"
+      ],
+      "note": "Year not separated by a colon (e.g. '(Part 2/Sec 11)2026')."
+    },
+    {
+      "check": "designation_flag:number_range",
+      "severity": "info",
+      "count": 2,
+      "examples": [
+        "IS 4864 to 4870:1968",
+        "IS 1201 to 1220:1978"
+      ],
+      "note": "Designation covering a range of numbers (e.g. 'IS 4864 to 4870')."
+    },
+    {
+      "check": "designation_flag:prefix_case",
+      "severity": "info",
+      "count": 17,
+      "examples": [
+        "IS/IEC 62232:2022",
+        "IS/IEC/IEEE 63195 (Part 2):2022",
+        "IS 14661 (Part 2):2025",
+        "IS 3413:2025",
+        "IS 18889:2024"
+      ],
+      "note": "Designation prefix written with irregular letter case (e.g. 'Is'); normalised."
+    },
+    {
+      "check": "designation_flag:prefix_repaired",
+      "severity": "info",
+      "count": 30,
+      "examples": [
+        "IS/ISO/IEC/TR 20226:2025",
+        "IS/ISO/IEC/TS 12791:2024",
+        "IS/ISO/IEC/TR 24027:2021",
+        "IS/IEC/IEEE 63195 (Part 2):2022",
+        "IS/IEC/IEEE 63195 (Part 1):2022"
+      ],
+      "note": "Designation prefix with irregular separators or a known typo (e.g. 'IS ISO', 'IEE'); normalised."
+    },
+    {
+      "check": "designation_flag:suffix",
+      "severity": "info",
+      "count": 19,
+      "examples": [
+        "IS 9374 P:2026",
+        "IS 19877 T:2026",
+        "IS 8376 P:2026",
+        "IS 6882 P:2026",
+        "IS/ISO/IEC 20540 P:2025"
+      ],
+      "note": "Designation carries a suffix such as P, T, Supplement or (S&T); kept as part of its identity."
+    },
+    {
+      "check": "designation_flag:unparsed",
+      "severity": "warning",
+      "count": 1,
+      "examples": [
+        "ISIHB MMAW:1965"
+      ],
+      "note": "Designation that could not be parsed; stored under its whitespace-normalised text."
+    },
+    {
+      "check": "orphan_classification_links",
+      "severity": "warning",
+      "count": 0,
+      "examples": [],
+      "note": "Current classification links pointing to a retired standard or node."
+    }
+  ]
+}

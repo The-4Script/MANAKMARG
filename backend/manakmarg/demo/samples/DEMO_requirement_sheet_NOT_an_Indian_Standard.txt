@@ -1,0 +1,28 @@
+DEMO REQUIREMENT SHEET — FICTIONAL — NOT AN INDIAN STANDARD
+Prepared by the MANAK MARG team only to demonstrate gap analysis. These limits are invented and must not be
+used for certification. Upload a legitimately obtained standard or buyer specification for real use.
+
+Product: Demo steel serving bowl (fictional)
+
+1 Scope
+This demo sheet lists illustrative numeric limits for a fictional product.
+
+2 Material
+2.1 Chromium content shall be between 16.0 % and 18.0 %
+2.2 Nickel content shall be not less than 8.0 %
+
+3 Dimensions
+3.1 Wall thickness shall be not less than 0.50 mm
+3.2 Rim diameter shall be between 200 mm and 205 mm
+3.3 Lid gap shall not exceed 1.5 mm
+
+4 Performance
+4.1 Handle pull-out force shall be not less than 150 N
+4.2 Surface hardness shall be not less than 180 HV
+4.3 Mass shall be not less than 250 g
+4.4 Capacity shall be not less than 1.0 l
+
+Table 1 Finish limits
+| Parameter | Min | Max | Unit |
+| Surface roughness Ra | | 0.8 | µm |
+| Brightness (gloss) | 60 | | GU |

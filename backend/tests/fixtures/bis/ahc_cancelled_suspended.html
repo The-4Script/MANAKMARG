@@ -1,0 +1,1484 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>AHC cancelled suspended</title></head><body>
+<div>
+<!DOCTYPE html>
+
+
+
+
+
+<!-- <script type="text/javascript"
+	src="/MANAK/resources/app_srv/GlobalPages/CommonUtility/JS/dataTables.buttons.min.js"></script> -->
+<!-- <script type="text/javascript"	src="https://cdn.datatables.net/buttons/2.3.4/js/dataTables.buttons.min.js"></script> -->
+
+<!-- <script type="text/javascript"	src="//cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script> -->
+
+
+
+
+
+
+
+
+<section>
+<div id="preloader">
+<div class="ctn-preloader" id="ctn-preloader">
+<div class="animation-preloader">
+<div class="spinner"></div>
+<div class="txt-loading">
+<!-- <span data-text-preloader="Please Wait..." class="letters-loading">
+							L
+						</span> -->
+<span class="" data-text-preloader="Please Wait...">
+<span>Please Wait...</span><br/>
+<!-- <span>While Fetching Your Records</span> -->
+</span>
+</div>
+</div>
+<div class="loader-section section-left"></div>
+<div class="loader-section section-right"></div>
+</div>
+</div>
+</section>
+<div class="">
+<div style="width:100%;text-align: center;">
+<h2>Suspended/Cancelled AHC List</h2>
+</div>
+<div style="width:100%; text-align: center;">
+<fieldset>
+<legend><h3>Filters</h3></legend>
+<label>Region:</label>
+<select class="select2" id="selectRegionId" name="selectRegionId" onchange="setFormVal(0);resetStateDistrict();" style="width:200px;">
+<option value="0">---ALL---</option>
+<option value="8">CENTRAL REGION</option>
+<option value="5">EASTERN REGION</option>
+<option value="9">NORTHERN REGION</option>
+<option value="6">SOUTH REGION</option>
+<option value="7">WESTERN REGION</option>
+</select>
+
+			      
+			<label style="color:gray">OR</label>      
+			<span>
+<label>State:</label> 
+				<select class="select2" id="selectStateId" name="selectStateId" onchange="setFormVal(1);resetRegine();" style="width:250px;">
+<option value="0">--ALL--</option>
+<option value="1">ANDAMAN &amp; NICOBAR</option>
+<option value="2">ANDHRA PRADESH</option>
+<option value="3">ARUNACHAL PRADESH</option>
+<option value="4">ASSAM</option>
+<option value="5">BIHAR</option>
+<option value="6">CHANDIGARH</option>
+<option value="7">CHHATTISGARH</option>
+<option value="8">DADRA &amp; NAGAR HAVELI</option>
+<option value="9">DAMAN &amp; DIU</option>
+<option value="10">DELHI</option>
+<option value="11">GOA</option>
+<option value="12">GUJARAT</option>
+<option value="13">HARYANA</option>
+<option value="14">HIMACHAL PRADESH</option>
+<option value="16">JAMMU &amp; KASHMIR</option>
+<option value="15">JHARKHAND</option>
+<option value="17">KARNATAKA</option>
+<option value="18">KERALA</option>
+<option value="37">LADAKH</option>
+<option value="19">LAKSHADWEEP</option>
+<option value="20">MADHYA PRADESH</option>
+<option value="21">MAHARASHTRA</option>
+<option value="22">MANIPUR</option>
+<option value="23">MEGHALAYA</option>
+<option value="24">MIZORAM</option>
+<option value="25">NAGALAND</option>
+<option value="26">ODISHA</option>
+<option value="27">PONDICHERY</option>
+<option value="28">PUNJAB</option>
+<option value="29">RAJASTHAN</option>
+<option value="30">SIKKIM</option>
+<option value="31">TAMIL NADU</option>
+<option value="32">TELANGANA</option>
+<option value="33">TRIPURA</option>
+<option value="35">UTTARAKHAND</option>
+<option value="34">UTTAR PRADESH</option>
+<option value="36">WEST BENGAL</option>
+</select>
+
+</span>
+			  
+			<span>
+<label>District:</label> 
+				<select class="select2" id="selectDistrictId" name="selectDistrictId" onchange="setFormVal(1)" style="width:250px;">
+<option value="0">--ALL--</option>
+</select>
+
+</span>
+			      
+			<span>
+<!-- <div style="margin-left:18%;margin-top:1%;text-align: left;"> -->
+<!-- <select name="recogAppliedFor" id="statusCode" multiple="multiple" class=""> -->
+<label style="color:gray">AND</label>      
+			<label>Status:</label> 
+			<select class="select2" id="statusCode" multiple="multiple" name="recogAppliedFor" onchange="setFormVal(3)" style="width:250px;">
+<option value="0">All</option>
+<option value="203">Under Suspension</option>
+<option value="205">Cancelled</option>
+</select>
+</span>
+			
+				  
+			<span>
+<label>From Date :</label> <input class="" id="fromDtId" name="fromDt" onchange="setFormVal(4)" readonly="true" style="border: 1px solid gray; border-radius:5px ; background:#fff; width:100px" type="text"/>
+</span>
+			  	
+			<span>
+<label>To Date :</label> <input class="" id="toDtId" name="toDt" onchange="setFormVal(4)" readonly="true" style="border: 1px solid gray; border-radius:5px ; background:#fff ;width:100px" type="text"/>
+</span>
+<!-- <input type="checkbox" name="suspndcode" id="hdnsuspndcode" value="203"/><b>Under Suspension</b> 
+			<input type="checkbox" name="canceldcode" id="hdncanceledcode" value="305"/><b>Cancelled</b>
+			 -->
+<!-- </div> -->
+<!-- &nbsp;&nbsp;&nbsp;&nbsp;<span><button type="button" id="showButtonID" class="btn btn-primary" style="width:50px;" onclick="submitFrm();">Show</button>&nbsp; -->
+		    <span><button class="btn btn-primary" id="showButtonID" style="width:50px;" type="button">Show</button> 
+		<button class="btn btn-danger" onclick="clearFrm();" style="width:50px;" type="button">Clear</button></span>
+</fieldset>
+<br/>
+</div>
+<div style="margin-top:25px;">
+<!-- <table class="table" id="ahcDetailsTbl" style="width : 99%" border="0"> -->
+<div style="text-align:center"><button id="exportExcelId" style="float:left;margin-left:5px;">Export To Excel</button> <span style="font-size: 25px;">Total Records : <span id="totlRecdID">731</span></span></div>
+<!-- <table class="footable table bg-head table-bordered table-striped dataTable"  data-filter-minimum="3" data-filter="#filter" id="ahcDetailsTbl" style="width : 99%"> -->
+<table class="footable table bg-head table-bordered table-striped" data-filter="#filter" data-filter-minimum="3" id="ahcDetailsTbl" style="width: 99%">
+<thead style="background:rgb(51,122,183); color:white">
+<tr>
+<th>
+<label>Sl.No.</label>
+</th>
+<th style="min-width:150px;">
+<label>Recognition No.</label>
+</th>
+<th>
+<label>AHC Name &amp; Address </label>
+</th>
+<th style="max-width:45px;">
+<label>Region</label>
+</th>
+<th style="max-width:45px;">
+<label> Center Type</label>
+</th>
+<th>
+<label>Suspended/ Cancelled Date</label>
+</th>
+<!-- <th>
+						<label>District</label>
+					</th> -->
+<!-- <th>
+						<label>State</label>
+						
+					</th> -->
+<th style="min-width:150px;">
+<label>Current Status</label>
+</th>
+<th style="text-align:center">
+<label>Activity Log</label>
+</th>
+<!-- <th>	
+						<label>AHC Logo</label>
+					</th> -->
+</tr>
+</thead>
+<tbody id="tblBodyID">
+<tr>
+<td>
+								1.
+							</td>
+<td>
+<label>CRO/RAHC/R-110034</label><br/>
+</td>
+<td>
+<label>SHREERAM HALLMARKING CENTRE</label>
+								50,BADA SARAFA50,BADA SARAFA, INDORE, INDORE CLOTH MARKET, MADHYA PRADESH ,452002<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								30/04/2026<br/>
+</td>
+<td>
+<label>CANCELLED</label>
+</td>
+<td>
+<a id="80000000424_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								2.
+							</td>
+<td>
+<label>CRO/RAHC/R-110043</label><br/>
+</td>
+<td>
+<label>M/S AASTHA ASSAYING &amp; HALLMARKING CENTRE</label>
+								1733, 3RD FLOOR DARIBA KALAN, CHANDNI CHOWK, DELHI, NORTH DELHI, CHANDNI CHOWK, DELHI ,110006<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								06/03/2023<br/>
+</td>
+<td>
+<label>CANCELLED</label>
+</td>
+<td>
+<a id="100000730_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								3.
+							</td>
+<td>
+<label>CRO/RAHC/R-110044</label><br/>
+</td>
+<td>
+<label>KATARIA FASHION HALLMARKING CENTRE</label>
+								19, CHANDNI CHOWK, RATLAMRATLAM , M.P., RATLAM, RATLAM CITY, MADHYA PRADESH ,457001<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								06/06/2025<br/>
+</td>
+<td>
+<label>CANCELLED</label>
+</td>
+<td>
+<a id="80000000345_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								4.
+							</td>
+<td>
+<label>CRO/RAHC/R-110046</label><br/>
+</td>
+<td>
+<label>M/S SHREE KATYAYANI ENTERPRISES</label>
+								PROP NO. 1072, 3RD FLOOR, KUCHA NATWAN,CHANDNI CHOWK AREA, NEW DELHI, CENTRAL DELHI – 110 006, NORTH DELHI, CHANDNI CHOWK, DELHI ,110006<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								31/07/2026<br/>
+</td>
+<td>
+<label>UNDER SUSPENSION</label>
+</td>
+<td>
+<a id="100000014_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								5.
+							</td>
+<td>
+<label>CRO/RAHC/R-110047</label><br/>
+</td>
+<td>
+<label>KAPS HALLMARKING CENTRE</label>
+								110, 1ST FLOOR, RABDI WALI GALIKAGZI BAZAR, MEERUT, MEERUT CITY, UTTAR PRADESH ,250002<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								28/10/2025<br/>
+</td>
+<td>
+<label>CANCELLED</label>
+</td>
+<td>
+<a id="80000000390_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								6.
+							</td>
+<td>
+<label>CRO/RAHC/R-110057</label><br/>
+</td>
+<td>
+<label>HIRA HALLMARKING CENTRE</label>
+								65, KAGZI BAZAR, SARRAFA, MEERUT CITY, MEERUT, MEERUT CITY, UTTAR PRADESH ,250002<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								31/01/2026<br/>
+</td>
+<td>
+<label>CANCELLED</label>
+</td>
+<td>
+<a id="80000000526_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								7.
+							</td>
+<td>
+<label>CRO/RAHC/R-110060</label><br/>
+</td>
+<td>
+<label>SIDDHIVINAYAK ASSAYING AND HALLMARKING CENTRE</label>
+								BUILDING NO. 1187, 1ST , 2ND &amp; 3RD FLOOR KUCHA MAHAJANICHANDNI CHOWK, DELHI, NORTH DELHI, CHANDNI CHOWK, DELHI ,110006<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								27/08/2026<br/>
+</td>
+<td>
+<label>CANCELLED</label>
+</td>
+<td>
+<a id="100000651_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								8.
+							</td>
+<td>
+<label>CRO/RAHC/R-110064</label><br/>
+</td>
+<td>
+<label>JAIPUR HALLMARKING</label>
+								JAIPUR HALLMARKINGJMC-63,GOVINDRAM BUILDING,GROUND FLOOR, M.I.ROAD, JAIPUR, M.I.ROAD, RAJASTHAN ,302001<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								26/09/2025<br/>
+</td>
+<td>
+<label>CANCELLED</label>
+</td>
+<td>
+<a id="80000000828_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								9.
+							</td>
+<td>
+<label>CRO/RAHC/R-110065</label><br/>
+</td>
+<td>
+<label>M/S R.V. GOLD HALLMARK</label>
+								3140, 1ST FLOOR, STREET NO. 33BEADON PURA, CENTRAL DELHI, KAROL BAGH, DELHI ,110005<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								29/04/2026<br/>
+</td>
+<td>
+<label>CANCELLED</label>
+</td>
+<td>
+<a id="100000642_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								10.
+							</td>
+<td>
+<label>CRO/RAHC/R-110071</label><br/>
+</td>
+<td>
+<label>M/S R B HALLMARKING CENTRE</label>
+								SHOP NO. 301, 3RD FLOOR, BUILDING NO. 1095,KUCHA NATWA, CHANDNI CHOWK, NORTH DELHI, CHANDNI CHOWK, DELHI ,110006<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								06/08/2026<br/>
+</td>
+<td>
+<label>CANCELLED</label>
+</td>
+<td>
+<a id="100000685_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								11.
+							</td>
+<td>
+<label>CRO/RAHC/R-110076</label><br/>
+</td>
+<td>
+<label>JYOTI HALLMARKING AND ASSAYING CENTRE</label>
+								27/3, 1ST AND 2ND FLOOR, DHANJI BAI KA NOHRA CHANDNI CHOWK, RATLAM M.P, RATLAM, RATLAM CITY, MADHYA PRADESH ,457001<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								03/02/2023<br/>
+</td>
+<td>
+<label>CANCELLED</label>
+</td>
+<td>
+<a id="100000133_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								12.
+							</td>
+<td>
+<label>CRO/RAHC/R-110081</label><br/>
+</td>
+<td>
+<label>M/S JEEN MATA HALLMARKING CENTRE</label>
+								1042, SITARAMJI KI GALLI, JADIYON KA RAASTACHOURA RASTA, JAIPUR, JAIPUR, JAIPUR CITY, RAJASTHAN ,302002<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								03/02/2021<br/>
+</td>
+<td>
+<label>CANCELLED</label>
+</td>
+<td>
+<a id="100000943_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								13.
+							</td>
+<td>
+<label>CRO/RAHC/R-110082</label><br/>
+</td>
+<td>
+<label>J P TESTING AND GOLD HALLMARKING CENTRE</label>
+								WARD NO 7, HOLI DARWAJA , DULHE SINGH RASTACHOMU , DISTT JAIPUR RURAL, JAIPUR, JAIPUR, RAJASTHAN ,303702<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								19/08/2026<br/>
+</td>
+<td>
+<label>UNDER SUSPENSION</label>
+</td>
+<td>
+<a id="80000000837_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								14.
+							</td>
+<td>
+<label>CRO/RAHC/R-110084</label><br/>
+</td>
+<td>
+<label>ZEVAR HALLMARKING CENTRE</label>
+								PLOT NO. 9/10, OPP KILOL PARK PETROL PUMPGOYAL BUILDERS BUILDING, PROFESSOR COLONY, BHOPAL, BHOPAL, BHOPAL G.P.O., MADHYA PRADESH ,462002<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								06/01/2025<br/>
+</td>
+<td>
+<label>CANCELLED</label>
+</td>
+<td>
+<a id="80000000337_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+<tr>
+<td>
+								15.
+							</td>
+<td>
+<label>CRO/RAHC/R-110085</label><br/>
+</td>
+<td>
+<label>M/S NATIONAL HALLMARKING CENTRE</label>
+								1170/1240, 5TH FLOOR KUCHA MAHAJANICHANDNI CHOWK, DELHI, NORTH DELHI, CHANDNI CHOWK, DELHI ,110006<br/>
+</td>
+<td>
+							CRO<br/>
+</td>
+<td>
+								
+								
+
+									
+									
+										AHC
+									
+								
+								</td>
+<td>
+								21/06/2026<br/>
+</td>
+<td>
+<label>UNDER SUSPENSION</label>
+</td>
+<td>
+<a id="100000831_8_log" onclick="getLog(this)">Activity Log</a>
+</td>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tbody>
+</table>
+</div>
+</div>
+<form action="AHCSuspendCancelledAppsForWebsite" id="ahcListFrm" method="POST" name="ahcListFrm">
+<input id="hdnStateId" name="stateId" type="hidden" value="0"/>
+<input id="hdnDistrictId" name="districtId" type="hidden" value="0"/>
+<input id="hdnRegionId" name="regionId" type="hidden" value="0"/>
+<input id="statuslist" name="statuslist" type="hidden" value="203,205"/>
+<input id="hidfromDtId" name="fromDt" type="hidden" value=""/>
+<input id="hidtoDateId" name="toDate" type="hidden" value=""/>
+</form>
+<!-- Modal -->
+<div aria-hidden="true" aria-labelledby="myModalLabel" class="modal fade" id="officerActivityLogModalPc" role="dialog" tabindex="-1">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header">
+<button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
+<h4 class="modal-title">Activity Log</h4>
+</div>
+<div class="modal-body row">
+<div class="col-md-12">
+<table class="footable table bg-head table-bordered table-striped" data-filter-minimum="3">
+<thead>
+<tr>
+<th data-toggle="true">
+                        S.No.
+                    </th>
+<th data-hide="phone,tablet">
+                        User Name
+                    </th>
+<th>
+                        User Role
+                    </th>
+<th data-hide="phone,tablet">
+                    	Action Date
+                    </th>
+<th data-hide="phone,tablet">
+                    	Application/Licence Status
+                    </th>
+<th data-hide="phone,tablet">
+                    	Remarks
+                    </th>
+</tr>
+</thead>
+<tbody id="officerActivityLogBody">
+</tbody>
+<tfoot class="hide-if-no-paging">
+<tr>
+<td colspan="10">
+<div class="text-center">
+<ul class="pagination"></ul>
+</div>
+</td>
+</tr>
+</tfoot>
+</table>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-default" data-dismiss="modal" type="button">Close</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Modal -->
+</div>
+
+</body></html>

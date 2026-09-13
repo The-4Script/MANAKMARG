@@ -1,0 +1,15 @@
+DEMO PRODUCT DATASHEET — FICTIONAL COMPANY AND PRODUCT
+"Demo Metalworks" does not exist. Values are invented to demonstrate gap analysis.
+
+Product: Demo steel serving bowl, model DSB-200
+
+Declared characteristics
+Chromium content: 17.2 %
+Nickel content: 8.1 %
+Wall thickness: 0.052 cm
+Rim diameter: 20.3 cm
+Lid gap: 1.8 mm
+Handle pull-out force: 16 kgf
+Mass: 0.27 kg
+Surface hardness: 12 HRC
+Brightness (gloss): 72 GU

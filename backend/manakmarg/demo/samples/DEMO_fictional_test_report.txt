@@ -1,0 +1,10 @@
+DEMO TEST REPORT — FICTIONAL — NOT ISSUED BY ANY LABORATORY
+Invented measurements used only to demonstrate gap analysis.
+
+Sample: Demo steel serving bowl, model DSB-200
+
+| Test parameter | Result | Unit |
+| Wall thickness | 0.47 | mm |
+| Handle pull-out force | 162 | N |
+| Surface roughness Ra | 0.6 | µm |
+| Nickel content | 8.05 | % |
