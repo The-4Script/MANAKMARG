@@ -22,5 +22,5 @@ class AssistantQuery(BaseModel):
 @router.post("/assistant/query")
 def assistant_query(body: AssistantQuery, conn: Connection = Depends(get_conn), today: date = Depends(get_today)) -> dict:
     state = get_state()
-    result = answer(conn, body.query, lang=body.lang, today=today, vectors=state.vectors, gazetteer=state.gazetteer(conn))
+    result = answer(conn, body.query, lang=body.lang, today=today, vectors=state.vectors, gazetteer=state.gazetteer(conn), settings=state.settings)
     return with_evidence(result)

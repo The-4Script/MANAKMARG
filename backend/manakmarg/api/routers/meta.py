@@ -12,6 +12,7 @@ from manakmarg import __version__
 from manakmarg.core import paths
 from manakmarg.db import schema
 from manakmarg.ingest.sources import REGISTRY
+from manakmarg.reasoning import groq
 
 from ..deps import get_conn, get_state, get_today
 
@@ -64,6 +65,7 @@ _COUNTS = {
     "faqs": ("faq", True),
     "documents": ("document", True),
     "document_chunks": ("document_chunk", False),
+    "hsn_codes": ("hsn_code", True),
 }
 
 
@@ -118,6 +120,10 @@ def meta(conn: Connection = Depends(get_conn), today: date = Depends(get_today))
         },
         "limitations": LIMITATIONS,
         "upload_ttl_minutes": settings.upload_ttl_minutes,
+        "voice_enabled": settings.voice_enabled,
+        "voice_max_mb": settings.voice_max_mb,
+        # Counts only (since process start): no query text, audio or credentials.
+        "ai_usage": groq.usage_snapshot(),
     }
 
 

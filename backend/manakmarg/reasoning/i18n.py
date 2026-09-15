@@ -23,6 +23,22 @@ MESSAGES: dict[str, dict[str, str]] = {
         "hi": "प्रकाशित मानक जिनके शीर्षक में आपके सभी शब्द हैं (अनिवार्य सूची नहीं)",
     },
     "section.suggestions": {"en": "Did you mean", "hi": "क्या आपका आशय था"},
+    "section.hsn": {"en": "Potential HSN matches", "hi": "संभावित HSN मिलान"},
+    "section.hsn_related": {"en": "Related HSN information (classification lookup, not a BIS requirement)", "hi": "संबंधित HSN जानकारी (वर्गीकरण खोज, BIS आवश्यकता नहीं)"},
+    "head.hsn_matches": {
+        "en": "{count} potential HSN match(es) for “{text}” in the supplied HSN master. HSN is a classification lookup — it is not a GST, customs or BIS determination, so verify before use.",
+        "hi": "दिए गए HSN मास्टर में “{text}” के लिए {count} संभावित HSN मिलान। HSN एक वर्गीकरण खोज है — यह GST, सीमा शुल्क या BIS का निर्णय नहीं है, इसलिए उपयोग से पहले पुष्टि करें।",
+    },
+    "head.hsn_none": {
+        "en": "No HSN code in the supplied HSN master matched “{text}”. Try the product's common name or an HSN code.",
+        "hi": "दिए गए HSN मास्टर में “{text}” से कोई HSN कोड मेल नहीं खाया। उत्पाद का सामान्य नाम या HSN कोड बताकर देखें।",
+    },
+    "head.hsn_invalid": {
+        "en": "“{text}” is not a valid HSN code — HSN codes have 2 to 8 digits.",
+        "hi": "“{text}” मान्य HSN कोड नहीं है — HSN कोड में 2 से 8 अंक होते हैं।",
+    },
+    "item.hsn": {"en": "HSN {code} — {description}", "hi": "HSN {code} — {description}"},
+    "item.hsn_under": {"en": "{item} (under {code}: {description})", "hi": "{item} ({code} के अंतर्गत: {description})"},
     # routing outcomes
     "head.scheme": {"en": "{name}: {description}", "hi": "{name}: {description}"},
     "head.scheme_no_description": {

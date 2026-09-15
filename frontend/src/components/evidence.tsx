@@ -13,7 +13,48 @@ const AUTHORITY: Record<string, { en: string; hi: string; tone: "green" | "amber
   official_secondary: { en: "Official (secondary)", hi: "आधिकारिक (द्वितीयक)", tone: "indigo" },
   derived: { en: "Derived cross-check", hi: "व्युत्पन्न जाँच", tone: "amber" },
   curated: { en: "Curated matching aid", hi: "संकलित मिलान सहायता", tone: "slate" },
+  supplied_dataset: { en: "Supplied dataset", hi: "प्रदत्त डेटासेट", tone: "slate" },
 };
+
+const ACTION_KEYS = new Set([
+  "view_notification",
+  "verify_on_bis",
+  "view_standard_portal",
+  "view_product_manual",
+  "view_lims",
+  "view_hallmarking_source",
+  "open_official_document",
+  "view_official_source",
+]);
+
+function actionLabel(action: string, t: (key: never) => string): string {
+  return t((ACTION_KEYS.has(action) ? `source.${action}` : "source.view_official_source") as never);
+}
+
+/** Direct links to the official BIS / Gazette pages behind an item (at most two). Pass one shared ``shown`` set per
+ * answer so the same official page is linked once, at its first mention, instead of on every line. */
+export function OfficialSourceLinks({ ids, shown }: { ids: (string | null | undefined)[] | undefined; shown?: Set<string> }) {
+  const { byId } = useContext(EvidenceContext);
+  const { t } = useI18n();
+  const seen = shown ?? new Set<string>();
+  const links: { url: string; action: string }[] = [];
+  for (const id of ids ?? []) {
+    const item = id ? byId.get(id) : undefined;
+    if (!item?.url || !item.action || seen.has(item.url)) continue;
+    seen.add(item.url);
+    links.push({ url: item.url, action: item.action });
+  }
+  if (!links.length) return null;
+  return (
+    <span className="no-print inline-flex flex-wrap items-center gap-x-3 gap-y-1">
+      {links.slice(0, 2).map((link) => (
+        <ExternalAnchor key={link.url} href={link.url} className="text-xs font-medium">
+          {actionLabel(link.action, t as never)}
+        </ExternalAnchor>
+      ))}
+    </span>
+  );
+}
 
 export function AuthorityChip({ authority }: { authority: string }) {
   const { lang } = useI18n();
@@ -85,7 +126,12 @@ function EvidenceDrawer({ items, onClose }: { items: Evidence[]; onClose: () => 
                   </div>
                 )}
               </dl>
-              {item.url && (
+              {item.url && item.action && (
+                <ExternalAnchor href={item.url} className="mt-2 text-sm font-medium">
+                  {actionLabel(item.action, t as never)}
+                </ExternalAnchor>
+              )}
+              {item.url && !item.action && (
                 <ExternalAnchor href={item.url} className="mt-2 text-sm">
                   {t("common.officialLink")}
                 </ExternalAnchor>

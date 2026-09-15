@@ -14,6 +14,8 @@ export type Evidence = {
   page: number | null;
   clause: string | null;
   record_id: string | null;
+  /** Official-source action for this evidence (only for official BIS/Gazette URLs), e.g. "view_notification". */
+  action?: string | null;
 };
 
 export type SourceRollup = {
@@ -38,6 +40,9 @@ export type Meta = {
   as_of: Record<string, string | null>;
   limitations: Limitation[];
   upload_ttl_minutes: number;
+  voice_enabled?: boolean;
+  voice_max_mb?: number;
+  ai_usage?: Record<string, number>;
 };
 
 export type Understanding = {
@@ -291,6 +296,8 @@ export type AssistantResponse = WithEvidence & {
   narrative: string | null;
   narrative_source: "template" | "llm";
   links: { label: string; to: string }[];
+  headline_evidence?: string[];
+  route?: { category: string; reason: string; scheme_id: string | null } | null;
 };
 
 export type SearchResponse = {

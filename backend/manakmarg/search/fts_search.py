@@ -101,6 +101,10 @@ _SQL = {
         SELECT a.ahc_id, -bm25(ahc_fts, 4.0, 1.0, 3.0, 2.0), a.name, NULL
           FROM ahc_fts JOIN ahc a ON a.ahc_id = ahc_fts.rowid
          WHERE ahc_fts MATCH ? ORDER BY 2 DESC LIMIT ?""",
+    "hsn": """
+        SELECT h.hsn_id, -bm25(hsn_fts, 2.0, 1.0), h.code, h.description
+          FROM hsn_fts JOIN hsn_code h ON h.hsn_id = hsn_fts.rowid
+         WHERE hsn_fts MATCH ? ORDER BY 2 DESC LIMIT ?""",
 }
 
 

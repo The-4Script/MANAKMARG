@@ -12,7 +12,7 @@ from manakmarg.core import paths
 from manakmarg.core.config import Settings, get_settings
 
 from . import deps
-from .routers import assistant, compliance, documents, labs_hallmarking, meta
+from .routers import assistant, compliance, documents, hsn, labs_hallmarking, meta, voice
 
 
 CLIENT_ROUTES = frozenset({"", "assistant", "journey", "standards", "certification", "labs", "hallmarking", "gap-analysis", "sources"})
@@ -40,7 +40,7 @@ def create_app(settings: Settings | None = None, state: deps.AppState | None = N
         allow_methods=["GET", "POST", "DELETE"],
         allow_headers=["Content-Type"],
     )
-    for router in (meta.router, compliance.router, labs_hallmarking.router, assistant.router, documents.router):
+    for router in (meta.router, compliance.router, labs_hallmarking.router, assistant.router, documents.router, voice.router, hsn.router):
         app.include_router(router, prefix="/api")
 
     dist = frontend_dir or paths.FRONTEND_DIST_DIR

@@ -56,6 +56,7 @@ from manakmarg.ingest.documents import (
     register_document,
 )
 from manakmarg.ingest.excel_standards import ingest_standard_exports
+from manakmarg.ingest.hsn import ingest_hsn
 from manakmarg.ingest.fetch import AccessBlocked, FetchError, Fetcher, FetchResult, OfflineCacheMiss
 from manakmarg.ingest.hallmarking import (
     parse_ahc_events,
@@ -74,7 +75,7 @@ from manakmarg.search.vectors import build_vector_indexes
 
 log = logging.getLogger(__name__)
 
-STEPS = ("standards", "schemes", "pages", "psg", "documents", "labs", "lab_scope", "hallmarking", "index", "quality")
+STEPS = ("standards", "hsn", "schemes", "pages", "psg", "documents", "labs", "lab_scope", "hallmarking", "index", "quality")
 MAX_ORDERS_PER_FAMILY = 12
 
 SCHEME_PAGES = (
@@ -158,6 +159,10 @@ def lims_doc_numbers() -> list[str]:
 
 def step_standards(ctx: PipelineContext) -> dict:
     return ingest_standard_exports(ctx.engine, ctx.data_dir)
+
+
+def step_hsn(ctx: PipelineContext) -> dict:
+    return ingest_hsn(ctx.engine, ctx.data_dir)
 
 
 def step_schemes(ctx: PipelineContext) -> dict:
@@ -545,6 +550,7 @@ def step_quality(ctx: PipelineContext) -> dict:
 
 STEP_FUNCTIONS: dict[str, Callable[[PipelineContext], dict]] = {
     "standards": step_standards,
+    "hsn": step_hsn,
     "schemes": step_schemes,
     "pages": step_pages,
     "psg": step_psg,

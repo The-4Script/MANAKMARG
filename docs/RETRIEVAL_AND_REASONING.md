@@ -58,6 +58,24 @@ product has no compulsory listing, a published standard is shown only if its tit
 | `synonyms.json` | Curated matching aids (e.g. *bartan / बर्तन → stainless steel utensils*, *pankha / पंखा → ceiling fans*). Shown as "matched via synonym"; never evidence. |
 | `hybrid.py` | Candidate listings from identifiers, BM25 and vectors; score = 0.30·BM25 (normalised) + 0.20·cosine + 0.35·token coverage + 0.10·exact name + 0.05·listing prior + 0.30·standard-title match (+1 when linked to a named standard). The standard-title match applies when the subject of a cited standard's title (the part before its first " - ") is exactly the user's product phrase — *structural steel* → IS 2062 "Structural Steel - Part 1 - …" rather than the narrower "Structural Steel (Ordinary Quality)". Vector-only neighbours sharing no query word are discarded. |
 
+**Entity constraints** (from the benchmark in September 2026: *PVC pipes* led with "PVC sandal", *copper wire* with PVC
+insulated cables). When query understanding names a product and/or a material, each candidate listing is checked:
+
+| Flag | Meaning | Effect |
+|---|---|---|
+| `product_mismatch` | the named product is neither in the listing name nor reached through a synonym for it | not offered as a listing |
+| `product_as_modifier` | the product word only modifies another noun (*Chain **Pipe** Wrenches*) | not offered |
+| `material_conflict` | the listing names a different material and not the requested one | not offered |
+| `accessory_of_product` | the product appears only in the "for …" clause (*Rubber Gaskets for Pressure Cookers*) | ranked lower |
+
+Literal query words also outrank curated-synonym expansions (weight 0.2). When every candidate is excluded, the answer
+says that no compulsory listing matched instead of presenting a material-only match.
+
+**HSN lookup** (`search/hsn.py`) is separate from BIS retrieval: exact code → the codes filed under it; product words →
+FTS5 over the verbatim descriptions, keeping only descriptions that contain every word and ranking the words in the
+user's order and shorter, more specific descriptions first. HSN results appear in their own section and never change a
+BIS headline, status or caveat.
+
 Scores only order candidates. The **token coverage** (share of the user's product words found in the official product
 name, category or product category) is reported and feeds the applicability label thresholds.
 

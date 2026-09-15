@@ -543,6 +543,34 @@ _SOURCES = (
     ),
 )
 
+HSN_RIGHTS = (
+    "Supplied dataset. The workbook does not state its publisher, date or URL, so none is claimed here. HSN codes "
+    "and descriptions are shown verbatim as a classification lookup only; they are not a GST, customs or BIS "
+    "determination and must be verified with the competent authority."
+)
+
+_SOURCES = _SOURCES + (
+    SourceDef(
+        source_id="hsn_master_workbook",
+        name="HSN master — supplied workbook (sheet HSN_MSTR)",
+        publisher="Not stated in the workbook",
+        domain="local supplied file (data/)",
+        url="",
+        source_type="supplied_file",
+        purpose="Harmonized System of Nomenclature (HSN) codes with their descriptions, used as an additional "
+        "classification lookup next to BIS information.",
+        ingestion_method="Workbook supplied by the team in data/; located by its HSN_CD / HSN_Description header and "
+        "read with openpyxl by manakmarg.ingest.hsn. Descriptions are stored exactly as written.",
+        authority="supplied_dataset",
+        access_status="ok",
+        document_type="xlsx",
+        copyright_notes=HSN_RIGHTS,
+        access_notes="21,935 HSN rows; codes of 2, 4, 5, 6, 7 and 8 characters kept as text (two contain a space). "
+        "The workbook's SAC_MSTR sheet (services) is not used.",
+        as_of_label="Supplied workbook (no date stated)",
+    ),
+)
+
 REGISTRY: dict[str, SourceDef] = {definition.source_id: definition for definition in _SOURCES}
 
 

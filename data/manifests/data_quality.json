@@ -1,6 +1,6 @@
 {
   "generated_by": "manakmarg.ingest.quality",
-  "checked_on": "2026-09-13",
+  "checked_on": "2026-09-15",
   "findings": [
     {
       "check": "missing_provenance",

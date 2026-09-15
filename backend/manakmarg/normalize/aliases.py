@@ -44,12 +44,19 @@ DOMAIN_ALIASES: dict[str, str] = {
     # hallmarking
     "हॉलमार्किंग": "hallmarking",
     "हालमार्किंग": "hallmarking",
+    # speech-to-text often splits the word
+    "हॉल मार्किंग": "hallmarking",
+    "हाल मार्किंग": "hallmarking",
+    "हॉल मार्क": "hallmark",
+    "हाल मार्क": "hallmark",
     "हॉलमार्क": "hallmark",
     "हालमार्क": "hallmark",
     "चाँदी": "silver",
     "चांदी": "silver",
     "केंद्र": "centre",
     "केन्द्र": "centre",
+    # HSN lookup
+    "एचएसएन": "hsn",
     # Hinglish
     "jaanch": "testing",
     "janch": "testing",

@@ -7,6 +7,7 @@ mistaken for an official statement.
 """
 
 from dataclasses import asdict, dataclass
+from urllib.parse import urlsplit
 
 import sqlalchemy as sa
 from sqlalchemy.engine import Connection
@@ -15,6 +16,39 @@ from manakmarg.db import schema
 from manakmarg.normalize.text import snippet as short_snippet
 
 SNIPPET_LIMIT = 300
+
+# Hosts whose pages are the official place to verify a record. An action link is offered only for these; the URL is
+# always the one stored with the record or its registered source, never constructed.
+OFFICIAL_HOSTS = ("bis.gov.in", "manakonline.in", "egazette.gov.in", "egazette.nic.in")
+ACTION_BY_KIND = {
+    "regulatory_order": "view_notification",
+    "gazette_cross_check": "view_notification",
+    "coverage_listing": "verify_on_bis",
+    "certification_scheme": "verify_on_bis",
+    "standard": "view_standard_portal",
+    "guideline_section": "view_product_manual",
+    "product_guideline": "view_product_manual",
+    "lab_scope": "view_lims",
+    "laboratory": "view_lims",
+    "ahc": "view_hallmarking_source",
+    "ahc_status_event": "view_hallmarking_source",
+    "hallmarking_district": "view_hallmarking_source",
+    "scheme_document": "open_official_document",
+    "document_chunk": "open_official_document",
+    "faq": "view_official_source",
+    "process_step": "view_official_source",
+}
+
+
+def official_action(kind: str, url: str | None, authority: str | None) -> str | None:
+    """The verification action for an evidence item, or ``None`` when its URL is not an official BIS/Gazette page."""
+    if not url or authority != "official_primary":
+        return None
+    parts = urlsplit(url)
+    host = (parts.hostname or "").lower()
+    if parts.scheme not in ("http", "https") or not any(host == allowed or host.endswith(f".{allowed}") for allowed in OFFICIAL_HOSTS):
+        return None
+    return ACTION_BY_KIND.get(kind, "view_official_source")
 
 
 @dataclass(frozen=True)
@@ -32,6 +66,7 @@ class Evidence:
     page: int | None = None
     clause: str | None = None
     record_id: str | None = None
+    action: str | None = None
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -74,6 +109,8 @@ class EvidenceBuilder:
         if key in self._ids:
             return self._ids[key]
         source = self._sources.get(source_id)
+        resolved_authority = authority or (source.authority if source else "unknown")
+        resolved_url = url or url_from_locator(locator) or (source.url if source else None) or None
         evidence = Evidence(
             id=f"E{len(self._items) + 1}",
             kind=kind,
@@ -81,13 +118,14 @@ class EvidenceBuilder:
             snippet=short_snippet(snippet, SNIPPET_LIMIT) if snippet else None,
             source_id=source_id,
             source_name=source.name if source else source_id,
-            authority=authority or (source.authority if source else "unknown"),
-            url=url or url_from_locator(locator) or (source.url if source else None),
+            authority=resolved_authority,
+            url=resolved_url,
             locator=locator,
             retrieved_at=retrieved_at,
             page=page,
             clause=clause,
             record_id=None if record_id is None else str(record_id),
+            action=official_action(kind, resolved_url, resolved_authority),
         )
         self._items.append(evidence)
         self._ids[key] = evidence.id

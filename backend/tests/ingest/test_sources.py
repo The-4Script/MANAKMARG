@@ -7,9 +7,11 @@ from manakmarg.db import schema
 from manakmarg.db.engine import get_engine, init_db
 from manakmarg.ingest import sources
 
-ALLOWED_AUTHORITY = {"official_primary", "official_secondary", "curated", "derived"}
+# "supplied_dataset": a file provided to the team whose publisher/URL is not stated (e.g. the HSN master); it is never
+# presented as an official source and has no URL, because none may be invented.
+ALLOWED_AUTHORITY = {"official_primary", "official_secondary", "curated", "derived", "supplied_dataset"}
 ALLOWED_ACCESS = {"ok", "partial", "captcha_blocked", "access_denied", "not_used", "unavailable"}
-ALLOWED_TYPES = {"excel_export", "html_table", "html_page", "pdf_document", "web_report", "web_api", "curated_file"}
+ALLOWED_TYPES = {"excel_export", "html_table", "html_page", "pdf_document", "web_report", "web_api", "curated_file", "supplied_file"}
 REQUIRED_TEXT_FIELDS = (
     "source_id",
     "name",
@@ -31,6 +33,9 @@ def test_registry_entries_are_complete():
     for source_id, definition in sources.REGISTRY.items():
         assert definition.source_id == source_id
         for field in REQUIRED_TEXT_FIELDS:
+            if field == "url" and definition.authority == "supplied_dataset":
+                assert definition.url == "", f"{source_id} must not claim a URL the dataset does not state"
+                continue
             assert getattr(definition, field), f"{source_id}.{field} is empty"
         assert definition.authority in ALLOWED_AUTHORITY, source_id
         assert definition.access_status in ALLOWED_ACCESS, source_id

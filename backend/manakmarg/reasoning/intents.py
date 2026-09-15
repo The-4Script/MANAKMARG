@@ -94,6 +94,7 @@ _ENTITY_ALIASES = {
     "product": {
         "wire": ("wire", "wires", "तार"),
         "cable": ("cable", "cables", "केबल"),
+        "conductor": ("conductor", "conductors", "कंडक्टर"),
         "pipe": ("pipe", "pipes", "पाइप"),
         "tube": ("tube", "tubes", "ट्यूब"),
         "plate": ("plate", "plates", "प्लेट"),

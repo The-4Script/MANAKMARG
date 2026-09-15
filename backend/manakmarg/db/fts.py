@@ -89,6 +89,15 @@ FTS_SPECS: dict[str, FtsSpec] = {
             """,
         ),
         FtsSpec(
+            "hsn_fts",
+            ("code", "description"),
+            """
+            SELECT h.hsn_id, h.code_digits, h.description
+              FROM hsn_code h
+             WHERE h.is_current = 1
+            """,
+        ),
+        FtsSpec(
             "ahc_fts",
             ("name", "address", "district", "state"),
             """

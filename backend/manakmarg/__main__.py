@@ -8,7 +8,7 @@ import sys
 from manakmarg.core import paths
 from manakmarg.core.config import get_settings
 
-STEP_NAMES = ("standards", "schemes", "pages", "psg", "documents", "labs", "lab_scope", "hallmarking", "index", "quality")
+STEP_NAMES = ("standards", "hsn", "schemes", "pages", "psg", "documents", "labs", "lab_scope", "hallmarking", "index", "quality")
 
 
 def _fetcher(settings, *, offline: bool):

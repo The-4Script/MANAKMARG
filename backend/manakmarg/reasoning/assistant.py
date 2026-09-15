@@ -40,8 +40,8 @@ from manakmarg.reasoning.intents import (
     understand,
     apply_model_hints,
 )
-from manakmarg.core.config import get_settings
-from manakmarg.reasoning.groq import understand_query
+from manakmarg.core.config import Settings, get_settings
+from manakmarg.reasoning import groq
 from manakmarg.reasoning.journey import build_journey
 from manakmarg.reasoning.labs import find_labs
 from manakmarg.reasoning.routing import (
@@ -56,12 +56,14 @@ from manakmarg.reasoning.routing import (
     ROUTE_PRODUCT,
     ROUTE_QCO,
     ROUTE_UNKNOWN_LOCATION,
+    ROUTE_HSN,
     ROUTE_UPCOMING,
     SCHEME_ROUTES,
     Route,
     route_query,
 )
 from manakmarg.search import fts_search
+from manakmarg.search.hsn import code_in_text, query_words, search_hsn
 from manakmarg.search.hybrid import content_tokens
 from manakmarg.search.resolvers import StandardResolver
 
@@ -167,9 +169,10 @@ def _lab_items(result, composer: _Composer) -> list[AnswerItem]:
 
 def _product_answer(conn, understanding: QueryUnderstanding, composer: _Composer, evidence: EvidenceBuilder, today: date, vectors) -> tuple[str, str | None, list[str], list[str]]:
     std_key = understanding.standard_refs[0] if understanding.standard_refs else None
-    assessment: Assessment = assess(conn, text=understanding.product_text, std_key=std_key if not understanding.product_text else None, today=today, evidence=evidence, vectors=vectors)
+    entities = {"material": understanding.material, "product": understanding.product}
+    assessment: Assessment = assess(conn, text=understanding.product_text, std_key=std_key if not understanding.product_text else None, today=today, evidence=evidence, vectors=vectors, **entities)
     if understanding.product_text and std_key:
-        assessment = assess(conn, text=understanding.product_text, std_key=std_key, today=today, evidence=evidence, vectors=vectors)
+        assessment = assess(conn, text=understanding.product_text, std_key=std_key, today=today, evidence=evidence, vectors=vectors, **entities)
     lead = assessment.listings[0] if assessment.listings else None
     headline_ids: list[str] = []
     if lead is not None:
@@ -261,7 +264,59 @@ def _product_answer(conn, understanding: QueryUnderstanding, composer: _Composer
                 break
         composer.section("standards" if identified is not None else "related_standards", standards)
         composer.follow("follow.upcoming")
-    return headline, assessment.label, assessment.caveats, headline_ids
+    caveats = list(assessment.caveats) + _related_hsn_section(conn, understanding, composer, evidence)
+    return headline, assessment.label, caveats, headline_ids
+
+
+# --------------------------------------------------------------------------- HSN (classification lookup, never a BIS fact)
+
+
+def _hsn_items(matches, composer: _Composer, evidence: EvidenceBuilder) -> list[AnswerItem]:
+    items = []
+    for match in matches:
+        evidence_id = evidence.add(
+            kind="hsn_code",
+            record_id=match.code,
+            title=f"HSN {match.code}",
+            source_id=match.source_id,
+            snippet=match.description,
+            locator=match.source_locator,
+            retrieved_at=match.retrieved_at,
+        )
+        heading = match.parents[-1] if match.parents else None
+        text = composer.say("item.hsn", code=match.code, description=match.description)
+        if heading:
+            text = composer.say("item.hsn_under", item=text, code=heading["code"], description=heading["description"])
+        items.append(AnswerItem(text, (evidence_id,)))
+    return items
+
+
+def _related_hsn_section(conn, understanding: QueryUnderstanding, composer: _Composer, evidence: EvidenceBuilder) -> list[str]:
+    """A separate, clearly labelled HSN block for product questions. Shown only when a code's official description
+    contains every product word; it never changes the BIS headline, status or caveats about compulsory status."""
+    words = query_words(understanding.product_text)
+    if not words:
+        return []
+    result = search_hsn(conn, words, limit=3)
+    matches = [match for match in result.matches if match.coverage >= 1.0]
+    if not matches:
+        return []
+    composer.section("hsn_related", _hsn_items(matches, composer, evidence))
+    return ["hsn_not_definitive"]
+
+
+def _hsn_answer(conn, understanding: QueryUnderstanding, composer: _Composer, evidence: EvidenceBuilder) -> tuple[str, str | None, list[str], list[str]]:
+    text = understanding.normalized_text or understanding.text
+    words = query_words(understanding.product_text)
+    code = code_in_text(text)
+    lookup = code if code and not words else (words or text)
+    result = search_hsn(conn, lookup, limit=6)
+    if result.mode == "invalid":
+        return composer.say("head.hsn_invalid", text=lookup), None, ["hsn_not_definitive"], []
+    if not result.matches:
+        return composer.say("head.hsn_none", text=lookup), None, ["hsn_not_definitive"], []
+    composer.section("hsn", _hsn_items(result.matches, composer, evidence))
+    return composer.say("head.hsn_matches", count=len(result.matches), text=lookup), None, ["hsn_not_definitive"], []
 
 
 # --------------------------------------------------------------------------- hallmarking
@@ -555,6 +610,28 @@ def _general_answer(conn, query: str, composer: _Composer, evidence: EvidenceBui
 
 # --------------------------------------------------------------------------- entry point
 
+_LOCAL_ROUTES_NEEDING_NO_MODEL = frozenset(SCHEME_ROUTES) | {
+    ROUTE_PRODUCT, ROUTE_CERTIFICATION, ROUTE_QCO, ROUTE_LAB, ROUTE_HALLMARKING, ROUTE_AHC, ROUTE_GAP, ROUTE_UPCOMING,
+    ROUTE_INVALID_IDENTIFIER, ROUTE_UNKNOWN_LOCATION, ROUTE_HSN,
+}
+
+
+def _model_assisted_route(query: str, understanding: QueryUnderstanding, route: Route, gazetteer: Gazetteer, settings: Settings) -> tuple[Route, QueryUnderstanding]:
+    """Local first: a model is asked for routing hints only when the question is in scope but no deterministic flow
+    applies (general or unroutable) — never for identifiers, listings, labs, hallmarking or other structured lookups.
+    Hints are allow-listed (``apply_model_hints``) and the result goes back through the same local router."""
+    if route.category in _LOCAL_ROUTES_NEEDING_NO_MODEL or not understanding.in_scope:
+        groq.USAGE.add("understanding_not_needed")
+        return route, understanding
+    hints = groq.understand_query(query, settings)
+    if not hints:
+        return route, understanding
+    hinted = apply_model_hints(understanding, hints)
+    new_route = route_query(hinted, gazetteer)
+    if new_route.category == route.category:
+        return route, understanding
+    return Route(new_route.category, f"{new_route.reason} (routing hint from language model)", new_route.scheme_id), hinted
+
 
 def answer(
     conn: Connection,
@@ -564,23 +641,20 @@ def answer(
     today: date | None = None,
     vectors=None,
     gazetteer: Gazetteer | None = None,
+    settings: Settings | None = None,
 ) -> AssistantResponse:
     today = today or clock.today()
     lang = lang if lang in ("en", "hi") else "en"
+    settings = settings or get_settings()
     gazetteer = gazetteer or Gazetteer.load(conn)
     understanding = understand(query, gazetteer=gazetteer)
-    if understanding.in_scope and (understanding.clarification or understanding.confidence < 0.5):
-        hints = understand_query(query, get_settings())
-        if hints:
-            understanding = apply_model_hints(understanding, hints)
     route = route_query(understanding, gazetteer)
+    if route.category == ROUTE_OUT_OF_SCOPE and fts_search.search_faq_all_terms(conn, understanding.normalized_text or query):
+        route = Route(ROUTE_GENERAL, "every word found in an official FAQ")
+    route, understanding = _model_assisted_route(query, understanding, route, gazetteer, settings)
     evidence = EvidenceBuilder(conn)
     composer = _Composer(lang)
     category = route.category
-
-    if category == ROUTE_OUT_OF_SCOPE and fts_search.search_faq_all_terms(conn, understanding.normalized_text or query):
-        route = Route(ROUTE_GENERAL, "every word found in an official FAQ")
-        category = ROUTE_GENERAL
 
     if category == ROUTE_INVALID_IDENTIFIER:
         headline, status, caveats, headline_ids = _invalid_identifier_answer(conn, understanding, composer)
@@ -593,6 +667,8 @@ def answer(
         headline, status, caveats, headline_ids = _labs_answer(conn, understanding, composer, evidence, today, vectors)
     elif category == ROUTE_UPCOMING:
         headline, status, caveats, headline_ids = _upcoming_answer(conn, composer, evidence, today)
+    elif category == ROUTE_HSN:
+        headline, status, caveats, headline_ids = _hsn_answer(conn, understanding, composer, evidence)
     elif route.scheme_id:
         headline, status, caveats, headline_ids = _scheme_answer(conn, SCHEME_ROUTES[category], composer, evidence)
     elif category == ROUTE_CERTIFICATION:

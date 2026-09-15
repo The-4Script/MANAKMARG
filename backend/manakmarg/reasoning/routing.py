@@ -43,6 +43,8 @@ ROUTE_GENERAL = "general"
 ROUTE_OUT_OF_SCOPE = "out_of_scope"
 ROUTE_INVALID_IDENTIFIER = "invalid_identifier"
 ROUTE_UNKNOWN_LOCATION = "unknown_location"
+ROUTE_HSN = "hsn_lookup"
+_HSN_CUES = (" hsn ", " hs code ", " hsn code ", " tariff code ", " itc hs ")
 
 SCHEME_ROUTES = {ROUTE_SCHEME_I: "SCHEME_I", ROUTE_SCHEME_II: "SCHEME_II", ROUTE_SCHEME_IV: "SCHEME_IV", ROUTE_SCHEME_X: "SCHEME_X"}
 _SCHEME_NUMBERS = {"i": ROUTE_SCHEME_I, "1": ROUTE_SCHEME_I, "ii": ROUTE_SCHEME_II, "2": ROUTE_SCHEME_II, "iv": ROUTE_SCHEME_IV, "4": ROUTE_SCHEME_IV, "x": ROUTE_SCHEME_X, "10": ROUTE_SCHEME_X}
@@ -83,6 +85,8 @@ def route_query(understanding: QueryUnderstanding, gazetteer: Gazetteer | None =
 
     if understanding.invalid_refs and not understanding.standard_refs:
         return Route(ROUTE_INVALID_IDENTIFIER, f"malformed IS number {understanding.invalid_refs[0]!r}")
+    if any(cue in padded for cue in _HSN_CUES):
+        return Route(ROUTE_HSN, "HSN code cue (local HSN lookup; separate from BIS compliance)")
     if understanding.recognition_nos:
         return Route(ROUTE_AHC, "AHC recognition number")
     if INTENT_GAP in intents:

@@ -37,6 +37,9 @@ Never commit `.env`.
 | `MANAKMARG_LOG_LEVEL` | `INFO` | |
 | `MANAKMARG_FETCH_MIN_DELAY_S`, `MANAKMARG_OFFLINE` | `2.5`, `false` | Only for re-running ingestion. |
 | `ANTHROPIC_API_KEY`, `MANAKMARG_LLM_MODEL` | empty | Optional narrative; leave empty for the demo. |
+| `GROQ_API_KEY` | empty | **Optional secret** for voice input (Whisper transcription) and routing hints for questions no local rule can route. Set it in the host's secret store (Render/Hugging Face "secrets"), never in the repo or frontend. Without it every deterministic feature and HSN lookup works and the voice button is disabled. |
+| `MANAKMARG_GROQ_TIMEOUT_S`, `MANAKMARG_GROQ_TRANSCRIPTION_TIMEOUT_S` | `8`, `30` | Upper bounds for the Groq calls. |
+| `MANAKMARG_VOICE_MAX_MB`, `MANAKMARG_VOICE_REQUESTS_PER_MINUTE` | `10`, `12` | Voice upload size limit and per-client rate limit. |
 | `VITE_API_BASE_URL` | empty | **Frontend build time only**, when the frontend is hosted separately. |
 
 ## 3. Installation (without Docker)

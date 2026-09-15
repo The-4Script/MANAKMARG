@@ -17,6 +17,12 @@ def test_both_hallmarking_spellings_and_places():
     assert apply_aliases("कोलकाता में IS 2062 की जाँच").text == "Kolkata में IS 2062 की testing"
 
 
+def test_speech_to_text_word_splits_are_normalised():
+    # Whisper transcribed a spoken Hinglish question as "… हॉल मार्किंग …" (September 2026 live check).
+    assert apply_aliases("जयपुर में हॉल मार्किंग अनिवार्य है").text == "Jaipur में hallmarking अनिवार्य है"
+    assert apply_aliases("हाल मार्क वाले गहने").text == "hallmark वाले गहने"
+
+
 def test_aliases_do_not_touch_parts_of_other_words():
     assert apply_aliases("स्टीलवर्क").text == "स्टीलवर्क"
     assert apply_aliases("What is IS 2062?").text == "What is IS 2062?"

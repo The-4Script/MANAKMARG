@@ -40,6 +40,22 @@ These are also shown in the product (Navigator and Sources & Data Health).
   for cookware); both links are kept as published.
 * Answers are template-based. The optional Claude narrative is not enabled in this build.
 
+## HSN lookup
+
+* HSN codes come from the supplied workbook (sheet `HSN_MSTR`, 21,935 rows). The workbook states no publisher, date or
+  URL, so none is shown; results are a classification lookup only — not a GST rate, customs or BIS determination.
+* Text search needs every product word to appear in an official description; trade names that the descriptions do not
+  use (e.g. "utensils" where the description says "household articles") return no match rather than a guess.
+* The workbook's `SAC_MSTR` sheet (services) is not used. The workbook file itself is not committed to git; the HSN
+  rows ship inside the data bundle.
+
+## Voice input
+
+* Requires `GROQ_API_KEY` on the server; without it the microphone button is disabled with an explanation.
+* Recordings are capped at 30 seconds / 10 MB, sent only to Groq's transcription API, held in memory for that one
+  request and never stored or logged. Transcription quality depends on the microphone and accent; the transcript is
+  shown as the question so the user can see exactly what was understood.
+
 ## Gap analysis
 
 * Compares only numeric limits written in the uploaded requirement source; text requirements (e.g. marking, visual

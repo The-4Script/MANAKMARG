@@ -34,6 +34,7 @@ EXPECTED_TABLES = {
     "district_alias",
     "jeweller",
     "faq",
+    "hsn_code",
 }
 
 PROVENANCE_TABLES = {
@@ -56,6 +57,7 @@ PROVENANCE_TABLES = {
     "hallmarking_district",
     "jeweller",
     "faq",
+    "hsn_code",
 }
 
 PROVENANCE_COLUMNS = {
@@ -124,6 +126,7 @@ def test_fts_indexes_are_declared():
         "chunk_fts",
         "lab_fts",
         "ahc_fts",
+        "hsn_fts",
     }
 
 

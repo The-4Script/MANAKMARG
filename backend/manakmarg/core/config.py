@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     groq_reasoning_model: str = "openai/gpt-oss-120b"
     groq_transcription_model: str = "whisper-large-v3-turbo"
     groq_transcription_fallback_model: str = "whisper-large-v3"
+    groq_timeout_s: float = 8.0
+    groq_transcription_timeout_s: float = 30.0
+    voice_max_mb: int = 10
+    voice_requests_per_minute: int = 12
     fetch_min_delay_s: float = 2.5
     user_agent: str = USER_AGENT
     offline: bool = False
@@ -51,6 +55,10 @@ class Settings(BaseSettings):
     @property
     def llm_enabled(self) -> bool:
         return bool(self.groq_api_key) or (bool(self.anthropic_api_key) and bool(self.llm_model))
+
+    @property
+    def voice_enabled(self) -> bool:
+        return bool(self.groq_api_key)
 
     @property
     def cors_origin_list(self) -> list[str]:
