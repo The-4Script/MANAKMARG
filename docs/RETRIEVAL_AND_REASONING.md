@@ -17,11 +17,19 @@ Transparent rules produce a `QueryUnderstanding`:
 * **Hindi / Hinglish aliases** (`normalize/aliases.py`): known domain words and Devanagari city names are replaced by
   the English record terms before the rules run (*स्टेनलेस स्टील के बर्तन → stainless steel utensils*,
   *हॉलमार्किंग / हालमार्किंग → hallmarking*, *जयपुर → Jaipur*, *लाइसेंस → licence*). Only listed entities are replaced;
-  the question is never translated, and aliased places are still resolved against the official lists.
+  the question is never translated, and aliased places are still resolved against the official lists. Listed spelling
+  and speech-to-text variants are included (*कोलकत्ता / कलकत्ता → Kolkata*, *बंबई → Mumbai*, *जाज → testing*,
+  *लाब → lab*, *कॉपर वायर → copper wire*, *आईएस → IS*), matching ignores chandrabindu/anusvara and nukta differences and
+  invisible joiners, Devanagari digits are read as digits, and *IS-2062 / IS:2062* is read as *IS 2062*.
+* **Response language** (`normalize/language.py`): the web client sends `lang: "auto"`. A question containing
+  Devanagari is answered in Hindi and a plain-English question in English; Hinglish or a bare identifier keeps the
+  interface language (`ui_lang`). A voice question recorded with English or Hindi selected keeps that language. Only the
+  wording changes — the same records, evidence and status are used in both languages.
 * **Invalid identifiers**: an IS number that mixes digits with the letters O/I/l (*IS 2O62*) is recorded as invalid and
   never read as a shorter standard (*IS 2*).
 * **Unrecognised places**: an explicitly named place (*in Timbuktu*, *Gotham district*) that no list resolves is kept,
-  so the answer can say it was not recognised instead of silently searching everywhere.
+  so the answer can say it was not recognised instead of silently searching everywhere. A Devanagari name one spelling
+  away from a listed place (*कोलकाटा*) adds a "did you mean Kolkata" suggestion; results are still not filtered by it.
 
 Text normalisation keeps letters, digits and combining marks of every script, so Devanagari words stay whole.
 

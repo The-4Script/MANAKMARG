@@ -34,8 +34,14 @@ These are also shown in the product (Navigator and Sources & Data Health).
   may not match, and ties are shown as candidates for the user to confirm. Neural embeddings are pluggable but the model
   download was deferred.
 * Query understanding and routing are rule-based. Hindi and Hinglish questions pass through a curated alias list
-  (`normalize/aliases.py`) of domain words and about 45 major city names in Devanagari; places missing from that list
-  must be written in Latin script, and an unrecognised place is reported rather than guessed.
+  (`normalize/aliases.py`) of domain words and about 45 major city names (with common spelling variants) in Devanagari;
+  places missing from that list must be written in Latin script, and an unrecognised place is reported rather than
+  guessed (a near spelling of a listed city is only suggested).
+* Answers follow the language of the question (Devanagari → Hindi, English → English); Hinglish follows the interface
+  language. Record titles, place names and identifiers stay as published, so Hindi answers still contain English names.
+* Speech-to-text can mishear words beyond the listed variants (in a synthetic-voice check "Jaipur" became "जेलपूर" and
+  "बताइए" became "बाट ए"). Such words are not corrected: the place is reported as unrecognised, and extra words can lower
+  the match confidence shown for a product.
 * The BIS Scheme I page itself sometimes lists the same notification twice with two PDF links (for example S.O. 4494(E)
   for cookware); both links are kept as published.
 * Answers are template-based. The optional Claude narrative is not enabled in this build.

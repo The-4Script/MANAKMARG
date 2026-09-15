@@ -8,6 +8,7 @@ Hindi and Hinglish questions first pass through ``manakmarg.normalize.aliases``,
 place names with the English terms used by the records; the rest of the question is left as written.
 """
 
+import difflib
 import re
 from dataclasses import dataclass, field
 from dataclasses import replace
@@ -16,7 +17,7 @@ import sqlalchemy as sa
 from sqlalchemy.engine import Connection
 
 from manakmarg.db import schema
-from manakmarg.normalize.aliases import apply_aliases
+from manakmarg.normalize.aliases import PLACE_ALIASES, apply_aliases, clean_script
 from manakmarg.normalize.geo import STATES_AND_UTS, compact_district
 from manakmarg.normalize.is_number import extract_designations
 from manakmarg.normalize.orders import extract_so_number
@@ -322,6 +323,18 @@ def _unresolved_place(text: str, ignore: set[str]) -> str | None:
     return None
 
 
+_DEVANAGARI_PLACE_NAMES = {clean_script(name): target for name, target in {**PLACE_ALIASES, **_HINDI_STATES}.items()}
+
+
+def suggest_place(place: str | None) -> str | None:
+    """A known place whose Devanagari spelling is very close to an unrecognised one ("कोलकाटा" → "Kolkata"). Used only for
+    a "did you mean" suggestion: the question is never answered as if the user had named that place."""
+    if not place or not _DEVANAGARI.search(place):
+        return None
+    close = difflib.get_close_matches(clean_script(place).strip(), list(_DEVANAGARI_PLACE_NAMES), n=1, cutoff=0.8)
+    return _DEVANAGARI_PLACE_NAMES[close[0]] if close else None
+
+
 def _find_entity(text: str, category: str) -> str | None:
     normalized = _padded(text)
     for canonical, aliases in _ENTITY_ALIASES[category].items():
@@ -367,9 +380,11 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
     elif " silver " in padded:
         metal = "silver"
 
-    material = _find_entity(text, "material")
-    product = _find_entity(text, "product")
-    application = _find_entity(text, "application")
+    # The aliased text too: speech-to-text writes English product words in Devanagari ("कॉपर वायर" → "copper wire").
+    entity_text = f"{text} {aliased.text}"
+    material = _find_entity(entity_text, "material")
+    product = _find_entity(entity_text, "product")
+    application = _find_entity(entity_text, "application")
 
     cue_tokens = {token for cues in hits.values() for cue in cues for token in norm_match(cue).split()}
     identifier_tokens = {norm_match(part) for designation in designations for part in designation.raw.split()}

@@ -237,6 +237,85 @@ def test_hinglish_product_question(engine):
     assert response.understanding.product_text == "steel"
 
 
+# --------------------------------------------------------------------------- response language follows the question
+# Cases A–G of the Hindi voice check (September 2026). "auto" is what the web client sends; fallback_lang is the
+# interface language, used only when the question itself gives no clear signal.
+
+
+def _ask_auto(engine, query, ui_lang="en"):
+    with engine.connect() as conn:
+        return answer(conn, query, lang="auto", fallback_lang=ui_lang, today=TODAY)
+
+
+def _section_ids(response, key):
+    return [item.evidence_ids for section in response.sections if section.key == key for item in section.items]
+
+
+def test_case_a_hindi_hallmarking_question_gets_a_hindi_answer(engine):
+    response = _ask_auto(engine, "जयपुर में हॉलमार्किंग अनिवार्य है क्या?")
+    assert response.lang == "hi" and DEVANAGARI.search(response.headline)
+    assert response.status_label == "COVERED" and "Jaipur, Rajasthan" in response.headline
+
+
+@pytest.mark.parametrize(
+    "query",
+    [
+        "कोलकाता में IS 2062 के परीक्षण के लिए लैब बताइए",  # B
+        "कोलकत्ता में IS 2062 के जाँच के लिए लैब बताइए",  # C: spelling variant
+        "कोलकत्ता में आईएस २०६२ की जाज के लिए लैब",  # as speech-to-text writes it
+    ],
+)
+def test_cases_b_c_hindi_lab_questions_are_filtered_to_kolkata(engine, query):
+    response = _ask_auto(engine, query)
+    english = _ask_auto(engine, "Find laboratories for IS 2062 in Kolkata.")
+    assert response.lang == "hi" and DEVANAGARI.search(response.headline)
+    assert response.route.category == "lab_testing" and "IS 2062" in response.headline and "Kolkata" in response.headline
+    assert "location_not_recognised" not in response.caveats
+    assert _section_ids(response, "labs") == _section_ids(english, "labs")  # same laboratories, Hindi wording
+
+
+def test_case_d_hindi_steel_standard_question(engine):
+    response = _ask_auto(engine, "स्टील के लिए BIS standard बताइए")
+    assert response.lang == "hi" and DEVANAGARI.search(response.headline)
+    assert response.route.category == "product_standard" and response.understanding.product_text == "steel"
+
+
+@pytest.mark.parametrize("query", ["मुझे copper wire का BIS standard बताइए", "मुझे कॉपर वायर का बीआईएस स्टैंडर्ड बताइए"])
+def test_case_e_mixed_copper_wire_question_keeps_the_english_retrieval(engine, query):
+    response = _ask_auto(engine, query)
+    english = _ask(engine, "I need BIS standard for copper wire")
+    assert response.lang == "hi" and response.route.category == "product_standard"
+    assert response.status_label == english.status_label
+    assert _section_ids(response, "standards") == _section_ids(english, "standards")
+
+
+def test_case_f_english_question_stays_english_in_a_hindi_interface(engine):
+    response = _ask_auto(engine, "Find laboratories for IS 2062 in Kolkata.", ui_lang="hi")
+    assert response.lang == "en" and not DEVANAGARI.search(response.headline) and "Kolkata" in response.headline
+
+
+@pytest.mark.parametrize("ui_lang", ["en", "hi"])
+def test_case_g_hinglish_follows_the_interface_language(engine, ui_lang):
+    response = _ask_auto(engine, "Jaipur mein hallmarking mandatory hai kya?", ui_lang=ui_lang)
+    assert response.lang == ui_lang and response.status_label == "COVERED" and "Jaipur, Rajasthan" in response.headline
+
+
+def test_hindi_state_names_resolve(engine):
+    response = _ask_auto(engine, "राजस्थान में हॉलमार्किंग अनिवार्य है?")
+    assert response.lang == "hi" and response.understanding.state == "Rajasthan"
+
+
+def test_close_misspelling_of_a_place_is_only_suggested(engine):
+    labs = _ask_auto(engine, "कोलकाटा में IS 2062 की लैब")
+    assert labs.route.category == "lab_testing" and "location_not_recognised" in labs.caveats and "कोलकाटा" in labs.headline
+    assert any(item.text.startswith("Kolkata") for section in labs.sections if section.key == "suggestions" for item in section.items)
+    hallmarking = _ask_auto(engine, "जयपूर में हॉलमार्किंग अनिवार्य है क्या?")
+    assert hallmarking.status_label != "COVERED"
+    assert any(item.text.startswith("Jaipur") for section in hallmarking.sections if section.key == "suggestions" for item in section.items)
+    unrelated = _ask_auto(engine, "टिम्बकटू में हॉलमार्किंग अनिवार्य है क्या?")
+    assert "suggestions" not in _keys(unrelated)
+
+
 @pytest.mark.parametrize("query, lang", [("Which standard applies to steel?", "en"), ("स्टील के लिए कौन सा BIS मानक लागू है?", "hi"), ("mujhe steel ke liye BIS standard batao", "en")])
 def test_single_broad_word_does_not_single_out_one_listing(engine, query, lang):
     response = _ask(engine, query, lang=lang)

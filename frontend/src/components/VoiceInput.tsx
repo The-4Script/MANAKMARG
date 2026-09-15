@@ -4,7 +4,7 @@ import { api, ApiError } from "../api/client";
 import { useI18n } from "../i18n/I18nProvider";
 import { cx } from "./ui";
 
-type VoiceLanguage = "auto" | "en" | "hi";
+export type VoiceLanguage = "auto" | "en" | "hi";
 type Phase = "idle" | "recording" | "processing" | "error";
 
 const MAX_SECONDS = 30;
@@ -22,7 +22,7 @@ function extensionFor(type: string): string {
 }
 
 /** Records a spoken question and returns the transcript; the caller asks it through the normal assistant flow. */
-export default function VoiceInput({ enabled, disabled, onTranscript }: { enabled: boolean; disabled?: boolean; onTranscript: (text: string) => void }) {
+export default function VoiceInput({ enabled, disabled, onTranscript }: { enabled: boolean; disabled?: boolean; onTranscript: (text: string, language: VoiceLanguage) => void }) {
   const { t, lang } = useI18n();
   const [phase, setPhase] = useState<Phase>("idle");
   const [seconds, setSeconds] = useState(0);
@@ -55,7 +55,7 @@ export default function VoiceInput({ enabled, disabled, onTranscript }: { enable
     try {
       const result = await api.upload<{ text: string }>("/voice/transcribe", form);
       setPhase("idle");
-      onTranscript(result.text);
+      onTranscript(result.text, language);
     } catch (reason) {
       setPhase("error");
       setError(reason instanceof ApiError ? reason.message : t("voice.failed"));

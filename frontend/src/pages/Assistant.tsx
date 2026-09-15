@@ -4,10 +4,10 @@ import { Link, useSearchParams } from "react-router-dom";
 import { api } from "../api/client";
 import type { AssistantResponse, Meta } from "../api/types";
 import { useApi } from "../api/useApi";
-import VoiceInput from "../components/VoiceInput";
+import VoiceInput, { type VoiceLanguage } from "../components/VoiceInput";
 import { EvidenceProvider, EvidenceRefs, OfficialSourceLinks, SourcesList } from "../components/evidence";
 import { Card, Chip, ErrorNote, formatDate, Notice, PageHeader, Spinner, StatusChip } from "../components/ui";
-import { useI18n } from "../i18n/I18nProvider";
+import { LanguageScope, useI18n } from "../i18n/I18nProvider";
 import { CAVEATS, pick } from "../i18n/domain";
 
 const EXAMPLES = {
@@ -185,18 +185,22 @@ export default function Assistant() {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [loading, setLoading] = useState(false);
   const asked = useRef<string | null>(null);
-  const spoken = useRef<Set<string>>(new Set());
+  const spoken = useRef<Map<string, VoiceLanguage>>(new Map());
   const meta = useApi((signal) => api.get<Meta>("/meta", undefined, signal), []);
 
   const ask = async (query: string) => {
     const clean = query.trim();
     if (!clean) return;
-    const viaVoice = spoken.current.has(clean);
+    const voiceLanguage = spoken.current.get(clean);
+    const viaVoice = voiceLanguage !== undefined;
     setLoading(true);
     setText("");
     setTurns((previous) => [{ query: clean, viaVoice }, ...previous]);
     try {
-      const response = await api.post<AssistantResponse>("/assistant/query", { query: clean, lang });
+      // The answer follows the language of the question ("auto"; the interface language only breaks ties, e.g. for
+      // Hinglish). A voice question recorded with English or Hindi selected keeps that language end to end.
+      const answerLang = voiceLanguage === "en" || voiceLanguage === "hi" ? voiceLanguage : "auto";
+      const response = await api.post<AssistantResponse>("/assistant/query", { query: clean, lang: answerLang, ui_lang: lang });
       setTurns((previous) => [{ query: clean, response, viaVoice }, ...previous.slice(1)]);
     } catch (reason) {
       setTurns((previous) => [{ query: clean, error: reason instanceof Error ? reason : new Error(String(reason)), viaVoice }, ...previous.slice(1)]);
@@ -206,10 +210,10 @@ export default function Assistant() {
   };
 
   // A transcript is asked exactly like a typed question, through the same assistant endpoint.
-  const askSpoken = (transcript: string) => {
+  const askSpoken = (transcript: string, language: VoiceLanguage) => {
     const clean = transcript.trim();
     if (!clean) return;
-    spoken.current.add(clean);
+    spoken.current.set(clean, language);
     setText(clean);
     setParams({ q: clean });
   };
@@ -263,7 +267,11 @@ export default function Assistant() {
             </div>
             {!turn.response && !turn.error && <Spinner />}
             {turn.error && <ErrorNote error={turn.error} onRetry={() => ask(turn.query)} />}
-            {turn.response && <Answer response={turn.response} />}
+            {turn.response && (
+              <LanguageScope lang={turn.response.lang === "hi" ? "hi" : "en"}>
+                <Answer response={turn.response} />
+              </LanguageScope>
+            )}
             {turn.response && index === 0 && turn.response.follow_ups.length > 0 && (
               <div className="flex flex-wrap items-center gap-2 text-sm">
                 <span className="text-slate-500">{t("assistant.followUps")}:</span>

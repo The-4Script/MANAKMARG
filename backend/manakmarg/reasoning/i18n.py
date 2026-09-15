@@ -73,6 +73,7 @@ MESSAGES: dict[str, dict[str, str]] = {
         "hi": "स्थान “{place}” पहचाना नहीं गया — पूरे भारत की प्रयोगशालाएँ दिखाई गई हैं।",
     },
     "item.suggestion": {"en": "{district}, {state}", "hi": "{district}, {state}"},
+    "item.place_suggestion": {"en": "{place} — ask again with this name to filter by it", "hi": "{place} — इस नाम से दोबारा पूछें ताकि परिणाम इसी स्थान के हों"},
     "head.hm_metal_gold": {
         "en": "In the indexed official records, mandatory hallmarking applies to gold jewellery and gold artefacts in {count} notified district(s); name a district to check it.",
         "hi": "अनुक्रमित आधिकारिक रिकॉर्ड में सोने के आभूषणों और कलाकृतियों की अनिवार्य हॉलमार्किंग {count} अधिसूचित ज़िलों में लागू है; जाँचने के लिए ज़िला बताएँ।",

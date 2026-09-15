@@ -354,3 +354,9 @@ const hi: Partial<Record<StringKey, string>> = {
 
 export type Lang = "en" | "hi";
 export const STRINGS: Record<Lang, Partial<Record<StringKey, string>>> = { en, hi };
+
+export function translate(lang: Lang, key: StringKey, vars?: Record<string, string | number>): string {
+  let text: string = STRINGS[lang][key] ?? STRINGS.en[key] ?? key;
+  for (const [name, value] of Object.entries(vars ?? {})) text = text.replaceAll(`{${name}}`, String(value));
+  return text;
+}

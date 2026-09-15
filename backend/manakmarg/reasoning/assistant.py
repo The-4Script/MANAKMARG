@@ -14,6 +14,7 @@ from sqlalchemy.engine import Connection
 
 from manakmarg.core import clock
 from manakmarg.db import schema
+from manakmarg.normalize.language import LANGUAGES, detect_language
 from manakmarg.normalize.orders import extract_gsr_number, extract_so_number
 from manakmarg.normalize.text import snippet
 from manakmarg.reasoning.applicability import (
@@ -39,6 +40,7 @@ from manakmarg.reasoning.intents import (
     QueryUnderstanding,
     understand,
     apply_model_hints,
+    suggest_place,
 )
 from manakmarg.core.config import Settings, get_settings
 from manakmarg.reasoning import groq
@@ -353,6 +355,8 @@ def _hallmarking_answer(conn, understanding: QueryUnderstanding, composer: _Comp
             if understanding.unresolved_place:
                 caveats.append("location_not_recognised")
             composer.section("suggestions", [AnswerItem(composer.say("item.suggestion", district=item.get("district"), state=item.get("state"))) for item in check.suggestions[:5]])
+            if not check.suggestions:
+                _place_suggestion(understanding, composer)
         else:
             match = check.matches[0]
             headline_ids = list(match.evidence_ids)
@@ -450,6 +454,8 @@ def _labs_answer(conn, understanding: QueryUnderstanding, composer: _Composer, e
     if unknown_place:
         items.insert(0, AnswerItem(composer.say("item.labs_place_unknown", place=unknown_place)))
     composer.section("labs", items)
+    if unknown_place:
+        _place_suggestion(understanding, composer)
     composer.follow("follow.apply")
     count = result.counts.get("rows", len(result.matches))
     if unknown_place:
@@ -593,10 +599,19 @@ def _invalid_identifier_answer(conn, understanding: QueryUnderstanding, composer
     return composer.say("head.invalid_identifier", number=ref[2:].strip(" -:/")), UNKNOWN, ["possible_typo"], []
 
 
+def _place_suggestion(understanding: QueryUnderstanding, composer: _Composer) -> None:
+    """ "Did you mean …" for a Devanagari place name one spelling away from a known one; results stay unfiltered."""
+    candidate = suggest_place(understanding.unresolved_place)
+    if candidate:
+        composer.section("suggestions", [AnswerItem(composer.say("item.place_suggestion", place=candidate))])
+
+
 def _unknown_location_answer(conn, understanding: QueryUnderstanding, composer: _Composer, evidence: EvidenceBuilder) -> tuple[str, str | None, list[str], list[str]]:
     place = understanding.unresolved_place
     check = check_district(conn, place, None, evidence=evidence)
     composer.section("suggestions", [AnswerItem(composer.say("item.suggestion", district=item.get("district"), state=item.get("state"))) for item in check.suggestions[:5]])
+    if not check.suggestions:
+        _place_suggestion(understanding, composer)
     composer.follow("follow.example_hallmarking")
     return composer.say("head.unknown_location", place=place), None, ["location_not_recognised"], []
 
@@ -638,13 +653,15 @@ def answer(
     query: str,
     *,
     lang: str = "en",
+    fallback_lang: str = "en",
     today: date | None = None,
     vectors=None,
     gazetteer: Gazetteer | None = None,
     settings: Settings | None = None,
 ) -> AssistantResponse:
+    """``lang`` is "en", "hi" or "auto" (the language of the question, with ``fallback_lang`` when it is unclear)."""
     today = today or clock.today()
-    lang = lang if lang in ("en", "hi") else "en"
+    lang = detect_language(query, fallback_lang) if lang == "auto" else (lang if lang in LANGUAGES else "en")
     settings = settings or get_settings()
     gazetteer = gazetteer or Gazetteer.load(conn)
     understanding = understand(query, gazetteer=gazetteer)
