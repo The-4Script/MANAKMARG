@@ -2,7 +2,9 @@
 
 This guide is for the team member deploying the demo. MANAK MARG is **one process**: a FastAPI server that serves
 the JSON API under `/api` and the built React app at `/`. Data lives in a local SQLite file. There is no database
-server, message queue, background worker, scheduled job or external API to set up, and nothing is scraped at startup.
+server, message queue, background worker or external API to set up, and nothing is scraped at startup. The weekly
+BIS standards refresh runs inside the same process every Saturday (`MANAKMARG_REFRESH_*` settings, persistent-disk
+notes and failure handling: [DATA_REFRESH.md](DATA_REFRESH.md)).
 
 > The fastest path is the Docker image (section 6). Without Docker, follow sections 3–5.
 

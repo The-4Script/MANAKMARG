@@ -40,14 +40,31 @@ def build_parser() -> argparse.ArgumentParser:
     load = commands.add_parser("import-data", help="Restore the runtime data bundle from a path or URL.")
     load.add_argument("source", nargs="?", help="Bundle path or http(s) URL (default: MANAKMARG_DATA_URL or deploy/data bundle).")
     load.add_argument("--force", action="store_true", help="Replace an existing database.")
+    refresh = commands.add_parser(
+        "refresh", help="Run the BIS standards data refresh once: download, validate, stage, check and activate."
+    )
+    refresh.add_argument("--no-activate", action="store_true", help="Stage and check the new dataset but keep the active one.")
+    refresh.add_argument("--with-tests", action="store_true", help="Also run the backend test suite before activating (needs dev dependencies).")
+    commands.add_parser("refresh-status", help="Show the active dataset version and the latest refresh results.")
     for name, text in (("serve", "Run the API and the built frontend."), ("start", "Deployment entry point: restore data if needed, then serve.")):
         command = commands.add_parser(name, help=text)
         command.add_argument("--host", default=None, help="Bind address (default: HOST or 127.0.0.1).")
         command.add_argument("--port", type=int, default=None, help="Port (default: PORT or 8000).")
+        command.add_argument(
+            "--refresh-schedule",
+            choices=("auto", "on", "off"),
+            default=None,
+            help="Weekly BIS data refresh inside the server (default: MANAKMARG_REFRESH_SCHEDULE, 'auto' = on for start, off for serve).",
+        )
     return parser
 
 
-def _serve(settings, host: str | None, port: int | None) -> int:
+def refresh_scheduled(settings, entry: str, override: str | None) -> bool:
+    mode = override or settings.refresh_schedule
+    return mode == "on" or (mode == "auto" and entry == "start")
+
+
+def _serve(settings, host: str | None, port: int | None, *, entry: str = "serve", schedule: str | None = None) -> int:
     from manakmarg.core.data_bundle import data_status
 
     status = data_status(settings.db_path)
@@ -61,6 +78,11 @@ def _serve(settings, host: str | None, port: int | None) -> int:
         return 2
     import uvicorn
 
+    if refresh_scheduled(settings, entry, schedule):
+        from manakmarg.refresh.scheduler import start_refresh_scheduler
+
+        scheduler = start_refresh_scheduler(settings)
+        print(f"Weekly BIS data refresh scheduled; next run {scheduler.next_run_at.isoformat()} ({scheduler.next_trigger}).")
     uvicorn.run("manakmarg.api.app:create_app", factory=True, host=host or settings.host, port=port or settings.port)
     return 0
 
@@ -94,7 +116,7 @@ def main(argv: list[str] | None = None) -> int:
     paths.ensure_dirs()
 
     if args.command == "serve":
-        return _serve(settings, args.host, args.port)
+        return _serve(settings, args.host, args.port, entry="serve", schedule=args.refresh_schedule)
 
     if args.command == "start":
         from manakmarg.core.data_bundle import BundleError, data_status
@@ -107,7 +129,27 @@ def main(argv: list[str] | None = None) -> int:
                 return 2
         if not (paths.INDEX_DIR / "coverage.joblib").exists():
             print(json.dumps(_build_runtime_index(settings)))
-        return _serve(settings, args.host, args.port)
+        return _serve(settings, args.host, args.port, entry="start", schedule=args.refresh_schedule)
+
+    if args.command == "refresh":
+        from manakmarg.refresh.pipeline import log_entry, run_refresh
+
+        report = run_refresh(settings, trigger="manual", activate=not args.no_activate, run_pytest=True if args.with_tests else None)
+        print(json.dumps(log_entry(report), indent=2, ensure_ascii=False, default=str))
+        return 0 if report["status"] in ("success", "staged") else 1
+
+    if args.command == "refresh-status":
+        from manakmarg.refresh import log as refresh_log
+
+        print(
+            json.dumps(
+                {"status": refresh_log.read_status(settings.refresh_dir), "recent": refresh_log.read_entries(settings.refresh_dir, limit=5)},
+                indent=2,
+                ensure_ascii=False,
+                default=str,
+            )
+        )
+        return 0
 
     if args.command == "inventory":
         from manakmarg.ingest.inventory import build_inventory, write_inventory

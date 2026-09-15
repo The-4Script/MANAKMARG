@@ -46,6 +46,18 @@ These are also shown in the product (Navigator and Sources & Data Health).
   for cookware); both links are kept as published.
 * Answers are template-based. The optional Claude narrative is not enabled in this build.
 
+## Weekly standards refresh
+
+* The refresh ([DATA_REFRESH.md](DATA_REFRESH.md)) updates published-standards metadata and ministry classification
+  only. Compulsory listings, QCOs, Product Manuals, labs, hallmarking and HSN data still come from the last full
+  ingestion.
+* Group-wise and Department-wise classification are not refreshed: the portal offers the aggregate Group-wise
+  download only to signed-in users with an approved role. The supplied group-wise export is reused unchanged.
+* The downloader follows the portal's request format as published in September 2026. If BIS changes it, refreshes
+  fail safely (the previous dataset stays active) until `refresh/portal.py` is updated.
+* The schedule runs only while the server process is running; on hosts without a persistent disk a restart returns to
+  the shipped dataset.
+
 ## HSN lookup
 
 * HSN codes come from the supplied workbook (sheet `HSN_MSTR`, 21,935 rows). The workbook states no publisher, date or

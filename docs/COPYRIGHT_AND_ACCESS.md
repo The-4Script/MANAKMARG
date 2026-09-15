@@ -15,8 +15,11 @@
 * **CAPTCHA-protected** Manakonline jeweller report: not accessed; users receive the official link.
 * **HTTP 401/403 and robots.txt disallows**: recorded as access-denied and not retried — for example one Product Manual
   PDF (`PM_IS_2062.pdf`) returns 403.
-* No hidden or internal APIs (the standards portal's single-page-app API is registered as not used), no DRM/FileOpen
-  circumvention, no rate-limit evasion. Requests are spaced ≥ 2.5 s per host with a clear User-Agent.
+* No private APIs and no sign-in-only data. The weekly standards refresh ([DATA_REFRESH.md](DATA_REFRESH.md)) makes only
+  the anonymous export and ministry-list requests that the public Published Standards pages make for any visitor.
+  The Ministry-wise and Group-wise aggregate downloads, which need a signed-in account with an approved role, are not
+  used, and the portal's Department/Group API stays registered as not used. No DRM/FileOpen circumvention, no
+  rate-limit evasion. Requests are spaced ≥ 2.5 s per host with a clear User-Agent.
 
 ## Presentation rules
 

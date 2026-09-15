@@ -105,14 +105,21 @@ def meta(conn: Connection = Depends(get_conn), today: date = Depends(get_today))
     def day(source_id: str) -> str | None:
         return latest.get(source_id, None) and latest[source_id][:10]
 
+    from manakmarg.refresh import log as refresh_log
+    from manakmarg.refresh import scheduler as refresh_scheduler
+
     settings = get_state().settings
+    scheduled = refresh_scheduler.ACTIVE_SCHEDULER
+    refresh = refresh_log.read_status(settings.refresh_dir, scheduled.next_run_at if scheduled else None)
     return {
         "version": __version__,
         "llm_enabled": settings.llm_enabled,
         "checked_on": today.isoformat(),
         "counts": counts,
+        # Weekly BIS standards refresh: active dataset version and the latest run (no admin controls).
+        "data_refresh": refresh,
         "as_of": {
-            "standards_export": "2026-09-12",
+            "standards_export": (refresh["activated_at"] or "")[:10] or "2026-09-12",
             "compulsory_listings": day("bis_scheme_i_page"),
             "laboratories": day("lims_recognised_labs"),
             "ahc_list": day("manak_ahc_list"),

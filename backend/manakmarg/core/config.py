@@ -46,8 +46,19 @@ class Settings(BaseSettings):
     port: int = Field(default=8000, validation_alias=AliasChoices("PORT", "MANAKMARG_PORT"))
     data_url: str | None = Field(default=None, validation_alias=AliasChoices("MANAKMARG_DATA_URL"))
     data_bundle: Path = paths.PROJECT_ROOT / "deploy" / "data" / "manakmarg-data.tar.gz"
+    # Weekly BIS standards refresh (docs/DATA_REFRESH.md). "auto": scheduled by `start` (deployment), not by `serve`.
+    refresh_schedule: str = Field(default="auto", pattern="^(auto|on|off)$")
+    refresh_weekday: int = Field(default=5, ge=0, le=6)  # Monday = 0 … Saturday = 5
+    refresh_time_ist: str = "02:30"
+    refresh_catch_up: bool = True
+    refresh_dir: Path = paths.DATA_DIR / "refresh"
+    refresh_keep_versions: int = 6
+    refresh_max_shrink: float = 0.05
+    refresh_min_row_ratio: float = 0.9
+    refresh_export_timeout_s: float = 900.0
+    refresh_run_pytest: bool = False
 
-    @field_validator("db_path", "data_bundle")
+    @field_validator("db_path", "data_bundle", "refresh_dir")
     @classmethod
     def _anchor_relative_db_path(cls, value: Path) -> Path:
         return value if value.is_absolute() else paths.PROJECT_ROOT / value

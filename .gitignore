@@ -25,6 +25,8 @@ data/indexes/
 data/uploads/
 data/documents/
 data/bundles/
+# Weekly BIS refresh: downloaded exports, staged datasets, snapshots and the refresh log (docs/DATA_REFRESH.md).
+data/refresh/
 # Supplied HSN master: its publisher/terms are not stated, so it is not redistributed through git. Its rows ship in the
 # data bundle; place the workbook in data/ to re-run `manakmarg ingest --steps hsn`.
 data/HSN.xlsx
