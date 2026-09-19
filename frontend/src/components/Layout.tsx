@@ -32,18 +32,9 @@ const NAV: { to: string; key: StringKey; icon: typeof Compass }[] = [
 ];
 
 function Logo() {
-  const { t } = useI18n();
   return (
-    <div className="flex items-center gap-3">
-      <div className="grid size-10 place-items-center rounded-xl bg-ink-800 shadow-inner" aria-hidden>
-        <svg viewBox="0 0 32 32" className="size-7">
-          <path d="M7 24V8l9 9 9-9v16" stroke="#f59e0b" strokeWidth="3.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </div>
-      <div className="leading-tight">
-        <div className="text-base font-bold tracking-wide text-white">{t("app.name")}</div>
-        <div className="text-[11px] text-ink-100/80">{t("app.tagline")}</div>
-      </div>
+    <div className="w-full overflow-hidden rounded-xl bg-white px-2 py-1" aria-label="MANAK MARG">
+      <img src="/assets/manak-marg-logo-full.png" alt="MANAK MARG" className="h-auto w-full" />
     </div>
   );
 }
@@ -88,9 +79,12 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="no-print sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-slate-200 bg-paper/90 px-4 py-3 backdrop-blur sm:px-8">
-          <button className="rounded-lg p-2 text-ink-900 hover:bg-slate-100 lg:hidden" onClick={() => setOpen(true)} aria-label="Open navigation">
-            <Menu className="size-5" />
-          </button>
+          <div className="flex min-w-0 items-center gap-1.5 lg:hidden">
+            <button className="rounded-lg p-2 text-ink-900 hover:bg-slate-100" onClick={() => setOpen(true)} aria-label="Open navigation">
+              <Menu className="size-5" />
+            </button>
+            <img src="/assets/manak-marg-logo-full.png" alt="MANAK MARG" className="h-12 w-24 object-contain object-left" />
+          </div>
           <p className="hidden truncate text-xs text-slate-500 sm:block">{t("app.prototype")}</p>
           <button
             onClick={() => setLang(lang === "en" ? "hi" : "en")}
