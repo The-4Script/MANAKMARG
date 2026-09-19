@@ -31,19 +31,10 @@ const NAV: { to: string; key: StringKey; icon: typeof Compass }[] = [
   { to: "/sources", key: "nav.sources", icon: Database },
 ];
 
-function Logo() {
-  const { t } = useI18n();
+function Logo({ className = "h-20" }: { className?: string }) {
   return (
-    <div className="flex items-center gap-3">
-      <div className="grid size-10 place-items-center rounded-xl bg-ink-800 shadow-inner" aria-hidden>
-        <svg viewBox="0 0 32 32" className="size-7">
-          <path d="M7 24V8l9 9 9-9v16" stroke="#f59e0b" strokeWidth="3.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </div>
-      <div className="leading-tight">
-        <div className="text-base font-bold tracking-wide text-white">{t("app.name")}</div>
-        <div className="text-[11px] text-ink-100/80">{t("app.tagline")}</div>
-      </div>
+    <div className="flex justify-center rounded-xl bg-white px-3 py-2" aria-label="MANAK MARG">
+      <img src="/assets/manak-marg-logo-full.png" alt="MANAK MARG" className={cx("w-auto", className)} />
     </div>
   );
 }
@@ -88,9 +79,12 @@ export default function Layout({ children }: { children: ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="no-print sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-slate-200 bg-paper/90 px-4 py-3 backdrop-blur sm:px-8">
-          <button className="rounded-lg p-2 text-ink-900 hover:bg-slate-100 lg:hidden" onClick={() => setOpen(true)} aria-label="Open navigation">
-            <Menu className="size-5" />
-          </button>
+          <div className="flex min-w-0 items-center gap-1.5 lg:hidden">
+            <button className="rounded-lg p-2 text-ink-900 hover:bg-slate-100" onClick={() => setOpen(true)} aria-label="Open navigation">
+              <Menu className="size-5" />
+            </button>
+            <img src="/assets/manak-marg-logo-full.png" alt="MANAK MARG" className="h-9 w-auto" />
+          </div>
           <p className="hidden truncate text-xs text-slate-500 sm:block">{t("app.prototype")}</p>
           <button
             onClick={() => setLang(lang === "en" ? "hi" : "en")}
@@ -107,7 +101,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <div className="absolute inset-0 bg-ink-950/60" onClick={() => setOpen(false)} />
             <div className="absolute inset-y-0 left-0 flex w-72 flex-col gap-6 overflow-y-auto bg-ink-950 px-5 py-6">
               <div className="flex items-center justify-between">
-                <Logo />
+                <Logo className="h-14" />
                 <button onClick={() => setOpen(false)} className="rounded-lg p-1.5 text-white hover:bg-white/10" aria-label={t("common.close")}>
                   <X className="size-5" />
                 </button>

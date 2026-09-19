@@ -80,6 +80,21 @@ def store(tmp_path):
     return SessionStore(tmp_path / "uploads", ttl_minutes=120, max_bytes=1024 * 1024)
 
 
+def test_demo_files_are_added_once_per_session(store, tmp_path):
+    session = store.create()["session_id"]
+    upload = tmp_path / "my_datasheet.txt"
+    upload.write_text("Mass: 0.30 kg\n", encoding="utf-8")
+    store.add_file(session, upload.name, upload.read_bytes(), "datasheet")
+    first = add_demo_files(store, session)
+    second = add_demo_files(store, session)
+    third = add_demo_files(store, session)
+    files = store.files(session)
+    assert [item["file_id"] for item in first] == [item["file_id"] for item in second] == [item["file_id"] for item in third]
+    assert sum(1 for stored, _ in files if stored.demo) == 3
+    assert any(stored.filename == "my_datasheet.txt" and not stored.demo for stored, _ in files)
+    assert analyze_session(store, session).requirement_count == 11
+
+
 def test_demo_session_gap_report(store):
     session = store.create()["session_id"]
     add_demo_files(store, session)

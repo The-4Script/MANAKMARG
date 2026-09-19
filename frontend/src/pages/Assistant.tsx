@@ -1,11 +1,13 @@
-import { ArrowRight, Bot, Send, Sparkles } from "lucide-react";
+import { ArrowRight, Bot, Hash, Mic, Send, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { api } from "../api/client";
-import type { AssistantResponse } from "../api/types";
-import { EvidenceProvider, EvidenceRefs, SourcesList } from "../components/evidence";
+import type { AssistantResponse, Meta } from "../api/types";
+import { useApi } from "../api/useApi";
+import VoiceInput, { type VoiceLanguage } from "../components/VoiceInput";
+import { EvidenceProvider, EvidenceRefs, OfficialSourceLinks, SourcesList } from "../components/evidence";
 import { Card, Chip, ErrorNote, formatDate, Notice, PageHeader, Spinner, StatusChip } from "../components/ui";
-import { useI18n } from "../i18n/I18nProvider";
+import { LanguageScope, useI18n } from "../i18n/I18nProvider";
 import { CAVEATS, pick } from "../i18n/domain";
 
 const EXAMPLES = {
@@ -31,27 +33,48 @@ const INTENT_LABEL: Record<string, [string, string]> = {
   general_question: ["General question", "सामान्य प्रश्न"],
 };
 
-type Turn = { query: string; response?: AssistantResponse; error?: Error };
+type Turn = { query: string; response?: AssistantResponse; error?: Error; viaVoice?: boolean };
+
+const ROUTE_LABEL: Record<string, [string, string]> = {
+  hsn_lookup: ["HSN lookup", "HSN खोज"],
+  scheme_i: ["Scheme I", "योजना I"],
+  scheme_ii: ["Scheme II", "योजना II"],
+  scheme_iv: ["Scheme IV", "योजना IV"],
+  scheme_x: ["Scheme X", "योजना X"],
+  certification: ["Certification process", "प्रमाणन प्रक्रिया"],
+  qco_mandatory: ["Compulsory certification", "अनिवार्य प्रमाणन"],
+  out_of_scope: ["Outside BIS scope", "BIS दायरे से बाहर"],
+  invalid_identifier: ["Invalid IS number", "अमान्य IS संख्या"],
+  unknown_location: ["Unknown location", "अज्ञात स्थान"],
+};
 
 function Answer({ response }: { response: AssistantResponse }) {
   const { t, lang } = useI18n();
   const understanding = response.understanding;
+  const routeLabel = response.route ? ROUTE_LABEL[response.route.category] : undefined;
+  const hasHsnSection = response.sections.some((section) => section.key.startsWith("hsn"));
+  // Official pages are linked once per answer, at their first mention.
+  const shownUrls = new Set<string>();
   return (
     <EvidenceProvider evidence={response.evidence}>
       <Card className="p-6">
         <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
           <span>{t("assistant.understood")}:</span>
-          {understanding.intents.map((intent) => (
-            <Chip key={intent} tone="indigo">
-              {INTENT_LABEL[intent]?.[lang === "hi" ? 1 : 0] ?? intent}
-            </Chip>
-          ))}
+          {routeLabel ? (
+            <Chip tone="indigo">{routeLabel[lang === "hi" ? 1 : 0]}</Chip>
+          ) : (
+            understanding.intents.map((intent) => (
+              <Chip key={intent} tone="indigo">
+                {INTENT_LABEL[intent]?.[lang === "hi" ? 1 : 0] ?? intent}
+              </Chip>
+            ))
+          )}
           {understanding.standard_refs.map((ref) => (
             <Chip key={ref}>
               <span className="id-token">{ref}</span>
             </Chip>
           ))}
-          {understanding.product_text && <Chip>{understanding.product_text}</Chip>}
+          {understanding.product_text && response.route?.category !== "hsn_lookup" && <Chip>{understanding.product_text}</Chip>}
           {[understanding.district, understanding.city, understanding.state].filter(Boolean).map((place) => (
             <Chip key={place}>{place}</Chip>
           ))}
@@ -61,6 +84,11 @@ function Answer({ response }: { response: AssistantResponse }) {
           <h2 className="flex-1 text-xl font-semibold leading-snug text-ink-900">{response.headline}</h2>
           {response.status_label && <StatusChip status={response.status_label} />}
         </div>
+        {response.headline_evidence && response.headline_evidence.length > 0 && (
+          <div className="mt-2">
+            <OfficialSourceLinks ids={response.headline_evidence} shown={shownUrls} />
+          </div>
+        )}
         {response.narrative && (
           <p className="mt-3 flex gap-2 rounded-xl bg-ink-50/70 p-3 text-sm text-ink-900">
             <Sparkles className="mt-0.5 size-4 shrink-0 text-saffron-600" aria-hidden />
@@ -69,20 +97,38 @@ function Answer({ response }: { response: AssistantResponse }) {
         )}
 
         <div className="mt-5 space-y-5">
-          {response.sections.map((section) => (
-            <section key={section.key}>
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">{section.title}</h3>
-              <ul className="mt-2 space-y-2">
-                {section.items.map((item, index) => (
-                  <li key={index} className="flex flex-wrap items-start gap-2 text-sm leading-relaxed text-slate-800">
-                    <span className="mt-2 size-1.5 shrink-0 rounded-full bg-saffron-500" aria-hidden />
-                    <span className="min-w-0 flex-1">{item.text}</span>
-                    <EvidenceRefs ids={item.evidence_ids} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
+          {response.sections.map((section) =>
+            section.key.startsWith("hsn") ? (
+              <section key={section.key} className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
+                <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-600">
+                  <Hash className="size-4" aria-hidden /> {section.title}
+                </h3>
+                <ul className="mt-2 space-y-2">
+                  {section.items.map((item, index) => (
+                    <li key={index} className="flex flex-wrap items-start gap-2 text-sm leading-relaxed text-slate-800">
+                      <span className="min-w-0 flex-1 font-mono text-[13px]">{item.text}</span>
+                      <EvidenceRefs ids={item.evidence_ids} />
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 text-xs text-slate-600">{t("hsn.disclaimer")}</p>
+              </section>
+            ) : (
+              <section key={section.key}>
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">{section.title}</h3>
+                <ul className="mt-2 space-y-2">
+                  {section.items.map((item, index) => (
+                    <li key={index} className="flex flex-wrap items-start gap-2 text-sm leading-relaxed text-slate-800">
+                      <span className="mt-2 size-1.5 shrink-0 rounded-full bg-saffron-500" aria-hidden />
+                      <span className="min-w-0 flex-1">{item.text}</span>
+                      <EvidenceRefs ids={item.evidence_ids} />
+                      <OfficialSourceLinks ids={item.evidence_ids} shown={shownUrls} />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ),
+          )}
         </div>
 
         {response.next_actions.length > 0 && (
@@ -108,13 +154,15 @@ function Answer({ response }: { response: AssistantResponse }) {
           </div>
         )}
 
-        {response.caveats.length > 0 && (
+        {response.caveats.some((code) => !(hasHsnSection && code === "hsn_not_definitive")) && (
           <div className="mt-5">
             <Notice>
               <ul className="list-disc space-y-1 pl-5">
-                {response.caveats.map((code) => (
-                  <li key={code}>{pick(CAVEATS[code], lang, code)}</li>
-                ))}
+                {response.caveats
+                  .filter((code) => !(hasHsnSection && code === "hsn_not_definitive"))
+                  .map((code) => (
+                    <li key={code}>{pick(CAVEATS[code], lang, code)}</li>
+                  ))}
               </ul>
             </Notice>
           </div>
@@ -137,21 +185,37 @@ export default function Assistant() {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [loading, setLoading] = useState(false);
   const asked = useRef<string | null>(null);
+  const spoken = useRef<Map<string, VoiceLanguage>>(new Map());
+  const meta = useApi((signal) => api.get<Meta>("/meta", undefined, signal), []);
 
   const ask = async (query: string) => {
     const clean = query.trim();
     if (!clean) return;
+    const voiceLanguage = spoken.current.get(clean);
+    const viaVoice = voiceLanguage !== undefined;
     setLoading(true);
     setText("");
-    setTurns((previous) => [{ query: clean }, ...previous]);
+    setTurns((previous) => [{ query: clean, viaVoice }, ...previous]);
     try {
-      const response = await api.post<AssistantResponse>("/assistant/query", { query: clean, lang });
-      setTurns((previous) => [{ query: clean, response }, ...previous.slice(1)]);
+      // The answer follows the language of the question ("auto"; the interface language only breaks ties, e.g. for
+      // Hinglish). A voice question recorded with English or Hindi selected keeps that language end to end.
+      const answerLang = voiceLanguage === "en" || voiceLanguage === "hi" ? voiceLanguage : "auto";
+      const response = await api.post<AssistantResponse>("/assistant/query", { query: clean, lang: answerLang, ui_lang: lang });
+      setTurns((previous) => [{ query: clean, response, viaVoice }, ...previous.slice(1)]);
     } catch (reason) {
-      setTurns((previous) => [{ query: clean, error: reason instanceof Error ? reason : new Error(String(reason)) }, ...previous.slice(1)]);
+      setTurns((previous) => [{ query: clean, error: reason instanceof Error ? reason : new Error(String(reason)), viaVoice }, ...previous.slice(1)]);
     } finally {
       setLoading(false);
     }
+  };
+
+  // A transcript is asked exactly like a typed question, through the same assistant endpoint.
+  const askSpoken = (transcript: string, language: VoiceLanguage) => {
+    const clean = transcript.trim();
+    if (!clean) return;
+    spoken.current.set(clean, language);
+    setText(clean);
+    setParams({ q: clean });
   };
 
   useEffect(() => {
@@ -171,11 +235,12 @@ export default function Assistant() {
   return (
     <div>
       <PageHeader title={t("assistant.title")} subtitle={t("navigator.subtitle")} />
-      <form onSubmit={submit} className="sticky top-16 z-20 flex gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-md">
-        <Bot className="ml-2 mt-2.5 size-5 shrink-0 text-ink-700" aria-hidden />
+      <form onSubmit={submit} className="sticky top-16 z-20 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-md sm:gap-3">
+        <Bot className="ml-2 size-5 shrink-0 text-ink-700" aria-hidden />
         <input value={text} onChange={(event) => setText(event.target.value)} placeholder={t("assistant.placeholder")} className="min-w-0 flex-1 bg-transparent px-1 py-2 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none" />
+        <VoiceInput enabled={!!meta.data?.voice_enabled} disabled={loading} onTranscript={askSpoken} />
         <button type="submit" disabled={loading || !text.trim()} className="inline-flex items-center gap-2 rounded-xl bg-ink-800 px-4 py-2 font-medium text-white hover:bg-ink-700 disabled:bg-slate-300">
-          <Send className="size-4" aria-hidden /> {t("assistant.ask")}
+          <Send className="size-4" aria-hidden /> <span className="hidden sm:inline">{t("assistant.ask")}</span>
         </button>
       </form>
 
@@ -192,10 +257,21 @@ export default function Assistant() {
       <div className="mt-6 space-y-8">
         {turns.map((turn, index) => (
           <article key={`${turn.query}-${index}`} className="space-y-3">
-            <p className="ml-auto w-fit max-w-2xl rounded-2xl rounded-br-sm bg-ink-800 px-4 py-2.5 text-white">{turn.query}</p>
+            <div className="ml-auto w-fit max-w-2xl text-right">
+              <p className="rounded-2xl rounded-br-sm bg-ink-800 px-4 py-2.5 text-left text-white">{turn.query}</p>
+              {turn.viaVoice && (
+                <span className="mt-1 inline-flex items-center gap-1 text-xs text-slate-500">
+                  <Mic className="size-3.5" aria-hidden /> {t("assistant.viaVoice")}
+                </span>
+              )}
+            </div>
             {!turn.response && !turn.error && <Spinner />}
             {turn.error && <ErrorNote error={turn.error} onRetry={() => ask(turn.query)} />}
-            {turn.response && <Answer response={turn.response} />}
+            {turn.response && (
+              <LanguageScope lang={turn.response.lang === "hi" ? "hi" : "en"}>
+                <Answer response={turn.response} />
+              </LanguageScope>
+            )}
             {turn.response && index === 0 && turn.response.follow_ups.length > 0 && (
               <div className="flex flex-wrap items-center gap-2 text-sm">
                 <span className="text-slate-500">{t("assistant.followUps")}:</span>

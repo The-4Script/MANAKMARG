@@ -45,7 +45,7 @@ from manakmarg.ingest.bis_schemes import (
     parse_scheme_x,
     parse_upcoming_qcos,
 )
-from manakmarg.ingest.compliance_loader import load_scheme_records
+from manakmarg.ingest.compliance_loader import load_scheme_records, retire_unlinked_orders
 from manakmarg.ingest.demo_families import DEMO_FAMILIES
 from manakmarg.ingest.documents import (
     TEXT_ACCESS_DENIED,
@@ -56,6 +56,7 @@ from manakmarg.ingest.documents import (
     register_document,
 )
 from manakmarg.ingest.excel_standards import ingest_standard_exports
+from manakmarg.ingest.hsn import ingest_hsn
 from manakmarg.ingest.fetch import AccessBlocked, FetchError, Fetcher, FetchResult, OfflineCacheMiss
 from manakmarg.ingest.hallmarking import (
     parse_ahc_events,
@@ -74,7 +75,7 @@ from manakmarg.search.vectors import build_vector_indexes
 
 log = logging.getLogger(__name__)
 
-STEPS = ("standards", "schemes", "pages", "psg", "documents", "labs", "lab_scope", "hallmarking", "index", "quality")
+STEPS = ("standards", "hsn", "schemes", "pages", "psg", "documents", "labs", "lab_scope", "hallmarking", "index", "quality")
 MAX_ORDERS_PER_FAMILY = 12
 
 SCHEME_PAGES = (
@@ -160,6 +161,10 @@ def step_standards(ctx: PipelineContext) -> dict:
     return ingest_standard_exports(ctx.engine, ctx.data_dir)
 
 
+def step_hsn(ctx: PipelineContext) -> dict:
+    return ingest_hsn(ctx.engine, ctx.data_dir)
+
+
 def step_schemes(ctx: PipelineContext) -> dict:
     report = {}
     for source_id, parser, scheme_id in SCHEME_PAGES:
@@ -170,6 +175,8 @@ def step_schemes(ctx: PipelineContext) -> dict:
                 run, parser(fetched.content, url), scheme_id=scheme_id, page_url=url
             ),
         )
+    with ctx.engine.begin() as conn:
+        report["unlinked_orders_retired"] = retire_unlinked_orders(conn)
     return report
 
 
@@ -266,6 +273,23 @@ def _fetch_document(run: RunRecorder, ctx: PipelineContext, url: str, *, doc_typ
         )
         return None, "access_denied"
     except (FetchError, OfflineCacheMiss) as exc:
+        previous = run.conn.execute(
+            sa.select(schema.document.c.text_status, schema.document.c.http_status, schema.document.c.notes).where(schema.document.c.url == url)
+        ).first()
+        if isinstance(exc, OfflineCacheMiss) and previous is not None and previous.text_status == TEXT_ACCESS_DENIED:
+            # An offline replay cannot re-ask a server that refused access; keep the recorded refusal (e.g. HTTP 403)
+            # instead of turning it into a generic fetch failure.
+            loaders.record_document_failure(
+                run,
+                url=url,
+                doc_type=doc_type,
+                title=title,
+                source_page_url=source_page_url,
+                text_status=TEXT_ACCESS_DENIED,
+                http_status=previous.http_status,
+                reason=previous.notes or "access blocked; not retried",
+            )
+            return None, "access_denied"
         loaders.record_document_failure(
             run,
             url=url,
@@ -526,6 +550,7 @@ def step_quality(ctx: PipelineContext) -> dict:
 
 STEP_FUNCTIONS: dict[str, Callable[[PipelineContext], dict]] = {
     "standards": step_standards,
+    "hsn": step_hsn,
     "schemes": step_schemes,
     "pages": step_pages,
     "psg": step_psg,

@@ -5,6 +5,7 @@ The combined score only orders candidate listings. Applicability and compulsory 
 """
 
 import json
+import re
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -20,7 +21,18 @@ from manakmarg.search.resolvers import Resolution, StandardResolver
 from manakmarg.search.vectors import VectorIndex
 
 SYNONYMS_PATH = Path(__file__).with_name("synonyms.json")
-WEIGHTS = {"bm25": 0.3, "vector": 0.2, "coverage": 0.35, "exact": 0.1, "listing": 0.05}
+WEIGHTS = {"bm25": 0.3, "vector": 0.2, "coverage": 0.35, "exact": 0.1, "listing": 0.05, "standard_title": 0.3, "literal": 0.2}
+# Entity constraints (applied only when the query understanding names a product and/or a material).
+PENALTIES = {"product_mismatch": 0.45, "product_as_modifier": 0.45, "material_conflict": 0.3, "accessory_of_product": 0.25}
+EXCLUDING_FLAGS = frozenset({"product_mismatch", "product_as_modifier", "material_conflict"})
+MATERIAL_WORDS = frozenset(
+    {
+        "copper", "steel", "stainless", "pvc", "aluminium", "aluminum", "plastic", "iron", "rubber", "glass", "zinc", "brass",
+        "polyethylene", "polypropylene", "nickel", "cement", "asbestos", "concrete", "ceramic",
+    }
+)
+_NOT_HEAD_WORDS = frozenset({"part", "sec", "section", "type", "grade", "class", "specification", "i", "ii", "iii", "iv", "v"})
+_PARENTHETICAL = re.compile(r"\([^)]*\)")
 IDENTIFIER_BONUS = 1.0
 MIN_VECTOR_SIMILARITY = 0.2
 _LISTING_PRIOR = {"LISTED_COMPULSORY": 1.0, "UPCOMING": 0.8, "NEEDS_VERIFICATION": 0.6, "DENOTIFIED": 0.4, "RESCINDED": 0.4}
@@ -132,6 +144,86 @@ def _linked_coverage(conn: Connection, families: set[str]) -> set[int]:
     return {row.coverage_id for row in rows}
 
 
+_TITLE_HEAD_SPLIT = re.compile(r"\s[-–—]\s|:\s")
+
+
+def title_head(title: str | None) -> str:
+    """The subject part of a standard title, before its first " - " / " — " / ": " separator
+    ("Structural Steel - Part 1 - Hot Rolled …" → "structural steel")."""
+    return norm_match(_TITLE_HEAD_SPLIT.split(title or "", maxsplit=1)[0])
+
+
+def _standard_title_heads(conn: Connection, coverage_ids: set[int]) -> dict[int, set[str]]:
+    """Title heads of the standards each listing cites. A listing citing an undivided standard that is published only
+    in parts ("IS 2062") takes the heads of those parts."""
+    if not coverage_ids:
+        return {}
+    links, standard = schema.coverage_standard, schema.standard
+    rows = conn.execute(
+        sa.select(links.c.coverage_id, links.c.family_key, standard.c.title_clean, standard.c.title)
+        .select_from(links.outerjoin(standard, standard.c.standard_id == links.c.standard_id))
+        .where(links.c.coverage_id.in_(sorted(coverage_ids)))
+    ).all()
+    heads: dict[int, set[str]] = {}
+    by_family: dict[str, set[int]] = {}
+    for row in rows:
+        title = row.title_clean or row.title
+        if title:
+            heads.setdefault(row.coverage_id, set()).add(title_head(title))
+        elif row.family_key:
+            by_family.setdefault(row.family_key, set()).add(row.coverage_id)
+    if by_family:
+        conditions = [sa.or_(standard.c.family_key == key, standard.c.family_key.like(f"{key} (Part %")) for key in sorted(by_family)]
+        for row in conn.execute(sa.select(standard.c.family_key, standard.c.title_clean, standard.c.title).where(standard.c.is_current.is_(True), sa.or_(*conditions))):
+            key = next((key for key in by_family if row.family_key == key or row.family_key.startswith(f"{key} (Part ")), None)
+            for coverage_id in by_family.get(key, ()):
+                heads.setdefault(coverage_id, set()).add(title_head(row.title_clean or row.title))
+    return heads
+
+
+def _material_set(tokens: set[str]) -> set[str]:
+    return {"aluminium" if token == "aluminum" else token for token in tokens if token in MATERIAL_WORDS}
+
+
+def entity_flags(product_name: str, *, product: str | None, material: str | None, synonym_targets: list[tuple[set[str], set[str]]]) -> list[str]:
+    """Constraint flags for one listing name.
+
+    * ``product_mismatch`` — the named product (e.g. *wire*) is neither in the listing name nor reached through a
+      curated synonym for it: a material-only match such as *PVC sandal* for *PVC pipes*.
+    * ``material_conflict`` — the listing names a different material and not the one asked for (*PVC insulated
+      cables* for *copper wire*).
+    * ``accessory_of_product`` — the product appears only in the listing's "for …" clause (*Rubber Gaskets for
+      Pressure Cookers* for *pressure cooker*).
+    """
+    flags: list[str] = []
+    name_tokens = set(content_tokens(product_name))
+    wanted = set(content_tokens(product)) if product else set()
+    if wanted:
+        via_synonym = any(term_tokens & wanted and target_tokens <= name_tokens for term_tokens, target_tokens in synonym_targets)
+        if not (wanted <= name_tokens or via_synonym):
+            flags.append("product_mismatch")
+        elif not via_synonym or wanted <= name_tokens:
+            normalized = norm_match(_PARENTHETICAL.sub(" ", product_name))
+            normalized = normalized.removeprefix("specification for ")
+            head, _, purpose = normalized.partition(" for ")
+            head_tokens = set(content_tokens(head))
+            if wanted <= head_tokens:
+                # The product must be what the phrase names ("… pipes and tubes"), not a modifier ("chain pipe wrenches").
+                last_words = set()
+                for conjunct in head.split(" and "):
+                    words = [token for token in content_tokens(conjunct) if token not in _NOT_HEAD_WORDS and not token.isdigit()]
+                    if words:
+                        last_words.add(words[-1])
+                if not wanted & last_words:
+                    flags.append("product_as_modifier")
+            elif purpose and wanted <= set(content_tokens(purpose)):
+                flags.append("accessory_of_product")
+    asked = _material_set(set(content_tokens(material))) if material else set()
+    if asked and not asked <= _material_set(name_tokens) and _material_set(name_tokens) - asked:
+        flags.append("material_conflict")
+    return flags
+
+
 def find_product_matches(
     conn: Connection,
     text: str,
@@ -139,9 +231,13 @@ def find_product_matches(
     limit: int = 10,
     vectors: dict[str, VectorIndex] | None = None,
     resolver: StandardResolver | None = None,
+    material: str | None = None,
+    product: str | None = None,
 ) -> ProductMatches:
     identifiers = tuple((resolver or StandardResolver(conn)).resolve_text(text))
     synonyms = expand_synonyms(text)
+    synonym_targets = [(set(content_tokens(term)), set(content_tokens(target))) for term, target in synonyms]
+    base_tokens = set(content_tokens(text))
     expanded = " ".join([text, *dict.fromkeys(target for _, target in synonyms)])
     variants = _query_variants(text, synonyms)
     exact_names = {norm_match(text), *(norm_match(target) for _, target in synonyms)}
@@ -160,21 +256,34 @@ def find_product_matches(
     top_bm25 = max(bm25.values(), default=0.0) or 1.0
 
     candidates: list[CoverageCandidate] = []
-    for row in _coverage_rows(conn, set(bm25) | set(vector_scores) | by_identifier):
+    rows = _coverage_rows(conn, set(bm25) | set(vector_scores) | by_identifier)
+    title_heads = _standard_title_heads(conn, {row.coverage_id for row in rows})
+    for row in rows:
         product_tokens = set(content_tokens(f"{row.product_name} {row.category or ''} {row.product_category or ''}"))
         coverage = max((len(variant & product_tokens) / len(variant) for variant in variants), default=0.0)
         if coverage == 0 and row.coverage_id not in bm25 and row.coverage_id not in by_identifier:
             continue  # vector-only neighbour sharing no query word: too weak to show as a candidate
         exact = 1.0 if norm_match(row.product_name) in exact_names else 0.0
+        # The cited standard's title subject is exactly what the user named ("structural steel" → IS 2062 "Structural
+        # Steel - Part 1 - …"), which a narrower listing name ("Structural Steel (Ordinary Quality)") is not.
+        title_match = 1.0 if coverage >= 1.0 and title_heads.get(row.coverage_id, set()) & exact_names else 0.0
+        # Literal words outrank curated-synonym expansions ("copper wires" before "PVC insulated cables" for copper wire).
+        literal = len(base_tokens & product_tokens) / len(base_tokens) if base_tokens else 0.0
+        flags = [] if row.coverage_id in by_identifier else entity_flags(row.product_name, product=product, material=material, synonym_targets=synonym_targets)
         score = (
+            WEIGHTS["literal"] * literal
+            - sum(PENALTIES[flag] for flag in flags) +
             WEIGHTS["bm25"] * max(bm25.get(row.coverage_id, 0.0), 0.0) / top_bm25
             + WEIGHTS["vector"] * vector_scores.get(row.coverage_id, 0.0)
             + WEIGHTS["coverage"] * coverage
             + WEIGHTS["exact"] * exact
             + WEIGHTS["listing"] * _LISTING_PRIOR.get(row.listing_status, 0.5)
+            + WEIGHTS["standard_title"] * title_match
             + (IDENTIFIER_BONUS if row.coverage_id in by_identifier else 0.0)
         )
-        via = []
+        via = list(flags)
+        if title_match:
+            via.append("standard_title")
         if row.coverage_id in by_identifier:
             via.append("standard_reference")
         if row.coverage_id in bm25:

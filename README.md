@@ -14,6 +14,8 @@ MANAK MARG answers the questions a manufacturer, importer, jeweller or consumer 
 | Which labs can test it near me? | LIMS IS-wise scope rows joined with lab directories and Group-1/2 list status; exclusions and remarks shown verbatim. |
 | Is hallmarking mandatory in my district? Which AHCs are operative? | Phase-wise district list cross-checked against the Gazette annex; AHC operability from both Manakonline lists and validity dates. |
 | Does my datasheet or test report meet the requirement? | Private gap analysis against limits written in a document you upload — requirements are never generated. |
+| What is the HSN code for my product? | Local lookup (SQLite FTS5) over the supplied HSN master: exact codes, codes under a heading, or descriptions containing every product word — shown verbatim and separately from BIS answers, never as a GST/customs ruling. |
+| Can I just ask by voice? | English, Hindi or mixed speech is transcribed (Groq Whisper, only when `GROQ_API_KEY` is set) and asked through exactly the same assistant pipeline as typed text. |
 
 Answers are available in **English and हिंदी**; identifiers (IS numbers, S.O. numbers, recognition numbers,
 clauses) are never translated.

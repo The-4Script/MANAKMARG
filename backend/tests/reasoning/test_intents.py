@@ -115,6 +115,33 @@ def test_recognition_number_routes_to_hallmarking():
     assert result.intent == INTENT_HALLMARKING
 
 
+def test_mistyped_is_number_is_never_read_as_a_shorter_standard():
+    result = understand("What is IS 2O62?", gazetteer=GAZETTEER)
+    assert result.standard_refs == ()
+    assert result.invalid_refs == ("IS 2O62",)
+    assert understand("What is IS2062?").standard_refs == ("IS 2062",)
+
+
+def test_explicit_unknown_locations_are_reported():
+    assert understand("Find IS 2062 labs in Timbuktu", gazetteer=GAZETTEER).unresolved_place == "Timbuktu"
+    assert understand("Gotham district", gazetteer=GAZETTEER).unresolved_place == "Gotham"
+    assert understand("labs for IS 2062 in Kolkata", gazetteer=GAZETTEER).unresolved_place is None
+    assert understand("Which standard applies in India?", gazetteer=GAZETTEER).unresolved_place is None
+
+
+def test_devanagari_places_resolve_through_aliases():
+    jaipur = understand("जयपुर में हॉलमार्किंग अनिवार्य है क्या?", gazetteer=GAZETTEER)
+    assert (jaipur.language, jaipur.intent, jaipur.district, jaipur.state, jaipur.product_text) == ("hi", INTENT_HALLMARKING, "Jaipur", "Rajasthan", None)
+    kolkata = understand("कोलकाता में IS 2062 की जाँच", gazetteer=GAZETTEER)
+    assert (kolkata.city, kolkata.state, kolkata.standard_refs) == ("Kolkata", "West Bengal", ("IS 2062",))
+
+
+def test_hindi_and_hinglish_product_words():
+    assert understand("स्टील के लिए कौन सा BIS मानक लागू है?").product_text == "steel"
+    assert understand("मैं संरचनात्मक इस्पात बनाता हूँ। कौन सा BIS मानक लागू है?").product_text == "structural steel"
+    assert understand("mujhe steel ke liye BIS standard batao").product_text == "steel"
+
+
 @pytest.mark.parametrize(
     "text, intent, product",
     [

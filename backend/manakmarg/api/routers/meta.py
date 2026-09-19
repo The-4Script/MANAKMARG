@@ -12,17 +12,13 @@ from manakmarg import __version__
 from manakmarg.core import paths
 from manakmarg.db import schema
 from manakmarg.ingest.sources import REGISTRY
+from manakmarg.reasoning import groq
 
 from ..deps import get_conn, get_state, get_today
 
 router = APIRouter(tags=["meta"])
 
 LIMITATIONS = [
-    {
-        "key": "standards_snapshot",
-        "en": "Standards metadata comes from BIS exports generated on 12 Sep 2026; standard texts are not collected — look them up on the BIS standards portal.",
-        "hi": "मानकों का मेटाडेटा 12 सितंबर 2026 को बने BIS निर्यात से है; मानकों के पाठ एकत्र नहीं किए जाते — उन्हें BIS मानक पोर्टल पर देखें।",
-    },
     {
         "key": "classification_partial",
         "en": "Ministry classification covers 18 ministry exports only; department and group classification is not available.",
@@ -64,6 +60,7 @@ _COUNTS = {
     "faqs": ("faq", True),
     "documents": ("document", True),
     "document_chunks": ("document_chunk", False),
+    "hsn_codes": ("hsn_code", True),
 }
 
 
@@ -103,14 +100,21 @@ def meta(conn: Connection = Depends(get_conn), today: date = Depends(get_today))
     def day(source_id: str) -> str | None:
         return latest.get(source_id, None) and latest[source_id][:10]
 
+    from manakmarg.refresh import log as refresh_log
+    from manakmarg.refresh import scheduler as refresh_scheduler
+
     settings = get_state().settings
+    scheduled = refresh_scheduler.ACTIVE_SCHEDULER
+    refresh = refresh_log.read_status(settings.refresh_dir, scheduled.next_run_at if scheduled else None)
     return {
         "version": __version__,
         "llm_enabled": settings.llm_enabled,
         "checked_on": today.isoformat(),
         "counts": counts,
+        # Weekly BIS standards refresh: active dataset version and the latest run (no admin controls).
+        "data_refresh": refresh,
         "as_of": {
-            "standards_export": "2026-09-12",
+            "standards_export": (refresh["activated_at"] or "")[:10] or "2026-09-12",
             "compulsory_listings": day("bis_scheme_i_page"),
             "laboratories": day("lims_recognised_labs"),
             "ahc_list": day("manak_ahc_list"),
@@ -118,6 +122,10 @@ def meta(conn: Connection = Depends(get_conn), today: date = Depends(get_today))
         },
         "limitations": LIMITATIONS,
         "upload_ttl_minutes": settings.upload_ttl_minutes,
+        "voice_enabled": settings.voice_enabled,
+        "voice_max_mb": settings.voice_max_mb,
+        # Counts only (since process start): no query text, audio or credentials.
+        "ai_usage": groq.usage_snapshot(),
     }
 
 

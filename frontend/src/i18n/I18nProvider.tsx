@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { STRINGS, type Lang, type StringKey } from "./strings";
+import { translate, type Lang, type StringKey } from "./strings";
 
 type I18n = {
   lang: Lang;
@@ -36,15 +36,17 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const t = useCallback(
-    (key: StringKey, vars?: Record<string, string | number>) => {
-      let text: string = STRINGS[lang][key] ?? STRINGS.en[key] ?? key;
-      for (const [name, value] of Object.entries(vars ?? {})) text = text.replaceAll(`{${name}}`, String(value));
-      return text;
-    },
-    [lang],
-  );
+  const t = useCallback((key: StringKey, vars?: Record<string, string | number>) => translate(lang, key, vars), [lang]);
 
+  const value = useMemo(() => ({ lang, setLang, t }), [lang, setLang, t]);
+  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+}
+
+/** Renders its children in another language (an answer in the language the question was asked in) without changing
+ * the interface language the user selected. */
+export function LanguageScope({ lang, children }: { lang: Lang; children: ReactNode }) {
+  const { setLang } = useI18n();
+  const t = useCallback((key: StringKey, vars?: Record<string, string | number>) => translate(lang, key, vars), [lang]);
   const value = useMemo(() => ({ lang, setLang, t }), [lang, setLang, t]);
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }

@@ -576,3 +576,17 @@ faq = sa.Table(
     sa.Column("source_url", sa.Text),
     *_provenance(),
 )
+
+# --------------------------------------------------------------------------- HSN classification lookup
+
+hsn_code = sa.Table(
+    "hsn_code",
+    metadata,
+    sa.Column("hsn_id", sa.Integer, primary_key=True),
+    sa.Column("code", sa.String(16), nullable=False, unique=True),  # exactly as written in the workbook
+    sa.Column("code_digits", sa.String(16), nullable=False, index=True),  # digits only, for lookup
+    sa.Column("code_length", sa.Integer, nullable=False),
+    sa.Column("description", sa.Text, nullable=False),  # verbatim, never rewritten
+    sa.Column("sheet_row", sa.Integer),
+    *_provenance(),
+)

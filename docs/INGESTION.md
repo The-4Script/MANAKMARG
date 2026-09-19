@@ -6,7 +6,7 @@
 
 | Step | Sources | Result |
 |---|---|---|
-| `standards` | `data/1.xlsx`, `data/2.xlsx`, 18 ministry exports (read-only) | Standards, aliases, ministry nodes and links |
+| `standards` | `data/1.xlsx`, `data/2.xlsx`, 18 ministry exports (read-only); refreshed weekly from the BIS portal — see [DATA_REFRESH.md](DATA_REFRESH.md) | Standards, aliases, ministry nodes and links |
 | `schemes` | Scheme I, II, IV, X pages; upcoming-QCO page | Listings with status basis, standard links, orders |
 | `pages` | Compulsory overview, apply-for-licence, certification process, 4 FAQ pages, hallmarking overview | Process steps, scheme documents, FAQs, searchable page text |
 | `psg` | Product Specific Guidelines table | 1,645 guideline rows with standard resolution |

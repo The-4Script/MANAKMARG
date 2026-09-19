@@ -25,7 +25,7 @@ from manakmarg.db import schema
 from manakmarg.normalize.status_rules import upcoming_effect
 from manakmarg.normalize.text import norm_match
 from manakmarg.reasoning.evidence import EvidenceBuilder
-from manakmarg.search.hybrid import CoverageCandidate, StandardCandidate, find_product_matches, standard_candidates
+from manakmarg.search.hybrid import EXCLUDING_FLAGS, CoverageCandidate, StandardCandidate, find_product_matches, standard_candidates
 from manakmarg.search.resolvers import (
     EXACT_VERSION,
     FAMILY_AMBIGUOUS,
@@ -371,6 +371,8 @@ def assess(
     evidence: EvidenceBuilder | None = None,
     vectors=None,
     limit: int = 6,
+    material: str | None = None,
+    product: str | None = None,
 ) -> Assessment:
     today = today or clock.today()
     evidence = evidence or EvidenceBuilder(conn)
@@ -383,7 +385,7 @@ def assess(
     listing_ids: list[int] = []
 
     if text:
-        matches = find_product_matches(conn, text, limit=12, vectors=vectors, resolver=resolver)
+        matches = find_product_matches(conn, text, limit=12, vectors=vectors, resolver=resolver, material=material, product=product)
         candidates, standards, synonyms = matches.coverage, matches.standards, list(matches.synonyms_used)
         resolutions = list(matches.identifiers)
     if std_key:
@@ -398,7 +400,12 @@ def assess(
         basis, listing_ids = "standard_reference", _linked_listing_ids(conn, _families(conn, usable))
     elif candidates:
         basis = "product_text"
-        listing_ids = [candidate.coverage_id for candidate in candidates if candidate.token_coverage >= WEAK_COVERAGE][:limit]
+        # A listing that names a different product or material than the one asked for is not offered as a match.
+        listing_ids = [
+            candidate.coverage_id
+            for candidate in candidates
+            if candidate.token_coverage >= WEAK_COVERAGE and not EXCLUDING_FLAGS & set(candidate.matched_via)
+        ][:limit]
     elif standards:
         basis = "standard_title"
 

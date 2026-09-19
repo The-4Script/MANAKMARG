@@ -48,6 +48,20 @@ def get_state() -> AppState:
     return _state
 
 
+def release_state() -> None:
+    """Close pooled database connections before the data refresh replaces the database file."""
+    if _state is not None:
+        _state.engine.dispose()
+
+
+def reload_state() -> None:
+    """After a data refresh: reopen the database and rebuild the cached vector index and gazetteer on next use."""
+    if _state is not None:
+        _state.engine.dispose()
+        _state._vectors = None
+        _state._gazetteer = None
+
+
 def get_conn() -> Iterator[Connection]:
     with get_state().engine.connect() as conn:
         yield conn

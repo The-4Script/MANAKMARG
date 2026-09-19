@@ -3,8 +3,12 @@
 Rules only route a question to the right services. They never decide a fact: identifiers are resolved against the
 database and every answer is assembled from official records. An optional LLM may help parse low-confidence
 questions (``manakmarg.llm``), but its output goes through the same resolvers.
+
+Hindi and Hinglish questions first pass through ``manakmarg.normalize.aliases``, which replaces known domain words and
+place names with the English terms used by the records; the rest of the question is left as written.
 """
 
+import difflib
 import re
 from dataclasses import dataclass, field
 from dataclasses import replace
@@ -13,11 +17,12 @@ import sqlalchemy as sa
 from sqlalchemy.engine import Connection
 
 from manakmarg.db import schema
+from manakmarg.normalize.aliases import PLACE_ALIASES, apply_aliases, clean_script
 from manakmarg.normalize.geo import STATES_AND_UTS, compact_district
 from manakmarg.normalize.is_number import extract_designations
 from manakmarg.normalize.orders import extract_so_number
 from manakmarg.normalize.text import norm_match
-from manakmarg.search.fts_search import PRODUCT_STOP_WORDS
+from manakmarg.search.fts_search import PRODUCT_STOP_WORDS, stem
 
 INTENT_GAP = "gap_analysis"
 INTENT_HALLMARKING = "hallmarking"
@@ -42,32 +47,36 @@ INTENT_PRIORITY = (
 )
 
 CUES = {
-    INTENT_GAP: ("gap analysis", "compare my", "datasheet", "data sheet", "my test report", "my document"),
+    INTENT_GAP: (
+        "gap analysis", "compare my", "datasheet", "data sheet", "my test report", "my document", "check my",
+        "my specification", "my product specification", "against the applicable requirements", "against the requirements",
+    ),
     INTENT_HALLMARKING: (
         "hallmark", "hallmarking", "hallmarked", "huid", "jewellery", "jewelry", "jeweller", "jewellers", "jeweler",
-        "gold", "silver", "ahc", "ahcs", "assaying", "karat", "carat",
-        "हॉलमार्क", "हॉलमार्किंग", "सोना", "सोने", "चांदी", "गहने", "गहनों", "आभूषण", "आभूषणों", "ज्वेलरी",
+        "gold", "silver", "ahc", "ahcs", "assaying", "karat", "carat", "hallmarking centre", "hallmarking center",
+        "सोना", "सोने", "गहने", "गहनों", "आभूषण", "आभूषणों", "ज्वेलरी",
     ),
     INTENT_LABS: (
         "lab", "labs", "laboratory", "laboratories", "testing facility", "test centre", "test center", "get tested",
-        "where to test", "प्रयोगशाला", "लैब",
+        "get it tested", "tested", "where to test", "प्रयोगशाला", "लैब",
     ),
     INTENT_UPCOMING: ("upcoming", "new qco", "new qcos", "coming into force", "due for implementation"),
     INTENT_TESTS: (
         "which tests", "what tests", "tests required", "test requirements", "tests are required", "scheme of inspection",
-        "sampling", "test equipment", "परीक्षण",
+        "sampling", "test equipment", "testing", "sit", "product manual", "grouping", "grouping guideline",
     ),
     INTENT_PROCESS: (
         "how to apply", "how do i apply", "how can i apply", "apply for", "application", "procedure", "process", "steps",
-        "documents required", "fees", "manakonline", "आवेदन", "प्रक्रिया",
+        "documents required", "fees", "manakonline", "licence", "license", "obtain", "get certified", "आवेदन", "प्रक्रिया",
     ),
     INTENT_STATUS: (
         "mandatory", "compulsory", "qco", "qcos", "quality control order", "is it required", "need bis",
-        "enforcement", "deadline", "notified", "अनिवार्य", "ज़रूरी", "जरूरी",
+        "enforcement", "deadline", "notified", "zaroori", "jaruri", "anivarya", "अनिवार्य", "ज़रूरी", "जरूरी",
     ),
     INTENT_STANDARD: (
         "which standard", "which indian standard", "applicable standard", "standard applies", "standard for",
-        "which is applies", "standard", "मानक", "बीआईएस मानक",
+        "which is applies", "standard", "bis standard", "kaunsa standard", "konsa standard", "standard batao", "manak",
+        "मानक", "बीआईएस मानक",
     ),
 }
 
@@ -86,6 +95,7 @@ _ENTITY_ALIASES = {
     "product": {
         "wire": ("wire", "wires", "तार"),
         "cable": ("cable", "cables", "केबल"),
+        "conductor": ("conductor", "conductors", "कंडक्टर"),
         "pipe": ("pipe", "pipes", "पाइप"),
         "tube": ("tube", "tubes", "ट्यूब"),
         "plate": ("plate", "plates", "प्लेट"),
@@ -113,7 +123,11 @@ _DOMAIN_TERMS = frozenset(
 QUESTION_WORDS = frozenset(
     """about all am any applies apply applicable ask cover covered coverage details do does done find give help
     hai hain have hoga how kya list me mein near please show tell under what whether which ke ka ki ko se
-    क्या में के की का को से पर है हैं हो और या कौन कौनसा कैसे कहाँ कहां लिए मेरे मेरा मेरी मुझे बताएं बताइए चाहिए""".split()
+    happen happens not also follow
+    mujhe liye batao bataye bataiye batayein kaunsa konsa kaun sa lagu hota hoti mera meri mere kaise milega chahiye
+    क्या में के की का को से पर है हैं हो और या कौन कौनसा कैसे कहाँ कहां लिए मेरे मेरा मेरी मुझे बताएं बताइए चाहिए
+    सा सी लागू होता होती बताओ बताएँ करें करे मैं हम बनाता बनाती बनाते हूँ हूं वाले वाली बारे जानकारी दें दीजिए उत्पाद
+    उत्पादों किस""".split()
 )
 
 _ABBREVIATED_STATES = {
@@ -147,6 +161,10 @@ _HINDI_STATES = {
     "उत्तराखंड": "Uttarakhand",
     "हिमाचल प्रदेश": "Himachal Pradesh",
     "गोवा": "Goa",
+    "लक्षद्वीप": "Lakshadweep",
+    "पुडुचेरी": "Puducherry",
+    "लद्दाख": "Ladakh",
+    "जम्मू और कश्मीर": "Jammu and Kashmir",
 }
 _STATE_PHRASES = {norm_match(name): name for name in STATES_AND_UTS} | {
     norm_match(name): state for name, state in _HINDI_STATES.items()
@@ -155,15 +173,22 @@ _STATE_PHRASES = {norm_match(name): name for name in STATES_AND_UTS} | {
 _DEVANAGARI = re.compile("[ऀ-ॿ]")
 _RECOGNITION = re.compile(r"\b[A-Z]{2,4}/RAHC/R-\d{3,8}\b", re.IGNORECASE)
 _BARE_NUMBER = re.compile(r"(?<![\w./:-])\d{2,5}(?![\w/:-])")
-_MALFORMED_IS = re.compile(r"\bIS\s+\d+[A-Za-z]+\d+\b", re.IGNORECASE)
+# "IS 2O62": digits mixed with the letters O/I/l are a mistyped number, never a shorter valid one ("IS 2").
+_MALFORMED_IS = re.compile(r"(?<![A-Za-z0-9])IS\s*[-:/]?\s*(?=[0-9OoIl]*[0-9])(?=[0-9OoIl]*[OoIl])[0-9OoIl]{2,}(?![A-Za-z0-9])")
+_PLACE_AFTER_PREPOSITION = re.compile(r"\b(?:in|at|near|around)\s+((?:[A-Z][A-Za-z.\-]{2,})(?:\s+[A-Z][A-Za-z.\-]{2,}){0,2})")
+_PLACE_BEFORE_DISTRICT = re.compile(r"\b([A-Za-z][A-Za-z.\-]{2,})\s+district\b", re.IGNORECASE)
+_HINDI_PLACE = re.compile(r"([ऀ-ॿ]{2,})\s+(?:ज़िले|जिले|ज़िला|जिला|में)")
+_NOT_PLACES = frozenset({"is", "bis", "india", "indian", "scheme", "part", "qco", "qcos", "english", "hindi", "the", "this", "that", "my", "your", "any", "each", "every", "same", "which", "one"})
 
 
 @dataclass
 class Gazetteer:
-    """Place names known from the official records: hallmarking districts (with aliases) and laboratory cities."""
+    """Place names known from the official records (hallmarking districts with aliases, laboratory cities) and the
+    product vocabulary of the compulsory-certification listings, used to tell product questions from other text."""
 
     districts: dict[str, list[tuple[str, str]]] = field(default_factory=dict)
     cities: dict[str, tuple[str, str | None]] = field(default_factory=dict)
+    product_words: frozenset[str] = frozenset()
 
     @classmethod
     def load(cls, conn: Connection) -> "Gazetteer":
@@ -182,7 +207,20 @@ class Gazetteer:
         lab = schema.laboratory
         for row in conn.execute(sa.select(lab.c.city, lab.c.state).where(lab.c.is_current.is_(True), lab.c.city.is_not(None))):
             cities.setdefault(norm_match(row.city), (row.city, row.state))
-        return cls(districts, cities)
+        return cls(districts, cities, product_vocabulary(conn))
+
+
+def product_vocabulary(conn: Connection) -> frozenset[str]:
+    """Stemmed words of the listed product names and categories plus the curated synonym terms."""
+    from manakmarg.search.hybrid import load_synonyms
+
+    words: set[str] = set()
+    for (term,) in conn.execute(sa.select(schema.product_term.c.term_norm)):
+        words.update(stem(token) for token in (term or "").split())
+    for synonym in load_synonyms():
+        for term in synonym.terms:
+            words.update(stem(token) for token in term.split())
+    return frozenset(word for word in words if len(word) > 2 and word not in PRODUCT_STOP_WORDS and not word.isdigit())
 
 
 @dataclass(frozen=True)
@@ -202,6 +240,10 @@ class QueryUnderstanding:
     metal: str | None
     product_text: str | None
     confidence: float
+    normalized_text: str = ""
+    aliases_used: tuple[tuple[str, str], ...] = ()
+    invalid_refs: tuple[str, ...] = ()
+    unresolved_place: str | None = None
     material: str | None = None
     product: str | None = None
     application: str | None = None
@@ -270,6 +312,29 @@ def _find_place(tokens: list[str], gazetteer: Gazetteer) -> tuple[str | None, st
     return None, None, None, set()
 
 
+def _unresolved_place(text: str, ignore: set[str]) -> str | None:
+    """A location the user named explicitly ("in Timbuktu", "Gotham district", "टिम्बकटू में") that no record list
+    resolved. Returned so the answer can say so instead of silently searching everywhere."""
+    for pattern in (_PLACE_BEFORE_DISTRICT, _PLACE_AFTER_PREPOSITION, _HINDI_PLACE):
+        for match in pattern.finditer(text):
+            words = norm_match(match.group(1)).split()
+            if words and not any(word in _NOT_PLACES or word in ignore or word in QUESTION_WORDS or word in PRODUCT_STOP_WORDS for word in words):
+                return match.group(1)
+    return None
+
+
+_DEVANAGARI_PLACE_NAMES = {clean_script(name): target for name, target in {**PLACE_ALIASES, **_HINDI_STATES}.items()}
+
+
+def suggest_place(place: str | None) -> str | None:
+    """A known place whose Devanagari spelling is very close to an unrecognised one ("कोलकाटा" → "Kolkata"). Used only for
+    a "did you mean" suggestion: the question is never answered as if the user had named that place."""
+    if not place or not _DEVANAGARI.search(place):
+        return None
+    close = difflib.get_close_matches(clean_script(place).strip(), list(_DEVANAGARI_PLACE_NAMES), n=1, cutoff=0.8)
+    return _DEVANAGARI_PLACE_NAMES[close[0]] if close else None
+
+
 def _find_entity(text: str, category: str) -> str | None:
     normalized = _padded(text)
     for canonical, aliases in _ENTITY_ALIASES[category].items():
@@ -285,41 +350,49 @@ def _has_domain_signal(text: str, understanding_parts: tuple[str | None, ...]) -
 
 def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderstanding:
     text = text or ""
-    padded = _padded(text)
-    tokens = norm_match(text).split()
+    gazetteer = gazetteer or Gazetteer()
+    aliased = apply_aliases(text)
+    invalid_refs = tuple(dict.fromkeys(match.group(0) for match in _MALFORMED_IS.finditer(aliased.text)))
+    work = _MALFORMED_IS.sub(" ", aliased.text)
+    padded = _padded(work)
+    tokens = norm_match(work).split()
     hits = _cue_hits(padded)
 
-    recognition_nos = tuple(dict.fromkeys(match.group(0).upper() for match in _RECOGNITION.finditer(text)))
+    recognition_nos = tuple(dict.fromkeys(match.group(0).upper() for match in _RECOGNITION.finditer(work)))
     if recognition_nos:
         hits[INTENT_HALLMARKING].append("recognition number")
     lab_or_standard_context = bool(hits[INTENT_LABS] or hits[INTENT_TESTS] or hits[INTENT_STANDARD])
-    designations = extract_designations(_RECOGNITION.sub(" ", text))
-    malformed_is = bool(_MALFORMED_IS.search(text))
-    if malformed_is:
-        designations = tuple(designation for designation in designations if not designation.raw.upper().startswith("IS "))
+    designations = extract_designations(_RECOGNITION.sub(" ", work))
+    malformed_is = bool(invalid_refs)
     if not designations and lab_or_standard_context:
-        designations = extract_designations(" ".join(_BARE_NUMBER.findall(text)), assume_is_prefix=True)
+        designations = extract_designations(" ".join(_BARE_NUMBER.findall(work)), assume_is_prefix=True)
     standard_refs = tuple(dict.fromkeys(designation.std_key for designation in designations))
     doc_numbers = tuple(dict.fromkeys(designation.number for designation in designations if designation.number))
-    so_number = extract_so_number(text)
+    so_number = extract_so_number(work)
 
-    state, state_tokens = _find_state(text, tokens)
+    state, state_tokens = _find_state(work, tokens)
     remaining = [token for token in tokens if token not in state_tokens]
-    district, district_state, city, place_tokens = _find_place(remaining, gazetteer or Gazetteer())
+    district, district_state, city, place_tokens = _find_place(remaining, gazetteer)
 
     metal = None
     if any(word in padded for word in (" gold ", " सोना ", " सोने ")):
         metal = "gold"
-    elif any(word in padded for word in (" silver ", " चांदी ")):
+    elif " silver " in padded:
         metal = "silver"
 
-    material = _find_entity(text, "material")
-    product = _find_entity(text, "product")
-    application = _find_entity(text, "application")
+    # The aliased text too: speech-to-text writes English product words in Devanagari ("कॉपर वायर" → "copper wire").
+    entity_text = f"{text} {aliased.text}"
+    material = _find_entity(entity_text, "material")
+    product = _find_entity(entity_text, "product")
+    application = _find_entity(entity_text, "application")
 
     cue_tokens = {token for cues in hits.values() for cue in cues for token in norm_match(cue).split()}
     identifier_tokens = {norm_match(part) for designation in designations for part in designation.raw.split()}
     identifier_tokens |= {"is", "part", "sec", *doc_numbers}
+    unresolved = None
+    if not (state or district or city):
+        unresolved = _unresolved_place(work, cue_tokens | identifier_tokens)
+    unresolved_tokens = set(norm_match(unresolved).split()) | {"district"} if unresolved else set()
     product_words = [
         token
         for token in tokens
@@ -327,12 +400,13 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
         and token not in identifier_tokens
         and token not in state_tokens
         and token not in place_tokens
+        and token not in unresolved_tokens
         and token not in PRODUCT_STOP_WORDS
         and token not in QUESTION_WORDS
         and not token.isdigit()
     ]
     product_text = " ".join(product_words) or None
-    in_scope = _has_domain_signal(text, (material, product, application, *standard_refs, *recognition_nos)) or any(hits.values())
+    in_scope = _has_domain_signal(f"{text} {aliased.text}", (material, product, application, *standard_refs, *recognition_nos, *invalid_refs)) or any(hits.values())
     if malformed_is and not standard_refs:
         product_text = None
     if not in_scope:
@@ -365,6 +439,10 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
         metal=metal,
         product_text=product_text,
         confidence=confidence,
+        normalized_text=aliased.text,
+        aliases_used=aliased.replacements,
+        invalid_refs=invalid_refs,
+        unresolved_place=unresolved,
         material=material,
         product=product,
         application=application,

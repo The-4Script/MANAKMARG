@@ -375,8 +375,11 @@ def _ingest_ministries(engine: Engine, exports: list[ExportFile], summary: dict)
     return {**run.stats, "run_id": run.run_id}
 
 
-def ingest_standard_exports(engine: Engine, data_dir: Path) -> dict:
-    """Ingest every supplied export in ``data_dir``; returns a per-file and per-run summary."""
+def ingest_standard_exports(engine: Engine, data_dir: Path, *, classifications: dict[str, str] | None = None) -> dict:
+    """Ingest every supplied export in ``data_dir``; returns a per-file and per-run summary.
+
+    ``classifications`` (file name → classification) is used for files whose role is known from how they were
+    obtained, e.g. a ministry export downloaded by the refresh whose heading does not start with "Ministry of"."""
     summary: dict = {"files": [], "skipped_files": [], "runs": {}, "duplicates_skipped": {}}
     grouped: dict[str, list[ExportFile]] = {"total_export": [], "untitled_export": [], "ministry_node": []}
 
@@ -388,7 +391,7 @@ def ingest_standard_exports(engine: Engine, data_dir: Path) -> dict:
         except ValueError:
             summary["skipped_files"].append(path.name)
             continue
-        classification = classify_export(export)
+        classification = (classifications or {}).get(path.name) or classify_export(export)
         summary["files"].append(
             {
                 "file": path.name,

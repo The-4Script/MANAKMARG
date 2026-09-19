@@ -12,6 +12,7 @@ const Labs = lazy(() => import("./pages/Labs"));
 const Hallmarking = lazy(() => import("./pages/Hallmarking"));
 const GapAnalysis = lazy(() => import("./pages/GapAnalysis"));
 const Sources = lazy(() => import("./pages/Sources"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 export default function App() {
   return (
@@ -28,7 +29,7 @@ export default function App() {
           <Route path="/hallmarking" element={<Hallmarking />} />
           <Route path="/gap-analysis" element={<GapAnalysis />} />
           <Route path="/sources" element={<Sources />} />
-          <Route path="*" element={<Navigator />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
     </Layout>

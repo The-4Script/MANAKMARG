@@ -1,6 +1,6 @@
 # Data-quality report
 
-Checked on 2026-09-13 by `manakmarg.ingest.quality`. Counts of zero are listed to show what was verified.
+Checked on 2026-09-15 by `manakmarg.ingest.quality`. Counts of zero are listed to show what was verified.
 
 | Check | Severity | Count | Examples | What it means |
 |---|---|---:|---|---|
