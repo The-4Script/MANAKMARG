@@ -151,7 +151,7 @@ export default function Standards() {
 
   return (
     <div>
-      <PageHeader title={t("standards.title")} subtitle={lang === "hi" ? "BIS की प्रकाशित मानक सूची (12 सितंबर 2026 निर्यात) से।" : "From the BIS published-standards list (export of 12 Sep 2026)."} />
+      <PageHeader title={t("standards.title")} subtitle={lang === "hi" ? "BIS की प्रकाशित मानक सूची से।" : "From the BIS published-standards list."} />
       <form onSubmit={submit} className="mb-6 flex gap-3">
         <label className="relative flex-1">
           <span className="sr-only">{t("common.search")}</span>
