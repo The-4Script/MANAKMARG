@@ -6,6 +6,8 @@ from the reasoning services over official records; the templates only word them.
 LLM narrative, when enabled, is checked against the same evidence before it is shown (``manakmarg.llm``).
 """
 
+import re
+from collections.abc import Callable
 from dataclasses import dataclass, field, replace
 from datetime import date
 
@@ -30,6 +32,7 @@ from manakmarg.reasoning.applicability import (
 )
 from manakmarg.reasoning.evidence import EvidenceBuilder
 from manakmarg.reasoning.interpret import interpret
+from manakmarg.reasoning.localize import to_hindi
 from manakmarg.reasoning.hallmarking import AMBIGUOUS, COVERED, NOT_IN_LIST, check_district, find_ahcs
 from manakmarg.reasoning.i18n import say
 from manakmarg.reasoning.intents import (
@@ -111,6 +114,9 @@ class AssistantResponse:
     route: Route | None = None
 
 
+_SOURCE_MARK = re.compile(r"\ue000(\d+)\ue001")
+
+
 class _Composer:
     def __init__(self, lang: str):
         self.lang = lang
@@ -118,6 +124,25 @@ class _Composer:
         self.actions: list[AnswerItem] = []
         self.links: list[dict] = []
         self.follow_ups: list[str] = []
+        self.sources: list[str] = []
+
+    def src(self, text: str | None) -> str:
+        """An official English passage placed in the answer. In a Hindi answer it becomes a placeholder, replaced by a
+        checked Hindi translation (or the English original) once the whole answer is composed (``localized``)."""
+        text = text or ""
+        if self.lang != "hi" or not text:
+            return text
+        self.sources.append(text)
+        return f"\ue000{len(self.sources) - 1}\ue001"
+
+    def localized(self, settings: Settings) -> tuple[Callable[[str], str], bool]:
+        """A function that fills every placeholder in a text, and whether any translation is shown."""
+        translated = to_hindi(self.sources, settings) if self.sources else {}
+
+        def fill(text: str) -> str:
+            return _SOURCE_MARK.sub(lambda match: translated.get(self.sources[int(match.group(1))], self.sources[int(match.group(1))]), text)
+
+        return fill, bool(translated)
 
     def say(self, key: str, **params) -> str:
         return say(key, self.lang, **params)
@@ -586,7 +611,7 @@ def _process_answer(conn, composer: _Composer, evidence: EvidenceBuilder, query:
     items = []
     for row in rows:
         evidence_id = evidence.add_record("process_step", row, record_id=row["step_id"], title=f"Apply for licence — step {row['step_label']}", snippet=row["text"])
-        items.append(AnswerItem(composer.say("item.step", label=row["step_label"], text=row["text"]), (evidence_id,)))
+        items.append(AnswerItem(composer.say("item.step", label=row["step_label"], text=composer.src(row["text"])), (evidence_id,)))
     composer.section("process", items)
     return headline, None, [], []
 
@@ -607,7 +632,7 @@ def _scheme_answer(conn, scheme_id: str, composer: _Composer, evidence: Evidence
     ).all()
     total = sum(count for _, count in counts)
     if row["official_description"]:
-        headline = composer.say("head.scheme", name=row["name"], description=row["official_description"])
+        headline = composer.say("head.scheme", name=row["name"], description=composer.src(row["official_description"]))
     else:
         headline = composer.say("head.scheme_no_description", name=row["name"], count=total)
     items = []
@@ -661,7 +686,7 @@ def _faq_section(conn, text: str, composer: _Composer, evidence: EvidenceBuilder
         if row is None or (categories and row["category"] not in categories):
             continue
         evidence_id = evidence.add_record("faq", row, record_id=row["faq_id"], title=row["question"], snippet=row["answer"], url=row["source_url"])
-        items.append(AnswerItem(composer.say("item.faq", question=row["question"], answer=snippet(row["answer"], 260)), (evidence_id,)))
+        items.append(AnswerItem(composer.say("item.faq", question=composer.src(row["question"]), answer=composer.src(snippet(row["answer"], 260))), (evidence_id,)))
         if len(items) >= limit:
             break
     composer.section("faq", items)
@@ -680,7 +705,7 @@ def _documents_section(conn, text: str, composer: _Composer, evidence: EvidenceB
         if row is None:
             continue
         evidence_id = evidence.add(kind="document_chunk", record_id=row["chunk_id"], title=row["doc_title"] or row["url"], source_id=row["source_id"], snippet=row["text"], url=row["url"], retrieved_at=row["retrieved_at"], page=row["page_start"])
-        items.append(AnswerItem(snippet(hit.snippet or row["text"], 260), (evidence_id,)))
+        items.append(AnswerItem(composer.src(snippet(hit.snippet or row["text"], 260)), (evidence_id,)))
     composer.section("documents", items)
     return len(items)
 
@@ -816,16 +841,21 @@ def answer(
         composer.follow("follow.example_hallmarking")
         composer.follow("follow.upcoming")
 
+    # Official English passages in a Hindi answer are shown in (checked) Hindi; names and identifiers stay as recorded.
+    fill, translated = composer.localized(settings)
+    sections = [AnswerSection(section.key, section.title, tuple(AnswerItem(fill(item.text), item.evidence_ids) for item in section.items)) for section in composer.sections]
+    if translated:
+        caveats = [*caveats, "machine_translation"]
     return AssistantResponse(
         query=query,
         lang=lang,
         understanding=understanding,
-        headline=headline,
+        headline=fill(headline),
         status_label=status,
-        sections=composer.sections,
+        sections=sections,
         caveats=list(dict.fromkeys(caveats)),
-        next_actions=composer.actions,
-        follow_ups=composer.follow_ups[:4],
+        next_actions=[AnswerItem(fill(item.text), item.evidence_ids) for item in composer.actions],
+        follow_ups=[fill(text) for text in composer.follow_ups[:4]],
         links=composer.links,
         evidence=evidence,
         headline_evidence=headline_ids,

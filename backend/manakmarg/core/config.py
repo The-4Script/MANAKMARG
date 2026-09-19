@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     groq_transcription_prompt: str | None = None
     groq_timeout_s: float = 8.0
     groq_transcription_timeout_s: float = 30.0
+    groq_translation_timeout_s: float = 20.0
     voice_max_mb: int = 10
     voice_requests_per_minute: int = 12
     fetch_min_delay_s: float = 2.5

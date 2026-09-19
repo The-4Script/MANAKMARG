@@ -75,6 +75,17 @@ _INTERPRET_PROMPT = (
     "the question."
 )
 INTERPRET_LIMIT = 300
+_TRANSLATE_PROMPT = (
+    "Translate each English text into clear, natural Hindi (Devanagari) for an Indian manufacturer or consumer reading "
+    "official Bureau of Indian Standards information. Translate faithfully: add, remove or explain nothing. Keep exactly "
+    "as written, in Latin script: every number and amount (Rs. 1000, 7,000, 90 days -> 90 दिन), IS numbers, S.O./G.S.R. "
+    "numbers, dates, URLs, e-mail addresses, and the names BIS, ISI, QCO, LIMS, AHC, HUID, Manakonline, Scheme-I and "
+    "Scheme – I. Use these terms: man-day = मानव-दिवस, licence = लाइसेंस, Indian Standard = भारतीय मानक, "
+    "certification = प्रमाणन, Product Manual = प्रोडक्ट मैनुअल. Return JSON only: {\"hi\": [...]} with one translation per input text, in the same order."
+)
+TRANSLATE_BATCH = 16
+TRANSLATE_CACHE_SIZE = 2048
+_translation_cache: OrderedDict[str, str | None] = OrderedDict()
 
 
 class GroqUnavailable(Exception):
@@ -98,6 +109,9 @@ class _Usage:
         "interpretation_calls",
         "interpretation_cache_hits",
         "interpretation_failures",
+        "translation_calls",
+        "translation_cache_hits",
+        "translation_failures",
         "transcription_calls",
         "transcription_failures",
     )
@@ -131,6 +145,7 @@ def usage_snapshot() -> dict[str, int]:
 def clear_cache() -> None:
     with _cache_lock:
         _cache.clear()
+        _translation_cache.clear()
 
 
 def _headers(settings: Settings) -> dict[str, str]:
@@ -162,6 +177,66 @@ def interpret_query(query: str, settings: Settings) -> dict | None:
         "product": result["product"].strip()[:120] if isinstance(result.get("product"), str) and result["product"].strip() else None,
         "intent": result.get("intent") if isinstance(result.get("intent"), str) else None,
     }
+
+
+def translate_to_hindi(texts: list[str], settings: Settings) -> list[str | None]:
+    """Hindi translations of official English passages (FAQ answers, application steps), one per text, ``None`` where
+    none is available (no key, failure, bad reply). Each passage is cached, so a repeated answer costs no call. Only
+    the passages are sent — public BIS text, never user documents. The caller checks the translations before use."""
+    results: list[str | None] = [None] * len(texts)
+    if not settings.groq_api_key or not texts:
+        return results
+    missing: list[int] = []
+    with _cache_lock:
+        for index, text in enumerate(texts):
+            key = _cache_key(text, "translate:")
+            if key in _translation_cache:
+                _translation_cache.move_to_end(key)
+                USAGE.add("translation_cache_hits")
+                results[index] = _translation_cache[key]
+            else:
+                missing.append(index)
+    for start in range(0, len(missing), TRANSLATE_BATCH):
+        batch = missing[start : start + TRANSLATE_BATCH]
+        translated = _translate_batch([texts[index] for index in batch], settings)
+        with _cache_lock:
+            for index, value in zip(batch, translated):
+                results[index] = value
+                if value is not None:  # a failure is retried on the next answer, not cached
+                    _translation_cache[_cache_key(texts[index], "translate:")] = value
+            while len(_translation_cache) > TRANSLATE_CACHE_SIZE:
+                _translation_cache.popitem(last=False)
+    return results
+
+
+def _translate_batch(texts: list[str], settings: Settings) -> list[str | None]:
+    for model in (settings.groq_reasoning_model or REASONING_MODEL, settings.groq_fast_model or FAST_MODEL):
+        USAGE.add("translation_calls")
+        started = time.monotonic()
+        try:
+            response = requests.post(
+                f"{API_BASE}/chat/completions",
+                headers=_headers(settings),
+                json={
+                    "model": model,
+                    "messages": [{"role": "system", "content": _TRANSLATE_PROMPT}, {"role": "user", "content": json.dumps({"texts": texts}, ensure_ascii=False)}],
+                    "temperature": 0,
+                    "max_completion_tokens": 8000,
+                    "response_format": {"type": "json_object"},
+                },
+                timeout=settings.groq_translation_timeout_s,
+            )
+            if response.status_code != 200:
+                raise GroqError("rate_limited" if response.status_code == 429 else "upstream", f"HTTP {response.status_code}")
+            translated = json.loads(response.json()["choices"][0]["message"]["content"] or "{}").get("hi")
+            if not isinstance(translated, list) or len(translated) != len(texts):
+                raise GroqError("bad_response", "translation count does not match")
+            log.info("groq translation ok model=%s texts=%d ms=%d", model, len(texts), (time.monotonic() - started) * 1000)
+            return [value.strip() if isinstance(value, str) and value.strip() else None for value in translated]
+        except (requests.RequestException, GroqError, ValueError, KeyError, IndexError, TypeError, AttributeError) as exc:
+            USAGE.add("translation_failures")
+            log.warning("groq translation failed model=%s error=%s", model, type(exc).__name__)
+    return [None] * len(texts)
 
 
 def _json_completion(query: str, settings: Settings, *, prompt: str, counter: str, namespace: str) -> dict | None:

@@ -46,6 +46,16 @@ product specifications before test methods, "Groundnut oil" before "Groundnut oi
 compulsory listing stays the answer only when it is about the product itself; a listing that merely mentions it
 ("Square Tins … for Ghee") is shown as such.
 
+### Hindi answers
+
+A question in Hindi is answered in Hindi. The answer's own wording comes from the Hindi templates (`reasoning/i18n.py`);
+the official English passages quoted in it — FAQ questions and answers, application steps, document excerpts, scheme
+descriptions — are translated in one batched request per answer (`groq.translate_to_hindi`, cached per passage) and
+checked before use (`reasoning/localize.py`): every number and amount, IS / S.O. / G.S.R. number, URL and e-mail must
+appear unchanged and the text must be Hindi, otherwise the official English is shown. Names stay as the records write
+them (IS numbers, standard and product titles, QCO names, laboratories, AHCs). The evidence drawer keeps the official
+English text and the answer carries the `machine_translation` note. Without a key the passages stay in English.
+
 ### Keeping it from regressing
 
 `python -m manakmarg eval-queries [--with-model]` scores the multilingual question set in `manakmarg/eval/queries.json`
@@ -63,6 +73,7 @@ against the real database (route reached and IS numbers named) and exits non-zer
 | A question the lexicon and sound-alike recovery fully understand ("दूध का IS क्या है") | **Never** |
 | Words no record matches remain, in a non-English or in-scope question | At most one restatement request (larger model, then the faster model on failure) |
 | An in-scope question that no local rule can route (general/unroutable) | At most one routing-hint request (larger model, then the faster model on failure) |
+| Hindi answer quoting official English passages (FAQs, steps, excerpts) | One batched translation request per answer; cached per passage, so a repeated answer costs nothing |
 | Voice recording | One transcription request (`whisper-large-v3` for accuracy, then `whisper-large-v3-turbo` on failure), with a domain-vocabulary prompt |
 
 A routing-hint request carries only the user's question (≤ 500 characters) and a fixed instruction — never database
@@ -77,7 +88,8 @@ Calls use Groq's OpenAI-compatible HTTP API through `requests` with explicit tim
 
 `GET /api/meta` returns `voice_enabled` and `ai_usage` counters since process start: `understanding_calls`,
 `understanding_cache_hits`, `understanding_failures`, `understanding_not_needed` (questions answered with no model),
-`interpretation_calls`, `interpretation_cache_hits`, `interpretation_failures`, `transcription_calls`,
+`interpretation_calls`, `interpretation_cache_hits`, `interpretation_failures`, `translation_calls`,
+`translation_cache_hits`, `translation_failures`, `transcription_calls`,
 `transcription_failures`. Counters hold no query text, audio or credentials; logs record only
 the model name, status and latency.
 
@@ -100,4 +112,5 @@ the model name, status and latency.
 ## Privacy and security
 
 API keys are read from the server environment only (`GROQ_API_KEY`), never sent to the frontend, never logged and
-never returned in errors. Uploaded gap-analysis documents and the BIS/HSN corpora are never sent to any model.
+never returned in errors. Uploaded gap-analysis documents and the BIS/HSN databases are never sent to any model; the only
+record text that leaves the server is the handful of public official passages quoted in a Hindi answer, for translation.

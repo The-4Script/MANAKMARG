@@ -19,6 +19,10 @@ export const CAVEATS: Record<string, Text> = {
     en: "BIS listings are snapshots with retrieval dates; verify the current legal position on the official BIS page and the latest Gazette.",
     hi: "BIS सूचियाँ प्राप्ति तिथि वाले स्नैपशॉट हैं; वर्तमान कानूनी स्थिति की पुष्टि आधिकारिक BIS पृष्ठ और नवीनतम राजपत्र से करें।",
   },
+  machine_translation: {
+    en: "Official passages were machine-translated from the English BIS source; identifiers and numbers are unchanged. The evidence drawer shows the official English text.",
+    hi: "आधिकारिक अंश अंग्रेज़ी BIS स्रोत से मशीनी अनुवाद हैं; पहचान संख्याएँ और अंक अपरिवर्तित हैं। आधिकारिक अंग्रेज़ी पाठ साक्ष्य में देखें।",
+  },
   absence_not_proof: {
     en: "No compulsory-certification listing was found in the indexed BIS pages. BIS certification is voluntary unless a QCO covers the product — this is not proof that none applies.",
     hi: "अनुक्रमित BIS पृष्ठों में कोई अनिवार्य प्रमाणन सूची नहीं मिली। जब तक कोई QCO उत्पाद को कवर न करे, BIS प्रमाणन स्वैच्छिक है — यह इस बात का प्रमाण नहीं है कि कोई आदेश लागू नहीं है।",
