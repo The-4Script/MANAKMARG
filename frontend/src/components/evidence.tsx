@@ -93,7 +93,7 @@ export function EvidenceRefs({ ids, className }: { ids: (string | null | undefin
 }
 
 function EvidenceDrawer({ items, onClose }: { items: Evidence[]; onClose: () => void }) {
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   return (
     <div className="no-print fixed inset-0 z-50" role="dialog" aria-modal aria-label={t("common.evidence")}>
       <div className="absolute inset-0 bg-ink-950/40" onClick={onClose} />
@@ -119,12 +119,6 @@ function EvidenceDrawer({ items, onClose }: { items: Evidence[]; onClose: () => 
                   <dt className="inline font-medium">{t("common.source")}: </dt>
                   <dd className="inline">{item.source_name}</dd>
                 </div>
-                {item.retrieved_at && (
-                  <div>
-                    <dt className="inline font-medium">{t("common.retrieved")}: </dt>
-                    <dd className="inline">{formatDate(item.retrieved_at, lang)}</dd>
-                  </div>
-                )}
               </dl>
               {item.url && item.action && (
                 <ExternalAnchor href={item.url} className="mt-2 text-sm font-medium">
@@ -145,7 +139,7 @@ function EvidenceDrawer({ items, onClose }: { items: Evidence[]; onClose: () => 
 }
 
 export function SourcesList({ sources }: { sources: SourceRollup[] | undefined }) {
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   if (!sources?.length) return null;
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-5">
@@ -159,9 +153,6 @@ export function SourcesList({ sources }: { sources: SourceRollup[] | undefined }
               <ExternalAnchor href={source.url}>{source.name}</ExternalAnchor>
               <AuthorityChip authority={source.authority} />
             </div>
-            <p className="mt-0.5 text-xs text-slate-500">
-              {source.retrieved_at.length ? `${t("common.retrieved")}: ${formatDate(source.retrieved_at[0], lang)}` : null}
-            </p>
           </li>
         ))}
       </ul>
