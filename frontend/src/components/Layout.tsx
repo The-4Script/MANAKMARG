@@ -31,10 +31,10 @@ const NAV: { to: string; key: StringKey; icon: typeof Compass }[] = [
   { to: "/sources", key: "nav.sources", icon: Database },
 ];
 
-function Logo() {
+function Logo({ className = "h-20" }: { className?: string }) {
   return (
-    <div className="w-full overflow-hidden rounded-xl bg-white px-2 py-1" aria-label="MANAK MARG">
-      <img src="/assets/manak-marg-logo-full.png" alt="MANAK MARG" className="h-auto w-full" />
+    <div className="flex justify-center rounded-xl bg-white px-3 py-2" aria-label="MANAK MARG">
+      <img src="/assets/manak-marg-logo-full.png" alt="MANAK MARG" className={cx("w-auto", className)} />
     </div>
   );
 }
@@ -83,7 +83,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <button className="rounded-lg p-2 text-ink-900 hover:bg-slate-100" onClick={() => setOpen(true)} aria-label="Open navigation">
               <Menu className="size-5" />
             </button>
-            <img src="/assets/manak-marg-logo-full.png" alt="MANAK MARG" className="h-12 w-24 object-contain object-left" />
+            <img src="/assets/manak-marg-logo-full.png" alt="MANAK MARG" className="h-9 w-auto" />
           </div>
           <p className="hidden truncate text-xs text-slate-500 sm:block">{t("app.prototype")}</p>
           <button
@@ -101,7 +101,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <div className="absolute inset-0 bg-ink-950/60" onClick={() => setOpen(false)} />
             <div className="absolute inset-y-0 left-0 flex w-72 flex-col gap-6 overflow-y-auto bg-ink-950 px-5 py-6">
               <div className="flex items-center justify-between">
-                <Logo />
+                <Logo className="h-14" />
                 <button onClick={() => setOpen(false)} className="rounded-lg p-1.5 text-white hover:bg-white/10" aria-label={t("common.close")}>
                   <X className="size-5" />
                 </button>
