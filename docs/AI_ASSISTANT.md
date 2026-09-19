@@ -10,8 +10,10 @@ never the database, the search engine or the regulatory authority.
 
 ```text
 typed question ─┐
-                ├─> local normalisation (Hindi/Hinglish aliases, entities: material / product / application / place)
+                ├─> local normalisation (Hindi/Hinglish aliases + product lexicon, entities, places, "IS" = standard)
 voice ─> Whisper┘        -> deterministic router (reasoning/routing.py, explainable reason on every answer)
+                         -> interpretation, only if words remain that no English record matches:
+                            sound-alike recovery (offline), then a guarded English restatement by the model
                          -> local services: IS resolution, listings + QCOs, schemes, Product Manuals/SIT, labs,
                             hallmarking/AHCs, HSN lookup, FAQs/documents (SQLite FTS5 + LSA listing vectors)
                          -> applicability rules and evidence builder
@@ -21,6 +23,35 @@ voice ─> Whisper┘        -> deterministic router (reasoning/routing.py, expl
 Voice input is only speech-to-text. The transcript is asked through the same `/api/assistant/query` call as typed
 text, so it gets exactly the same answer path.
 
+## Interpreting the question (any language, typed or spoken)
+
+The records (standards catalogue, listings, FAQs, lab scopes) are English. A question is turned into record terms in
+layers, cheapest first (`reasoning/interpret.py`):
+
+1. **Lexicon** (`normalize/lexicon.py`, offline): Hindi and romanised Hindi names of everyday goods → the words BIS
+   titles use ("दूध"/"dudh" → milk, "दही" → dahi, "पानी की टंकी" → water storage tank). का/के/की forms of a phrase and
+   chandrabindu/nukta spellings match automatically. "IS" without a number ("दूध का IS क्या है") asks for the standard.
+2. **Sound-alike recovery** (`normalize/phonetic.py`, offline): a word no record matches is compared by sound with the
+   lexicon, ignoring what speech-to-text typically gets wrong — aspiration, retroflex/dental consonants, vowel length,
+   a stray "s" and a merged postposition ("geeka"/"गीका" → ghee, "डूद्स" → milk). Only unambiguous matches are used.
+3. **Model restatement** (`groq.interpret_query`, only with `GROQ_API_KEY`): if unmatched words remain in a
+   non-English or in-scope question, the model restates it as one short English question plus the product name
+   ("दुधाचा IS काय आहे" → "What is the IS for milk?"). The restatement is accepted only if it passes validation:
+   IS numbers the user did not write are removed; every product word must exist in the record vocabulary; the result
+   must route in scope. The answer shows it ("Searched as: …") and stays in the language of the question.
+
+"Which standard / what is the IS for X" is answered from the whole published catalogue (`search/catalogue.py`),
+ranked so the standard whose subject *is* the product comes first ("Packaged Pasteurized Milk" before "Milk Boiler",
+product specifications before test methods, "Groundnut oil" before "Groundnut oil for cosmetic industry"). A
+compulsory listing stays the answer only when it is about the product itself; a listing that merely mentions it
+("Square Tins … for Ghee") is shown as such.
+
+### Keeping it from regressing
+
+`python -m manakmarg eval-queries [--with-model]` scores the multilingual question set in `manakmarg/eval/queries.json`
+against the real database (route reached and IS numbers named) and exits non-zero below `--min-accuracy` (default
+1.0). Whenever a phrasing is misread, add it there (and the word to the lexicon when it is a product name), then re-run.
+
 ## When an external model is called
 
 | Situation | External call |
@@ -29,6 +60,8 @@ text, so it gets exactly the same answer path.
 | HSN lookup (code or product words) | **Never** — local FTS5 over `hsn_code` |
 | Clearly out-of-scope question (no BIS cue, identifier, place or listed product) | **Never** |
 | A repeated question | **Never** — in-process cache (256 entries) |
+| A question the lexicon and sound-alike recovery fully understand ("दूध का IS क्या है") | **Never** |
+| Words no record matches remain, in a non-English or in-scope question | At most one restatement request (larger model, then the faster model on failure) |
 | An in-scope question that no local rule can route (general/unroutable) | At most one routing-hint request (larger model, then the faster model on failure) |
 | Voice recording | One transcription request (`whisper-large-v3` for accuracy, then `whisper-large-v3-turbo` on failure), with a domain-vocabulary prompt |
 
@@ -44,7 +77,8 @@ Calls use Groq's OpenAI-compatible HTTP API through `requests` with explicit tim
 
 `GET /api/meta` returns `voice_enabled` and `ai_usage` counters since process start: `understanding_calls`,
 `understanding_cache_hits`, `understanding_failures`, `understanding_not_needed` (questions answered with no model),
-`transcription_calls`, `transcription_failures`. Counters hold no query text, audio or credentials; logs record only
+`interpretation_calls`, `interpretation_cache_hits`, `interpretation_failures`, `transcription_calls`,
+`transcription_failures`. Counters hold no query text, audio or credentials; logs record only
 the model name, status and latency.
 
 ## Voice endpoint

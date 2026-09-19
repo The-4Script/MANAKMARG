@@ -6,6 +6,8 @@ MESSAGES: dict[str, dict[str, str]] = {
     "section.answer": {"en": "Answer", "hi": "उत्तर"},
     "section.standards": {"en": "Applicable Indian Standard", "hi": "लागू भारतीय मानक"},
     "section.why": {"en": "Why", "hi": "क्यों"},
+    "section.catalogue_standards": {"en": "Published Indian Standards", "hi": "प्रकाशित भारतीय मानक"},
+    "section.compulsory_status": {"en": "Compulsory certification", "hi": "अनिवार्य प्रमाणन"},
     "section.orders": {"en": "Orders & notifications", "hi": "आदेश और अधिसूचनाएँ"},
     "section.other_listings": {"en": "Other matching listings", "hi": "अन्य मिलान सूचियाँ"},
     "section.district": {"en": "District coverage", "hi": "ज़िला कवरेज"},
@@ -110,6 +112,38 @@ MESSAGES: dict[str, dict[str, str]] = {
     "head.standard_no_listing": {
         "en": "{std_key} is a published Indian Standard, but no compulsory-certification listing for it was found in the indexed BIS pages.",
         "hi": "{std_key} एक प्रकाशित भारतीय मानक है, पर अनुक्रमित BIS पृष्ठों में इसकी कोई अनिवार्य प्रमाणन सूची नहीं मिली।",
+    },
+    "head.catalogue_standard": {
+        "en": "The Indian Standard for “{product}” is {std_key} — {title}.",
+        "hi": "“{product}” के लिए भारतीय मानक {std_key} — {title} है।",
+    },
+    "head.catalogue_standards": {
+        "en": "Published Indian Standards for “{product}”: {standards}.",
+        "hi": "“{product}” के लिए प्रकाशित भारतीय मानक: {standards}।",
+    },
+    "head.catalogue_related": {
+        "en": "No Indian Standard is titled for “{product}” itself; these published standards cover it.",
+        "hi": "“{product}” के नाम से कोई भारतीय मानक नहीं है; ये प्रकाशित मानक इससे संबंधित हैं।",
+    },
+    "head.catalogue_status_none": {
+        "en": "No compulsory-certification listing covers “{product}” itself, so BIS certification is voluntary unless a Quality Control Order applies. Published Indian Standards: {standards}.",
+        "hi": "“{product}” के लिए स्वयं कोई अनिवार्य प्रमाणन सूची नहीं है, इसलिए जब तक कोई QCO लागू न हो, BIS प्रमाणन स्वैच्छिक है। प्रकाशित भारतीय मानक: {standards}।",
+    },
+    "head.catalogue_status_listing": {
+        "en": "The compulsory-certification listing “{listing}” is {effect}. Published Indian Standards for “{product}”: {standards}.",
+        "hi": "अनिवार्य प्रमाणन सूची “{listing}”: {effect}। “{product}” के लिए प्रकाशित भारतीय मानक: {standards}।",
+    },
+    "item.catalogue_listing_status": {
+        "en": "Compulsory-certification listing “{listing}”: {effect}.",
+        "hi": "अनिवार्य प्रमाणन सूची “{listing}”: {effect}।",
+    },
+    "item.catalogue_related_listing": {
+        "en": "A compulsory-certification listing mentions “{product}” but is for another product: “{listing}” ({effect}).",
+        "hi": "एक अनिवार्य प्रमाणन सूची में “{product}” का उल्लेख है, पर वह किसी अन्य उत्पाद के लिए है: “{listing}” ({effect})।",
+    },
+    "item.catalogue_no_listing": {
+        "en": "No compulsory-certification listing matches “{product}”, so BIS certification is voluntary unless a Quality Control Order covers it.",
+        "hi": "“{product}” से मेल खाती कोई अनिवार्य प्रमाणन सूची नहीं है, इसलिए जब तक कोई गुणवत्ता नियंत्रण आदेश (QCO) लागू न हो, BIS प्रमाणन स्वैच्छिक है।",
     },
     "head.no_listing": {
         "en": "No compulsory-certification listing matched “{text}” in the indexed BIS pages.",

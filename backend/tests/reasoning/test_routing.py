@@ -106,3 +106,45 @@ def test_multi_part_product_question_stays_a_product_question():
 def test_without_vocabulary_any_product_words_still_route_to_product_search():
     understanding = understand("ceiling fans")
     assert route_query(understanding, Gazetteer()).category == ROUTE_PRODUCT
+
+
+# Product words from the listings (as the database vocabulary would supply them) for the scope checks below.
+LISTING_GAZETTEER = Gazetteer(
+    product_words=frozenset({"electric", "iron", "helmet", "packaged", "pasteurized", "milk", "led", "lamp", "bulb", "pressure", "cooker", "weather", "car", "weight", "steel", "gold", "cement", "copper", "colour", "hair", "dye", "match"}),
+)
+
+
+@pytest.mark.parametrize("text", ["electric iron", "helmet", "Packaged Pasteurized Milk", "LED bulbs"])
+def test_product_named_only_by_listed_words_is_in_scope(text):
+    understanding = understand(text, gazetteer=LISTING_GAZETTEER)
+    assert understanding.in_scope
+    assert route_query(understanding, LISTING_GAZETTEER).category == ROUTE_PRODUCT
+
+
+@pytest.mark.parametrize(
+    "text",
+    ["weather today", "car insurance", "how to lose weight", "who won the cricket match", "steel share price", "gold rate today", "cement company jobs", "copper colour hair dye ideas"],
+)
+def test_other_topics_stay_out_of_scope_even_with_a_product_word(text):
+    understanding = understand(text, gazetteer=LISTING_GAZETTEER)
+    assert route_query(understanding, LISTING_GAZETTEER).category == ROUTE_OUT_OF_SCOPE
+
+
+def test_isi_mark_question_asks_about_compulsory_status_of_the_product():
+    understanding = understand("Do I need ISI mark for LED bulbs", gazetteer=LISTING_GAZETTEER)
+    assert route_query(understanding, LISTING_GAZETTEER).category == ROUTE_PRODUCT
+    assert understanding.product_text == "led bulbs"
+
+
+def test_hinglish_filler_words_are_not_product_words():
+    understanding = understand("mera product ke liye BIS chahiye kya, main pressure cooker banata hoon", gazetteer=LISTING_GAZETTEER)
+    assert understanding.product_text == "pressure cooker"
+
+
+@pytest.mark.parametrize(
+    "text",
+    ["how much is the fee for BIS certification", "how long does it take to get BIS license", "BIS licence kitne din me milta hai", "how to renew BIS licence"],
+)
+def test_fee_timeline_and_renewal_questions_are_process_questions(text):
+    route, _ = _route(text)
+    assert route.category == ROUTE_CERTIFICATION, route.reason

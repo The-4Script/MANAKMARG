@@ -16,6 +16,8 @@ import re
 import unicodedata
 from dataclasses import dataclass
 
+from manakmarg.normalize.lexicon import PRODUCT_LEXICON
+
 DOMAIN_ALIASES: dict[str, str] = {
     # products and materials
     "स्टेनलेस स्टील": "stainless steel",
@@ -46,6 +48,7 @@ DOMAIN_ALIASES: dict[str, str] = {
     "भारतीय मानक ब्यूरो": "BIS",
     "बीआईएस": "BIS",
     "बी आई एस": "BIS",
+    "बिस": "BIS",  # speech-to-text rendering of the spoken letters "BIS"
     "आईएसआई": "ISI",
     "आई एस आई": "ISI",
     "आईएस": "IS",
@@ -78,6 +81,15 @@ DOMAIN_ALIASES: dict[str, str] = {
     "मेंडेटरी": "mandatory",
     "क्यूसीओ": "QCO",
     "स्कीम": "scheme",
+    # Speech-to-text hears the spoken word "LED" as "lead": only the lighting phrases are corrected, never "lead" alone.
+    "lead bulb": "led bulb",
+    "lead bulbs": "led bulbs",
+    "lead lamp": "led lamp",
+    "lead lamps": "led lamps",
+    "lead light": "led light",
+    "lead lights": "led lights",
+    "lead tube light": "led tube light",
+    "lead tubelight": "led tube light",
     "योजना": "scheme",
     "आगामी": "upcoming",
     # hallmarking
@@ -177,10 +189,13 @@ def clean_script(text: str | None) -> str:
 
 
 def _spelling_variants(term: str) -> set[str]:
-    """Spellings of ``term`` that differ only by chandrabindu/anusvara or nukta."""
+    """Spellings of ``term`` that differ only by chandrabindu/anusvara, nukta or the का/के/की form of the genitive."""
     forms = {term}
     forms |= {form.replace("ँ", "ं") for form in forms} | {form.replace("ं", "ँ") for form in forms}
     forms |= {form.replace("़", "") for form in forms}
+    # Hindi genitive agrees with the noun that follows: "सरसों का तेल" / "सरसों के तेल" / "सरसों की ..." are one phrase.
+    for postposition in (" का ", " के ", " की "):
+        forms |= {form.replace(postposition, other) for form in forms if postposition in form for other in (" का ", " के ", " की ")}
     return forms
 
 
@@ -193,7 +208,8 @@ def _compile(aliases: dict[str, str]) -> list[tuple[re.Pattern, str, str]]:
     return [(re.compile(rf"(?<!{_WORD}){re.escape(form)}(?!{_WORD})", re.IGNORECASE), term, target) for form, (term, target) in ordered]
 
 
-_PATTERNS = _compile(PLACE_ALIASES) + _compile(DOMAIN_ALIASES)
+# Domain words first, so an entry there ("तार" → "wire") wins over a lexicon entry for the same word.
+_PATTERNS = _compile(PLACE_ALIASES) + _compile(DOMAIN_ALIASES) + _compile(PRODUCT_LEXICON)
 # Speech-to-text writes "IS-2062" or "IS:2062"; the question form of the identifier is "IS 2062". Only the separator
 # right after the prefix changes (a year suffix such as ":2011" is kept), and only in the user's question.
 _IDENTIFIER_SEPARATOR = re.compile(r"(?<![A-Za-z0-9])(IS|SP)\s*[-:.]\s*(?=\d)")

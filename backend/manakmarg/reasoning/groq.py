@@ -61,6 +61,22 @@ _SYSTEM_PROMPT = (
 )
 
 
+_INTERPRET_PROMPT = (
+    "You restate questions for a search engine over Bureau of Indian Standards (BIS) records, which are written in "
+    "English. The user may write in Hindi (Devanagari), romanised Hindi, another Indian language or English, and the "
+    "text may come from speech-to-text with misheard words: similar sounds are confused and a word may be merged with a "
+    "following postposition (\"geeka\" is \"ghee ka\"); restate what the user most plausibly meant. Return JSON only with keys: english, product, intent. "
+    "english: the question restated as one short, plain English question. product: the product or material asked "
+    "about, in the Indian English wording Indian Standard titles use (for example milk, ghee, paneer, groundnut oil "
+    "rather than peanut oil, water storage tank, electric iron), without describing words the question does not "
+    "need, or null. intent: one of applicable_standard, compulsory_status, certification_process, "
+    "tests_required, lab_search, hallmarking, upcoming_qco, general_question, out_of_scope. Keep IS numbers, place "
+    "names and other identifiers exactly as written. Never add IS numbers, dates, statuses or any fact that is not in "
+    "the question."
+)
+INTERPRET_LIMIT = 300
+
+
 class GroqUnavailable(Exception):
     """No Groq API key is configured on the server."""
 
@@ -79,6 +95,9 @@ class _Usage:
         "understanding_cache_hits",
         "understanding_failures",
         "understanding_not_needed",
+        "interpretation_calls",
+        "interpretation_cache_hits",
+        "interpretation_failures",
         "transcription_calls",
         "transcription_failures",
     )
@@ -118,8 +137,8 @@ def _headers(settings: Settings) -> dict[str, str]:
     return {"Authorization": f"Bearer {settings.groq_api_key}"}
 
 
-def _cache_key(query: str) -> str:
-    return hashlib.sha256(norm_match(query).encode("utf-8")).hexdigest()
+def _cache_key(query: str, namespace: str = "") -> str:
+    return hashlib.sha256(f"{namespace}{norm_match(query)}".encode("utf-8")).hexdigest()
 
 
 def understand_query(query: str, settings: Settings) -> dict | None:
@@ -128,18 +147,36 @@ def understand_query(query: str, settings: Settings) -> dict | None:
     The larger model is tried first, then the faster one. A result (including a failure) is cached per normalised
     query, so the same question never costs a second call in this process.
     """
+    return _json_completion(query, settings, prompt=_SYSTEM_PROMPT, counter="understanding", namespace="")
+
+
+def interpret_query(query: str, settings: Settings) -> dict | None:
+    """The question restated as plain English for retrieval (``english``, ``product``, ``intent``); ``None`` without a
+    key or on any failure. Only the question text is sent. The caller validates the result against the records
+    (``manakmarg.reasoning.interpret``): the model supplies wording, never facts."""
+    result = _json_completion(query, settings, prompt=_INTERPRET_PROMPT, counter="interpretation", namespace="interpret:")
+    if not result or not isinstance(result.get("english"), str) or not result["english"].strip():
+        return None
+    return {
+        "english": result["english"].strip()[:INTERPRET_LIMIT],
+        "product": result["product"].strip()[:120] if isinstance(result.get("product"), str) and result["product"].strip() else None,
+        "intent": result.get("intent") if isinstance(result.get("intent"), str) else None,
+    }
+
+
+def _json_completion(query: str, settings: Settings, *, prompt: str, counter: str, namespace: str) -> dict | None:
     if not settings.groq_api_key:
         return None
     query = (query or "")[:MAX_QUERY_CHARS]
-    key = _cache_key(query)
+    key = _cache_key(query, namespace)
     with _cache_lock:
         if key in _cache:
             _cache.move_to_end(key)
-            USAGE.add("understanding_cache_hits")
+            USAGE.add(f"{counter}_cache_hits")
             return _cache[key]
     result = None
     for model in (settings.groq_reasoning_model or REASONING_MODEL, settings.groq_fast_model or FAST_MODEL):
-        USAGE.add("understanding_calls")
+        USAGE.add(f"{counter}_calls")
         started = time.monotonic()
         try:
             response = requests.post(
@@ -147,7 +184,7 @@ def understand_query(query: str, settings: Settings) -> dict | None:
                 headers=_headers(settings),
                 json={
                     "model": model,
-                    "messages": [{"role": "system", "content": _SYSTEM_PROMPT}, {"role": "user", "content": query}],
+                    "messages": [{"role": "system", "content": prompt}, {"role": "user", "content": query}],
                     "temperature": 0,
                     "max_completion_tokens": 256,
                     "response_format": {"type": "json_object"},
@@ -159,11 +196,11 @@ def understand_query(query: str, settings: Settings) -> dict | None:
             content = response.json()["choices"][0]["message"]["content"] or "{}"
             parsed = json.loads(content)
             result = parsed if isinstance(parsed, dict) else None
-            log.info("groq understanding ok model=%s ms=%d", model, (time.monotonic() - started) * 1000)
+            log.info("groq %s ok model=%s ms=%d", counter, model, (time.monotonic() - started) * 1000)
             break
         except (requests.RequestException, GroqError, ValueError, KeyError, IndexError, TypeError) as exc:
-            USAGE.add("understanding_failures")
-            log.warning("groq understanding failed model=%s error=%s", model, type(exc).__name__)
+            USAGE.add(f"{counter}_failures")
+            log.warning("groq %s failed model=%s error=%s", counter, model, type(exc).__name__)
     with _cache_lock:
         _cache[key] = result
         while len(_cache) > CACHE_SIZE:

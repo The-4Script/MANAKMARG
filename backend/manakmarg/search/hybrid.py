@@ -96,12 +96,17 @@ def content_tokens(text: str | None) -> list[str]:
     return tokens
 
 
+def _folded(text: str | None) -> str:
+    return " ".join(stem(token) for token in norm_match(text).split())
+
+
 def expand_synonyms(text: str | None) -> list[tuple[str, str]]:
-    """(matched term, expansion) pairs for curated synonyms found as whole words in the query."""
-    padded = f" {norm_match(text)} "
+    """(matched term, expansion) pairs for curated synonyms found as whole words in the query. Plurals are folded on
+    both sides, so "solar panels" and "LED bulbs" match the terms "solar panel" and "led bulb"."""
+    padded = f" {_folded(text)} "
     used: list[tuple[str, str]] = []
     for synonym in load_synonyms():
-        term = next((term for term in synonym.terms if term and f" {term} " in padded), None)
+        term = next((term for term in synonym.terms if term and f" {_folded(term)} " in padded), None)
         if term:
             used.extend((term, target) for target in synonym.expands_to)
     return used

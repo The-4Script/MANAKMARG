@@ -79,6 +79,11 @@ function Answer({ response }: { response: AssistantResponse }) {
             <Chip key={place}>{place}</Chip>
           ))}
         </div>
+        {understanding.interpreted_as && (
+          <p className="mt-2 text-xs text-slate-500">
+            {t("assistant.interpretedAs")}: <span lang="en" className="italic text-slate-600">“{understanding.interpreted_as}”</span>
+          </p>
+        )}
 
         <div className="mt-4 flex flex-wrap items-start gap-3">
           <h2 className="flex-1 text-xl font-semibold leading-snug text-ink-900">{response.headline}</h2>

@@ -61,6 +61,9 @@ export type Understanding = {
   metal: string | null;
   product_text: string | null;
   confidence: number;
+  // Set when the question was restated in English (by the language model) before the records were searched.
+  interpreted_as?: string | null;
+  interpretation_source?: string | null;
 };
 
 export type CoverageCandidate = {

@@ -67,10 +67,13 @@ CUES = {
     ),
     INTENT_PROCESS: (
         "how to apply", "how do i apply", "how can i apply", "apply for", "application", "procedure", "process", "steps",
-        "documents required", "fees", "manakonline", "licence", "license", "obtain", "get certified", "आवेदन", "प्रक्रिया",
+        "documents required", "fee", "fees", "cost of", "charges", "how much", "how long", "how many days", "time taken", "timeline", "validity", "renewal", "renew", "kitna", "kitni",
+        "kitne din", "कितना", "कितनी", "शुल्क", "फीस",
+        "manakonline", "licence", "license", "obtain", "get certified", "आवेदन", "प्रक्रिया",
     ),
     INTENT_STATUS: (
         "mandatory", "compulsory", "qco", "qcos", "quality control order", "is it required", "need bis",
+        "isi", "isi mark", "isi marked", "bis mark", "bis certification", "certification required", "आईएसआई",
         "enforcement", "deadline", "notified", "zaroori", "jaruri", "anivarya", "अनिवार्य", "ज़रूरी", "जरूरी",
     ),
     INTENT_STANDARD: (
@@ -127,7 +130,22 @@ QUESTION_WORDS = frozenset(
     mujhe liye batao bataye bataiye batayein kaunsa konsa kaun sa lagu hota hoti mera meri mere kaise milega chahiye
     क्या में के की का को से पर है हैं हो और या कौन कौनसा कैसे कहाँ कहां लिए मेरे मेरा मेरी मुझे बताएं बताइए चाहिए
     सा सी लागू होता होती बताओ बताएँ करें करे मैं हम बनाता बनाती बनाते हूँ हूं वाले वाली बारे जानकारी दें दीजिए उत्पाद
-    उत्पादों किस""".split()
+    उत्पादों किस
+    main mai hoon hun banata banati banate bana raha rahi rahe karta karti karte karna chahta chahti chahte
+    bechna bechta bechti bechte bana rahe hamara hamari humara apna apni take takes taken milta milti milega lagta
+    lagti lagega din बाताओ बताओ बताइये बतायें""".split()
+)
+
+# With no BIS word in the question, these mark it as about something else ("steel share price", "gold rate today",
+# "cement company jobs") even though a product word appears in it.
+_NON_BIS_TOPICS = frozenset(
+    "price prices rate rates share shares stock stocks market job jobs salary vacancy recipe recipes ideas insurance "
+    "loan news movie weather".split()
+)
+# Words that name BIS or its instruments outright; any one of them keeps a question in scope.
+_STRONG_BIS_TERMS = frozenset(
+    "bis isi qco qcos standard standards certification certificate licence license hallmark hallmarking huid ahc lims "
+    "manakonline मानक प्रमाणन लाइसेंस हॉलमार्क हॉलमार्किंग बीआईएस आईएसआई क्यूसीओ".split()
 )
 
 _ABBREVIATED_STATES = {
@@ -178,6 +196,10 @@ _MALFORMED_IS = re.compile(r"(?<![A-Za-z0-9])IS\s*[-:/]?\s*(?=[0-9OoIl]*[0-9])(?
 _PLACE_AFTER_PREPOSITION = re.compile(r"\b(?:in|at|near|around)\s+((?:[A-Z][A-Za-z.\-]{2,})(?:\s+[A-Z][A-Za-z.\-]{2,}){0,2})")
 _PLACE_BEFORE_DISTRICT = re.compile(r"\b([A-Za-z][A-Za-z.\-]{2,})\s+district\b", re.IGNORECASE)
 _HINDI_PLACE = re.compile(r"([ऀ-ॿ]{2,})\s+(?:ज़िले|जिले|ज़िला|जिला|में)")
+# "IS" on its own asks for the Indian Standard ("दूध का IS क्या है", "what is the IS for milk"). Upper case only, so the
+# English verb "is" never counts; Hinglish "ka/ki/ke is" is accepted in any case. A number after it is an identifier.
+_IS_WORD = re.compile(r"(?<![A-Za-z0-9])IS(?![A-Za-z0-9])(?!\s*[-:/.]?\s*\d)")
+_HINGLISH_IS = re.compile(r"\b(?:ka|ki|ke|kaa)\s+is\b(?!\s*[-:/.]?\s*\d)", re.IGNORECASE)
 _NOT_PLACES = frozenset({"is", "bis", "india", "indian", "scheme", "part", "qco", "qcos", "english", "hindi", "the", "this", "that", "my", "your", "any", "each", "every", "same", "which", "one"})
 
 
@@ -189,6 +211,8 @@ class Gazetteer:
     districts: dict[str, list[tuple[str, str]]] = field(default_factory=dict)
     cities: dict[str, tuple[str, str | None]] = field(default_factory=dict)
     product_words: frozenset[str] = frozenset()
+    # Stemmed words of every current published standard title: what the catalogue can match at all.
+    catalogue_words: frozenset[str] = frozenset()
 
     @classmethod
     def load(cls, conn: Connection) -> "Gazetteer":
@@ -207,7 +231,7 @@ class Gazetteer:
         lab = schema.laboratory
         for row in conn.execute(sa.select(lab.c.city, lab.c.state).where(lab.c.is_current.is_(True), lab.c.city.is_not(None))):
             cities.setdefault(norm_match(row.city), (row.city, row.state))
-        return cls(districts, cities, product_vocabulary(conn))
+        return cls(districts, cities, product_vocabulary(conn), catalogue_vocabulary(conn))
 
 
 def product_vocabulary(conn: Connection) -> frozenset[str]:
@@ -221,6 +245,14 @@ def product_vocabulary(conn: Connection) -> frozenset[str]:
         for term in synonym.terms:
             words.update(stem(token) for token in term.split())
     return frozenset(word for word in words if len(word) > 2 and word not in PRODUCT_STOP_WORDS and not word.isdigit())
+
+
+def catalogue_vocabulary(conn: Connection) -> frozenset[str]:
+    """Stemmed words of the current published standard titles."""
+    words: set[str] = set()
+    for (title,) in conn.execute(sa.select(schema.standard.c.title_clean).where(schema.standard.c.is_current.is_(True))):
+        words.update(stem(token) for token in norm_match(title).split())
+    return frozenset(word for word in words if len(word) > 2 and not word.isdigit())
 
 
 @dataclass(frozen=True)
@@ -249,6 +281,12 @@ class QueryUnderstanding:
     application: str | None = None
     in_scope: bool = True
     clarification: str | None = None
+    # The words left after cues, identifiers, places and question words are removed, kept even when the question is
+    # judged out of scope: the interpretation step checks them against the English record vocabulary.
+    candidate_words: tuple[str, ...] = ()
+    # Set when the question was restated in English before retrieval (``manakmarg.reasoning.interpret``).
+    interpreted_as: str | None = None
+    interpretation_source: str | None = None
 
 
 def apply_model_hints(understanding: QueryUnderstanding, hints: dict) -> QueryUnderstanding:
@@ -357,6 +395,8 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
     padded = _padded(work)
     tokens = norm_match(work).split()
     hits = _cue_hits(padded)
+    if _IS_WORD.search(work) or _HINGLISH_IS.search(work):
+        hits[INTENT_STANDARD].append("IS")
 
     recognition_nos = tuple(dict.fromkeys(match.group(0).upper() for match in _RECOGNITION.finditer(work)))
     if recognition_nos:
@@ -405,8 +445,20 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
         and token not in QUESTION_WORDS
         and not token.isdigit()
     ]
+    # Product words checked against the vocabulary of the official compulsory-certification listings (loaded from the
+    # database). A question made only of listed product words ("electric iron", "Packaged Pasteurized Milk") is a product
+    # question even without a BIS cue. Every word must be known, so "car insurance" or "weather today" stay out of scope.
+    vocabulary = gazetteer.product_words
+    names_listed_product = bool(vocabulary) and bool(product_words) and all(stem(token) in vocabulary for token in product_words)
     product_text = " ".join(product_words) or None
-    in_scope = _has_domain_signal(f"{text} {aliased.text}", (material, product, application, *standard_refs, *recognition_nos, *invalid_refs)) or any(hits.values())
+    in_scope = (
+        _has_domain_signal(f"{text} {aliased.text}", (material, product, application, *standard_refs, *recognition_nos, *invalid_refs))
+        or any(hits.values())
+        or names_listed_product
+    )
+    all_tokens = set(norm_match(f"{text} {aliased.text}").split())
+    if all_tokens & _NON_BIS_TOPICS and not (all_tokens & _STRONG_BIS_TERMS or standard_refs or recognition_nos):
+        in_scope = False
     if malformed_is and not standard_refs:
         product_text = None
     if not in_scope:
@@ -448,6 +500,7 @@ def understand(text: str, *, gazetteer: Gazetteer | None = None) -> QueryUnderst
         application=application,
         in_scope=in_scope,
         clarification=clarification,
+        candidate_words=tuple(product_words),
     )
 
 

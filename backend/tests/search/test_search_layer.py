@@ -112,6 +112,11 @@ def test_vector_indexes_are_built_from_the_database(engine, tmp_path):
 def test_synonyms_expand_everyday_and_hindi_words():
     assert ("steel ke bartan", "stainless steel utensils") in expand_synonyms("steel ke bartan banane hain")
     assert ("bartan", "stainless steel utensils") in expand_synonyms("bartan")
+
+
+def test_synonyms_match_plural_forms():
+    assert ("solar panel", "photovoltaic modules") in expand_synonyms("BIS for solar panels")
+    assert ("led bulb", "self ballasted led lamps") in expand_synonyms("ISI mark for LED bulbs")
     assert any(target == "electric ceiling type fans" for _, target in expand_synonyms("पंखा"))
     assert expand_synonyms("hydraulic press") == []
 

@@ -46,6 +46,9 @@ def build_parser() -> argparse.ArgumentParser:
     refresh.add_argument("--no-activate", action="store_true", help="Stage and check the new dataset but keep the active one.")
     refresh.add_argument("--with-tests", action="store_true", help="Also run the backend test suite before activating (needs dev dependencies).")
     commands.add_parser("refresh-status", help="Show the active dataset version and the latest refresh results.")
+    evaluate = commands.add_parser("eval-queries", help="Score question understanding on the multilingual question set (manakmarg/eval/queries.json).")
+    evaluate.add_argument("--with-model", action="store_true", help="Also score cases that need the language model (uses GROQ_API_KEY).")
+    evaluate.add_argument("--min-accuracy", type=float, default=1.0, help="Exit with status 1 below this share of passing cases (default 1.0).")
     for name, text in (("serve", "Run the API and the built frontend."), ("start", "Deployment entry point: restore data if needed, then serve.")):
         command = commands.add_parser(name, help=text)
         command.add_argument("--host", default=None, help="Bind address (default: HOST or 127.0.0.1).")
@@ -137,6 +140,15 @@ def main(argv: list[str] | None = None) -> int:
         report = run_refresh(settings, trigger="manual", activate=not args.no_activate, run_pytest=True if args.with_tests else None)
         print(json.dumps(log_entry(report), indent=2, ensure_ascii=False, default=str))
         return 0 if report["status"] in ("success", "staged") else 1
+
+    if args.command == "eval-queries":
+        from manakmarg.db.engine import get_engine
+        from manakmarg.eval import run_eval, summary
+
+        with get_engine(settings.db_path).connect() as conn:
+            report = summary(run_eval(conn, settings, with_model=args.with_model))
+        print(json.dumps(report, indent=2, ensure_ascii=False))
+        return 0 if report["accuracy"] is not None and report["accuracy"] >= args.min_accuracy else 1
 
     if args.command == "refresh-status":
         from manakmarg.refresh import log as refresh_log

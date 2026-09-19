@@ -70,3 +70,8 @@ def test_unknown_words_are_not_guessed():
 def test_alias_targets_are_plain_english():
     for target in list(DOMAIN_ALIASES.values()) + list(PLACE_ALIASES.values()):
         assert target.isascii()
+
+
+def test_misheard_led_lighting_is_corrected_but_lead_metal_is_not():
+    assert apply_aliases("Do I need ISI mark for lead bulbs?").text == "Do I need ISI mark for led bulbs ?"
+    assert apply_aliases("standard for lead ingots").text == "standard for lead ingots"

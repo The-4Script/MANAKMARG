@@ -36,7 +36,7 @@ manakmarg = "manakmarg.__main__:main"
 include = ["manakmarg*"]
 
 [tool.setuptools.package-data]
-manakmarg = ["search/*.json", "reasoning/*.json", "demo/samples/*"]
+manakmarg = ["search/*.json", "reasoning/*.json", "eval/*.json", "demo/samples/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
