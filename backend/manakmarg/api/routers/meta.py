@@ -20,11 +20,6 @@ router = APIRouter(tags=["meta"])
 
 LIMITATIONS = [
     {
-        "key": "standards_snapshot",
-        "en": "Standards metadata comes from BIS exports generated on 12 Sep 2026; standard texts are not collected — look them up on the BIS standards portal.",
-        "hi": "मानकों का मेटाडेटा 12 सितंबर 2026 को बने BIS निर्यात से है; मानकों के पाठ एकत्र नहीं किए जाते — उन्हें BIS मानक पोर्टल पर देखें।",
-    },
-    {
         "key": "classification_partial",
         "en": "Ministry classification covers 18 ministry exports only; department and group classification is not available.",
         "hi": "मंत्रालय वर्गीकरण केवल 18 मंत्रालय निर्यातों तक सीमित है; विभाग और समूह वर्गीकरण उपलब्ध नहीं है।",
