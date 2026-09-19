@@ -161,7 +161,6 @@ export function SourcesList({ sources }: { sources: SourceRollup[] | undefined }
             </div>
             <p className="mt-0.5 text-xs text-slate-500">
               {source.retrieved_at.length ? `${t("common.retrieved")}: ${formatDate(source.retrieved_at[0], lang)}` : null}
-              {source.as_of ? ` · ${source.as_of}` : null}
             </p>
           </li>
         ))}
